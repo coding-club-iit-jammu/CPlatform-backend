@@ -1,0 +1,17 @@
+<h1 style="text-align:center">Indian Institute of Technology Jammu</h1>
+<h2 style="text-align:center">Coding Platform</h2>
+<div id="formDiv">
+    <form [formGroup] = "form">
+        <div class="container">
+            <label for="uname"><b>Username</b></label>
+            <input type="text" placeholder="Enter Username" name="uname" required formControlName = "username">
+            <label for="psw"><b>Password</b></label>
+            <input type="password" placeholder="Enter Password" name="psw" required formControlName = "password">
+            <button type="submit" (click)="login()">Login</button>
+        </div>
+        <div class="container" style="background-color:#f1f1f1">
+            <button type="button" class="cancelbtn" (click)="reset()">Cancel</button>
+            <span class="psw">Forgot <a href="#">password?</a></span>
+        </div>
+    </form>
+</div>

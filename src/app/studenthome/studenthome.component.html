@@ -1,1 +1,41 @@
-<p>studenthome works!</p>
+<div class="sidenav">
+    <h2>{{student.name}}</h2>
+    <h4>@{{student.username}}</h4>
+    <h4>Branch: {{student.branch}}</h4>
+    <a href="#">Past Tests</a>
+    <a href="#">Courses</a>
+    <a href="#">Teaching Assistant</a>
+</div>
+<div class="main">
+     <br>
+     <div>
+        <h2>Ongoing Tests</h2>
+        <hr>
+        <ng-template [ngFor]="let test of ongoingTests">
+            <div class="card bg-dark text-white">
+                <div class="card-body">Secondary card</div>
+            </div>
+            <br>
+        </ng-template>
+    </div>  
+     <div>
+        <h2>Past Tests</h2>
+        <hr>
+        <ng-template [ngFor]="let test of pastTests">
+            <div class="card bg-dark text-white">
+                <div class="card-body">Secondary card</div>
+            </div>
+            <br>
+        </ng-template>
+    </div>  
+    <div>
+        <h2>Courses</h2>
+        <hr>
+        <br>
+    </div>
+    <div>
+        <h2>Teaching Assistant</h2>
+        <hr>
+        <br>
+    </div>
+</div>

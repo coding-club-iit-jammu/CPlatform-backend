@@ -16,4 +16,21 @@ export class FirebaseServicesService {
     });
     return type;
   }
+
+  async fetchNameBranchStudent(username:string){
+    const database = this.firedata.database;
+    let s = {};
+    var temp;
+    await database.ref('users/').child(username).child('name').once('value',snapshot=>{
+      temp = snapshot.val();
+    }).then(()=>{
+      s["name"] = temp;
+    });
+    await database.ref('users/').child(username).child('branch').once('value',snapshot=>{
+      temp = snapshot.val();
+    }).then(()=>{
+      s["branch"] = temp;
+    });
+    return s;
+  }
 }

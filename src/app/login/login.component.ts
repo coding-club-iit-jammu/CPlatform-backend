@@ -1,10 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { FirebaseServicesService } from '../firebase-services.service';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { AngularFireDatabase } from '@angular/fire/database';
-import { typeofExpr } from '@angular/compiler/src/output/output_ast';
 
 @Component({
   selector: 'app-login',

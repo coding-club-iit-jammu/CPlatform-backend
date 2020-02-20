@@ -9,32 +9,55 @@
 <div class="main">
      <br>
      <div>
-        <h2>Ongoing Tests</h2>
+        <h2><b>Ongoing Tests</b></h2>
         <hr>
-        <ng-template [ngFor]="let test of ongoingTests">
+        <!-- <ng-template [ngFor]="let test of ongoingTests">
             <div class="card bg-dark text-white">
                 <div class="card-body">Secondary card</div>
             </div>
             <br>
-        </ng-template>
+        </ng-template> -->
     </div>  
      <div>
-        <h2>Past Tests</h2>
+        <h2><b>Past Tests</b></h2>
         <hr>
-        <ng-template [ngFor]="let test of pastTests">
+        <!-- <ng-template [ngFor]="let test of pastTests">
             <div class="card bg-dark text-white">
                 <div class="card-body">Secondary card</div>
             </div>
             <br>
-        </ng-template>
+        </ng-template> -->
     </div>  
     <div>
-        <h2>Courses</h2>
+        <h2><b>Courses</b></h2>
         <hr>
         <br>
+        <div class="row">
+            <div class="col-sm-6">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">CSL106</h5>
+                  <p class="card-text">Data Structures and Algorithm.</p>
+                  <button class="btn btn-primary" (click)="navToCourse('CSL106')">Open</button>
+                </div>
+              </div>
+            </div>
+            <br>
+            <div class="col-sm-6">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">CSL100</h5>
+                  <p class="card-text">Introduction to Computer Programming</p>
+                  <button class="btn btn-primary" (click)="navToCourse('CSL100')">Open</button>
+                </div>
+              </div>
+            </div>
+            <br>
+        </div>
     </div>
+    <br>
     <div>
-        <h2>Teaching Assistant</h2>
+        <h2><b>Teaching Assistant</b></h2>
         <hr>
         <br>
     </div>

@@ -4,6 +4,7 @@ import { LoginComponent } from './login/login.component';
 import { AdminpageComponent } from './adminpage/adminpage.component';
 import { StudenthomeComponent } from './studenthome/studenthome.component';
 import { InstructorhomeComponent } from './instructorhome/instructorhome.component';
+import { CoursehomeComponent } from './coursehome/coursehome.component';
 
 
 const routes: Routes = [
@@ -22,6 +23,10 @@ const routes: Routes = [
   {
     path: 'instructor',
     component: InstructorhomeComponent
+  },
+  {
+    path: 'course',
+    component: CoursehomeComponent
   }
 ];
 

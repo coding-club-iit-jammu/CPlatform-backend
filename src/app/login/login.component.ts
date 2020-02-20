@@ -37,8 +37,10 @@ export class LoginComponent implements OnInit {
       .catch(error => {
         console.log('got an error .', error);
       }) 
-    if(type!="")
+    if(type!=""){
+      // this.router.navigate(['/'+type]);
       this.router.navigateByUrl('/'+type);
+    }
   }
 
   reset(){

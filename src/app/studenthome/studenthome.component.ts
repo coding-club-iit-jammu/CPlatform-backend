@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AngularFireAuth} from '@angular/fire/auth';
 import { AngularFireDatabase } from '@angular/fire/database';
 import { FirebaseServicesService } from '../firebase-services.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-studenthome',
@@ -20,7 +21,8 @@ export class StudenthomeComponent implements OnInit {
   ongoingTests: Array<Test> = [];
 
   constructor(private fireauth: AngularFireAuth, private firedata: AngularFireDatabase,
-              private firebaseService: FirebaseServicesService) { }
+              private firebaseService: FirebaseServicesService,
+              private router: Router) { }
 
 
   async ngOnInit() {
@@ -29,6 +31,11 @@ export class StudenthomeComponent implements OnInit {
     this.student.name = temp["name"];
     this.student.branch = temp["branch"];
     console.log(this.student);
+  }
+
+  navToCourse(courseCode:string){
+    this.firebaseService.setCourse(courseCode);
+    this.router.navigateByUrl('/course'); 
   }
 
    

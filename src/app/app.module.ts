@@ -14,6 +14,7 @@ import { AdminpageComponent } from './adminpage/adminpage.component';
 import { StudenthomeComponent } from './studenthome/studenthome.component';
 import { InstructorhomeComponent } from './instructorhome/instructorhome.component';
 import { FirebaseServicesService } from './firebase-services.service';
+import { CoursehomeComponent } from './coursehome/coursehome.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { FirebaseServicesService } from './firebase-services.service';
     LoginComponent,
     AdminpageComponent,
     StudenthomeComponent,
-    InstructorhomeComponent
+    InstructorhomeComponent,
+    CoursehomeComponent
   ],
   imports: [
     BrowserModule,

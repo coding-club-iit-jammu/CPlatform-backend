@@ -17,6 +17,7 @@ export class StudenthomeComponent implements OnInit {
     branch : ""
   };
 
+  courses:any=[];
   pastTests: Array<Test> = [];
   ongoingTests: Array<Test> = [];
 
@@ -25,12 +26,26 @@ export class StudenthomeComponent implements OnInit {
               private router: Router) { }
 
 
+  async fillCourses(codes){
+    this.courses=[]
+    for(let c of codes){
+        let ti = await this.firebaseService.fetchCourseTitle(c);
+        let temp = {
+          code:c,
+          title:ti
+        };
+        this.courses.push(temp);
+    }
+  }
+
   async ngOnInit() {
     this.student.username = this.fireauth.auth.currentUser.email.split('@')[0];
     let temp = await this.firebaseService.fetchNameBranchStudent(this.student.username);
     this.student.name = temp["name"];
     this.student.branch = temp["branch"];
-    console.log(this.student);
+    let s = await this.firebaseService.fetchCourses(this.student.username);
+    await this.fillCourses(s);
+    console.log(this.courses);
   }
 
   navToCourse(courseCode:string){

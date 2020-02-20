@@ -21,6 +21,11 @@
     color: #818181;
     display: block;
   }
+
+  .all{
+    display: flex;
+    flex-direction: row;
+  }
   
   /* When you mouse over the navigation links, change their color */
   .sidenav a:hover {
@@ -29,12 +34,50 @@
   
   /* Style page content */
   .main {
-    margin-left: 25vw; /* Same as the width of the sidebar */
-    padding: 0px 10px;
+    margin-left: 25vw;
+    padding-left: 5vw;
+    width: 70vw;
+    /* margin-left: 25vw; Same as the width of the sidebar */
+  }
+
+  .cardRight {
+    margin: 2%;
+    width: 25vw;
+  }
+
+  .cardRow{
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .assignment{
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .box{
+    width: 30vw;
+    height: auto;
+    margin: 1%;
   }
   
   /* On smaller screens, where height is less than 450px, change the style of the sidebar (less padding and a smaller font size) */
   @media screen and (max-height: 450px) {
     .sidenav {padding-top: 15px;}
     .sidenav a {font-size: 18px;}
+    
+  }
+
+  @media only screen and (max-width: 600px) {
+    body {
+      background-color: lightblue;
+    }
+    .assignment{
+      display: flex;
+      flex-direction: column;
+      flex-wrap: nowrap;
+    }
+    .box {
+      width: 60vw;
+    }
   }

@@ -35,21 +35,39 @@ export class FirebaseServicesService {
     return s;
   }
 
-  async fetchTests(username:string){
+  async fetchCourses(username:string){
     const database = this.firedata.database;
-    let s = {};
+    let s = [];
     var temp;
-    await database.ref('users/').child(username).child('name').once('value',snapshot=>{
+    await database.ref('users/').child(username).child('courses').once('value',snapshot=>{
       temp = snapshot.val();
     }).then(()=>{
-      s["name"] = temp;
-    });
-    await database.ref('users/').child(username).child('branch').once('value',snapshot=>{
-      temp = snapshot.val();
-    }).then(()=>{
-      s["branch"] = temp;
+        s = Object.values(temp);
+        console.log(s);
     });
     return s;
+  }
+
+  async fetchCourseTitle(code:string){
+    const database = this.firedata.database;
+    var temp;
+    await database.ref("courses").child(code).child(code.substring(8)).once('value',function(snapshot){
+      temp = snapshot.val().title;
+    });
+    return temp;
+  }
+
+  async getCourseDetails(code:string){
+    const database = this.firedata.database;
+    var temp = {
+      title:"",
+      instructor:""
+    };
+    await database.ref("courses").child(code).child(code.substring(8)).once('value',function(snapshot){
+      temp.title = snapshot.val().title;
+      temp.instructor = snapshot.val().instructor;
+    });
+    return temp;
   }
 
   setCourse(c:string){

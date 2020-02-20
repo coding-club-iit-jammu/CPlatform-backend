@@ -33,26 +33,17 @@
         <hr>
         <br>
         <div class="row">
-            <div class="col-sm-6">
+          <!-- <ng-template *ngFor="let item of courses"> -->
+            <div *ngFor="let item of courses" class="col-sm-6">
               <div class="card">
                 <div class="card-body">
-                  <h5 class="card-title">CSL106</h5>
-                  <p class="card-text">Data Structures and Algorithm.</p>
-                  <button class="btn btn-primary" (click)="navToCourse('CSL106')">Open</button>
+                  <h5 class="card-title">{{item.code.substring(8)}}</h5>
+                  <p class="card-text">{{item.title}}</p>
+                  <button class="btn btn-primary" (click)="navToCourse(item.code)">Open</button>
                 </div>
               </div>
             </div>
-            <br>
-            <div class="col-sm-6">
-              <div class="card">
-                <div class="card-body">
-                  <h5 class="card-title">CSL100</h5>
-                  <p class="card-text">Introduction to Computer Programming</p>
-                  <button class="btn btn-primary" (click)="navToCourse('CSL100')">Open</button>
-                </div>
-              </div>
-            </div>
-            <br>
+          <!-- </ng-template> -->
         </div>
     </div>
     <br>

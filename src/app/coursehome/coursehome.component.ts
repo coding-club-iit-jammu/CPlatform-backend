@@ -10,15 +10,12 @@ export class CoursehomeComponent implements OnInit {
 
   constructor(private firebaseService: FirebaseServicesService) { }
 
-  course: Course = {
-    code:"",
-    title:"",
-    instructor:"",
-    ta:[]
-  };
-  ngOnInit() {
-    this.course.code = this.firebaseService.getCourse();
-    console.log(this.course.code);
+  code:string;
+  course:any;
+  async ngOnInit() {
+    this.code = this.firebaseService.getCourse();
+    this.course = await this.firebaseService.getCourseDetails(this.code);  
+    console.log(this.course)
   }
 
   

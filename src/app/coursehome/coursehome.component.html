@@ -17,22 +17,21 @@
                         <p class="card-text">{{assignment.description}}</p>
                         <p class="card-text" *ngIf="assignment.securedmarks!=undefined && assignment.securedmarks!=null">Secured Marks: {{assignment.securedmarks}}/{{assignment.marks}}</p>
                         <p class="card-text" *ngIf="assignment.securedmarks==undefined || assignment.securedmarks==null">Total Marks: {{assignment.marks}}</p>
-                        <label for="exampleFormControlFile1">Upload Here</label>
-                        <input type="file" class="form-control-file" id="exampleFormControlFile1">
-                        <br>
-                        <button class="btn btn-primary">Submit</button>
+                        <p class="card-text" *ngIf="assignment.submission_time!=undefined && assignment.submission_time!=null">Last Submission: {{assignment.submission_time}}</p>
+                        <div *ngIf="checkStatus(assignment.deadline)==true">
+                            <label for="exampleFormControlFile1" >Upload Here</label>
+                            <input type="file" class="form-control-file" id="exampleFormControlFile1">
+                            <br>
+                            <button class="btn btn-primary">Submit</button>
                         </div>
-                        <div class="card-footer">Deadline: {{assignment.deadline}}</div>
+                        <div class="card-footer">Deadline: {{assignment.deadline }}</div>
                     </div>
                 </div>
                 <div class="box" *ngIf="assignments==undefined || assignments==null">
                     <div class="card">
                         <div class="card-body">
-                        <!-- <h5 class="card-title">{{assignment.title}}</h5> -->
                         <p class="card-text">No Assignments</p>
-                        <!-- <a href="#" class="btn btn-primary">Open</a> -->
                         </div>
-                        <!-- <div class="card-footer">Deadline: {{assignment.deadline}}</div> -->
                     </div>
                 </div>
             </div>

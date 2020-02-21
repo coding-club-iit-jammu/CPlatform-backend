@@ -14,7 +14,10 @@ import { AdminpageComponent } from './adminpage/adminpage.component';
 import { StudenthomeComponent } from './studenthome/studenthome.component';
 import { InstructorhomeComponent } from './instructorhome/instructorhome.component';
 import { FirebaseServicesService } from './firebase-services.service';
+import { TimeAPIClientService } from './services/time-apiclient.service';
 import { CoursehomeComponent } from './coursehome/coursehome.component';
+import { FormatdatePipe } from './formatdate.pipe';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -23,7 +26,8 @@ import { CoursehomeComponent } from './coursehome/coursehome.component';
     AdminpageComponent,
     StudenthomeComponent,
     InstructorhomeComponent,
-    CoursehomeComponent
+    CoursehomeComponent,
+    FormatdatePipe
   ],
   imports: [
     BrowserModule,
@@ -32,10 +36,12 @@ import { CoursehomeComponent } from './coursehome/coursehome.component';
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFireStorageModule,
     AngularFireDatabaseModule,
-    AngularFireAuthModule
+    AngularFireAuthModule,
+    HttpClientModule
   ],
   providers: [
-    FirebaseServicesService
+    FirebaseServicesService,
+    TimeAPIClientService
   ],
   bootstrap: [AppComponent]
 })

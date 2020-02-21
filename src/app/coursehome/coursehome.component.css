@@ -57,7 +57,7 @@
 
   .box{
     width: 30vw;
-    height: auto;
+    /* height: auto; */
     margin: 1%;
   }
   

@@ -3,6 +3,7 @@ import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { AngularFireDatabase } from '@angular/fire/database';
+import { FirebaseServicesService } from '../firebase-services.service';
 
 @Component({
   selector: 'app-login',
@@ -15,7 +16,8 @@ export class LoginComponent implements OnInit {
   constructor(private formBuilder: FormBuilder, 
     private fire: AngularFireAuth,
     private router: Router,
-    private firedata: AngularFireDatabase) { }
+    private firedata: AngularFireDatabase,
+    private firebaseService: FirebaseServicesService) { }
 
   ngOnInit() {
     this.form = this.formBuilder.group({
@@ -39,6 +41,7 @@ export class LoginComponent implements OnInit {
       }) 
     if(type!=""){
       // this.router.navigate(['/'+type]);
+      this.firebaseService.setUserID(username);
       this.router.navigateByUrl('/'+type);
     }
   }

@@ -7,6 +7,7 @@ import {AngularFireDatabase} from '@angular/fire/database';
 export class FirebaseServicesService {
 
   course: string;
+  userid: string;
   constructor(private firedata: AngularFireDatabase) { }
 
   async fetchUserType(username:string){
@@ -42,7 +43,7 @@ export class FirebaseServicesService {
     await database.ref('users/').child(username).child('courses').once('value',snapshot=>{
       temp = snapshot.val();
     }).then(()=>{
-        s = Object.values(temp);
+        s = Object.keys(temp);
         console.log(s);
     });
     return s;
@@ -56,6 +57,31 @@ export class FirebaseServicesService {
     });
     return temp;
   }
+
+  async fetchCourseAssignments(code: string){
+    const database = this.firedata.database;
+    var temp;
+    await database.ref("courses").child(code).child(code.substring(8)).child("assignments").once('value',function(snapshot){
+      temp = snapshot.val();
+    });
+    var tempUser;
+    let userid = this.userid;
+    await database.ref("users").child(userid).child("courses").child(code).child("assignment").once('value',function(snapshot){
+      tempUser = snapshot.val();
+    }).then(()=>{
+      console.log(tempUser);
+      for(var i=0; i<tempUser.length;i++){
+        if(tempUser[i]!=undefined && tempUser[i]!=null){
+          temp[i]["securedmarks"]=tempUser[i].marks;
+          temp[i]["submission_time"]=tempUser[i]["submission_time"];
+          temp[i]["link"]=tempUser[i].link;
+        }
+      }
+    });
+    temp.shift();
+    return temp;
+  }
+
 
   async getCourseDetails(code:string){
     const database = this.firedata.database;
@@ -76,6 +102,14 @@ export class FirebaseServicesService {
 
   getCourse(){
     return this.course;
+  }
+
+  setUserID(c:string){
+    this.userid = c;
+  }
+
+  getUserID(){
+    return this.userid;
   }
 
 }

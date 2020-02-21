@@ -7,87 +7,32 @@
     <div class="main">
         <br>
         <div>
-            <h2><b>Assignment</b></h2>
+            <h2><b>Assignments</b></h2>
             <hr>
             <div class="assignment row">
-                <div class="box">
-                    <div class="card">
+                <div class="box" *ngFor="let assignment of assignments" >
+                    <div class="card" *ngIf="assignment!=undefined && assignment!=null">
                         <div class="card-body">
-                        <h5 class="card-title">Special title treatment</h5>
-                        <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                        <a href="#" class="btn btn-primary">Go somewhere</a>
+                        <h5 class="card-title">{{assignment.title}}</h5>
+                        <p class="card-text">{{assignment.description}}</p>
+                        <p class="card-text" *ngIf="assignment.securedmarks!=undefined && assignment.securedmarks!=null">Secured Marks: {{assignment.securedmarks}}/{{assignment.marks}}</p>
+                        <p class="card-text" *ngIf="assignment.securedmarks==undefined || assignment.securedmarks==null">Total Marks: {{assignment.marks}}</p>
+                        <label for="exampleFormControlFile1">Upload Here</label>
+                        <input type="file" class="form-control-file" id="exampleFormControlFile1">
+                        <br>
+                        <button class="btn btn-primary">Submit</button>
                         </div>
-                        <div class="card-footer">Deadline</div>
+                        <div class="card-footer">Deadline: {{assignment.deadline}}</div>
                     </div>
                 </div>
-                <div class="box">
+                <div class="box" *ngIf="assignments==undefined || assignments==null">
                     <div class="card">
                         <div class="card-body">
-                        <h5 class="card-title">Special title treatment</h5>
-                        <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                        <a href="#" class="btn btn-primary">Go somewhere</a>
+                        <!-- <h5 class="card-title">{{assignment.title}}</h5> -->
+                        <p class="card-text">No Assignments</p>
+                        <!-- <a href="#" class="btn btn-primary">Open</a> -->
                         </div>
-                        <div class="card-footer">Deadline</div>
-                    </div>
-                </div>
-                <div class="box">
-                    <div class="card">
-                        <div class="card-body">
-                        <h5 class="card-title">Special title treatment</h5>
-                        <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                        <a href="#" class="btn btn-primary">Go somewhere</a>
-                        </div>
-                        <div class="card-footer">Deadline</div>
-                    </div>
-                </div>
-                <div class="box">
-                    <div class="card">
-                        <div class="card-body">
-                        <h5 class="card-title">Special title treatment</h5>
-                        <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                        <a href="#" class="btn btn-primary">Go somewhere</a>
-                        </div>
-                        <div class="card-footer">Deadline</div>
-                    </div>
-                </div>
-                <div class="box">
-                    <div class="card">
-                        <div class="card-body">
-                        <h5 class="card-title">Special title treatment</h5>
-                        <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                        <a href="#" class="btn btn-primary">Go somewhere</a>
-                        </div>
-                        <div class="card-footer">Deadline</div>
-                    </div>
-                </div>
-                <div class="box">
-                    <div class="card">
-                        <div class="card-body">
-                        <h5 class="card-title">Special title treatment</h5>
-                        <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                        <a href="#" class="btn btn-primary">Go somewhere</a>
-                        </div>
-                        <div class="card-footer">Deadline</div>
-                    </div>
-                </div>
-                <div class="box">
-                    <div class="card">
-                        <div class="card-body">
-                        <h5 class="card-title">Special title treatment</h5>
-                        <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                        <a href="#" class="btn btn-primary">Go somewhere</a>
-                        </div>
-                        <div class="card-footer">Deadline</div>
-                    </div>
-                </div>
-                <div class="box">
-                    <div class="card">
-                        <div class="card-body">
-                        <h5 class="card-title">Special title treatment</h5>
-                        <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                        <a href="#" class="btn btn-primary">Go somewhere</a>
-                        </div>
-                        <div class="card-footer">Deadline</div>
+                        <!-- <div class="card-footer">Deadline: {{assignment.deadline}}</div> -->
                     </div>
                 </div>
             </div>

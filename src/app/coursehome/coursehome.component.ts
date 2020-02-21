@@ -11,11 +11,16 @@ export class CoursehomeComponent implements OnInit {
   constructor(private firebaseService: FirebaseServicesService) { }
 
   code:string;
-  course:any;
+  course:any={
+    title:"",
+    instructor:""
+  };
+  assignments:any;
   async ngOnInit() {
     this.code = this.firebaseService.getCourse();
-    this.course = await this.firebaseService.getCourseDetails(this.code);  
-    console.log(this.course)
+    this.course = await this.firebaseService.getCourseDetails(this.code);
+    this.assignments = await this.firebaseService.fetchCourseAssignments(this.code);
+    console.log(this.assignments);
   }
 
   

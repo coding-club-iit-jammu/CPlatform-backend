@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import {AngularFireDatabase} from '@angular/fire/database';
+import { AngularFireStorage } from '@angular/fire/storage';
 
 @Injectable({
   providedIn: 'root'
@@ -8,7 +9,8 @@ export class FirebaseServicesService {
 
   course: string;
   userid: string;
-  constructor(private firedata: AngularFireDatabase) { }
+  constructor(private firedata: AngularFireDatabase,
+              private firestore: AngularFireStorage) { }
 
   async fetchUserType(username:string){
     const database = this.firedata.database;
@@ -94,6 +96,15 @@ export class FirebaseServicesService {
       temp.instructor = snapshot.val().instructor;
     });
     return temp;
+  }
+
+  async uploadFile(path:string,file:any){
+    const store = this.firestore.storage;
+    store.ref(path).put(file).then(()=>{
+      console.log("Upload Successful")
+    }).catch(()=>{
+      console.log("Upload Unsuccessful")
+    });
   }
 
   setCourse(c:string){

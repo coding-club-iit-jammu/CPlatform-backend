@@ -20,9 +20,9 @@
                         <p class="card-text" *ngIf="assignment.submission_time!=undefined && assignment.submission_time!=null">Last Submission: {{assignment.submission_time}}</p>
                         <div *ngIf="checkStatus(assignment.deadline)==true">
                             <label for="exampleFormControlFile1" >Upload Here</label>
-                            <input type="file" class="form-control-file" id="exampleFormControlFile1">
+                            <input type="file" class="form-control-file" id="{{'uploadAssignment'+assignment.number}}" (change)="onFileChange($event)">
                             <br>
-                            <button class="btn btn-primary">Submit</button>
+                            <button class="btn btn-primary" (click)="uploadSubmission(assignment.number)">Submit</button>
                             <br>
                         </div>
                         <div class="card-footer">Deadline: {{assignment.deadline }}</div>

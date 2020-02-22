@@ -21,21 +21,21 @@ export class CoursehomeComponent implements OnInit {
   submissionPossible=true;
   time: Date;
 
-  async getTime(){
+  async gettime(){
     await this.timeApi.getTime().then(data=>{
-      this.time = data;
+      this.time = new Date(data);
     })
   }
   async ngOnInit() {
     this.code = this.firebaseService.getCourse();
     await this.timeApi.getTime().then(data=>{
-      this.time = data;
+      this.time = new Date(data);
     });
     this.course = await this.firebaseService.getCourseDetails(this.code);
     this.assignments = await this.firebaseService.fetchCourseAssignments(this.code);
   }
 
-  async checkStatus(date: string){
+  checkStatus(date: string){
     var dd = new Date(date);
     return dd.getTime() > this.time.getTime();
   }

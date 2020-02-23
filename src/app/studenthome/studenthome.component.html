@@ -1,55 +1,64 @@
-<div class="sidenav">
-    <h2>{{student.name}}</h2>
-    <h4>@{{student.username}}</h4>
-    <h4>Branch: {{student.branch}}</h4>
-    <a href="#">Past Tests</a>
-    <a href="#">Courses</a>
-    <a href="#">Teaching Assistant</a>
-</div>
-<div class="main">
-     <br>
-     <div>
-        <h2><b>Ongoing Tests</b></h2>
-        <hr>
-        <!-- <ng-template [ngFor]="let test of ongoingTests">
-            <div class="card bg-dark text-white">
-                <div class="card-body">Secondary card</div>
-            </div>
-            <br>
-        </ng-template> -->
-    </div>  
-     <div>
-        <h2><b>Past Tests</b></h2>
-        <hr>
-        <!-- <ng-template [ngFor]="let test of pastTests">
-            <div class="card bg-dark text-white">
-                <div class="card-body">Secondary card</div>
-            </div>
-            <br>
-        </ng-template> -->
-    </div>  
-    <div>
-        <h2><b>Courses</b></h2>
-        <hr>
-        <br>
-        <div class="row">
-          <!-- <ng-template *ngFor="let item of courses"> -->
-            <div *ngFor="let item of courses" class="col-sm-6">
-              <div class="card">
-                <div class="card-body">
-                  <h5 class="card-title">{{item.code.substring(8)}}</h5>
-                  <p class="card-text">{{item.title}}</p>
-                  <button class="btn btn-primary" (click)="navToCourse(item.code)">Open</button>
-                </div>
+<div class="wrapper">
+  <div class="overlay" *ngIf="showSpinner">
+    <div class="spinner-wrapper">
+      <app-spinner></app-spinner>
+    </div>
+  </div>
+  <div class="loaded-content" [class.blurred]="showSpinner">
+      <div class="sidenav">
+          <h2>{{student.name}}</h2>
+          <h4>@{{student.username}}</h4>
+          <h4>Branch: {{student.branch}}</h4>
+          <a href="#">Past Tests</a>
+          <a href="#">Courses</a>
+          <a href="#">Teaching Assistant</a>
+      </div>
+      <div class="main">
+          <br>
+          <div>
+              <h2><b>Ongoing Tests</b></h2>
+              <hr>
+              <!-- <ng-template [ngFor]="let test of ongoingTests">
+                  <div class="card bg-dark text-white">
+                      <div class="card-body">Secondary card</div>
+                  </div>
+                  <br>
+              </ng-template> -->
+          </div>  
+          <div>
+              <h2><b>Past Tests</b></h2>
+              <hr>
+              <!-- <ng-template [ngFor]="let test of pastTests">
+                  <div class="card bg-dark text-white">
+                      <div class="card-body">Secondary card</div>
+                  </div>
+                  <br>
+              </ng-template> -->
+          </div>  
+          <div>
+              <h2><b>Courses</b></h2>
+              <hr>
+              <br>
+              <div class="row">
+                <!-- <ng-template *ngFor="let item of courses"> -->
+                  <div *ngFor="let item of courses" class="col-sm-6">
+                    <div class="card">
+                      <div class="card-body">
+                        <h5 class="card-title">{{item.code.substring(8)}}</h5>
+                        <p class="card-text">{{item.title}}</p>
+                        <button class="btn btn-primary" (click)="navToCourse(item.code)">Open</button>
+                      </div>
+                    </div>
+                  </div>
+                <!-- </ng-template> -->
               </div>
-            </div>
-          <!-- </ng-template> -->
-        </div>
-    </div>
-    <br>
-    <div>
-        <h2><b>Teaching Assistant</b></h2>
-        <hr>
-        <br>
-    </div>
+          </div>
+          <br>
+          <div>
+              <h2><b>Teaching Assistant</b></h2>
+              <hr>
+              <br>
+          </div>
+      </div>
+  </div>
 </div>

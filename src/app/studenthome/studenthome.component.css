@@ -32,6 +32,25 @@
     margin-left: 25vw; /* Same as the width of the sidebar */
     padding: 0px 10px;
   }
+
+  .wrapper {
+    width: 100%;
+    height: 100%;
+  }
+  
+  .overlay {
+    position: absolute;
+    z-index: 1002;
+    background-color: rgba(255, 255, 255, 0.5);
+    width: 100%;
+    height: 100%;
+  }
+  
+  .spinner-wrapper {
+    display: flex;
+    justify-content: center;
+    justify-items: center;
+  }
   
   /* On smaller screens, where height is less than 450px, change the style of the sidebar (less padding and a smaller font size) */
   @media screen and (max-height: 450px) {

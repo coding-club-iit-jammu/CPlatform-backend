@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {AngularFireDatabase} from '@angular/fire/database';
 import { AngularFireStorage } from '@angular/fire/storage';
 import { TimeAPIClientService } from './services/time-apiclient.service';
+import { StoreInfoService } from './services/store-info.service'
 import { finalize } from 'rxjs/operators';
 
 @Injectable({
@@ -13,7 +14,8 @@ export class FirebaseServicesService {
   userid: string;
   constructor(private firedata: AngularFireDatabase,
               private firestore: AngularFireStorage,
-              private timeApi: TimeAPIClientService) { }
+              private timeApi: TimeAPIClientService,
+              private infoService: StoreInfoService) { }
 
   async fetchUserType(username:string){
     const database = this.firedata.database;
@@ -99,6 +101,22 @@ export class FirebaseServicesService {
       temp.instructor = snapshot.val().instructor;
     });
     return temp;
+  }
+
+  async fillCourseNames(){
+    
+  }
+  async getUserData(userid:string){
+    const database = this.firedata.database;
+    var temp;
+    await database.ref('users').child(userid).once('value',function(snapshot){
+      temp = snapshot.val();
+    }).then(()=>{
+      this.infoService.userData = temp;
+      return true;
+    }).catch(()=>{
+      return false;
+    })
   }
 
   async uploadFile(path:string,file:any){

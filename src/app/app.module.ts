@@ -18,6 +18,7 @@ import { TimeAPIClientService } from './services/time-apiclient.service';
 import { CoursehomeComponent } from './coursehome/coursehome.component';
 import { FormatdatePipe } from './formatdate.pipe';
 import { HttpClientModule } from '@angular/common/http';
+import { SpinnerComponent } from './spinner/spinner.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { HttpClientModule } from '@angular/common/http';
     StudenthomeComponent,
     InstructorhomeComponent,
     CoursehomeComponent,
-    FormatdatePipe
+    FormatdatePipe,
+    SpinnerComponent
   ],
   imports: [
     BrowserModule,

@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import {AngularFireDatabase} from '@angular/fire/database';
 import { AngularFireStorage } from '@angular/fire/storage';
+import { TimeAPIClientService } from './services/time-apiclient.service';
+import { finalize } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +12,8 @@ export class FirebaseServicesService {
   course: string;
   userid: string;
   constructor(private firedata: AngularFireDatabase,
-              private firestore: AngularFireStorage) { }
+              private firestore: AngularFireStorage,
+              private timeApi: TimeAPIClientService) { }
 
   async fetchUserType(username:string){
     const database = this.firedata.database;
@@ -99,12 +102,21 @@ export class FirebaseServicesService {
   }
 
   async uploadFile(path:string,file:any){
-    const store = this.firestore.storage;
-    store.ref(path).put(file).then(()=>{
-      console.log("Upload Successful")
-    }).catch(()=>{
-      console.log("Upload Unsuccessful")
+    var temp = path.split("/")
+    // const storage = this.firestore.storage;
+    const database = this.firedata.database;
+    var time;
+    await this.timeApi.getTime().then((data)=>{
+      time = new Date(data);
     });
+    const fileRef = this.firestore.ref(path);
+    const task = await this.firestore.upload(path, file);
+    await database.ref("users/").child(temp[2]).child('courses').child(temp[0]).child('assignment').child(temp[1].substring(10)).child("time").set(time.toString()).then(()=>{
+    }).catch((error)=>{
+      console.log(error);
+    });
+    await database.ref("users/").child(temp[2]).child('courses').child(temp[0]).child('assignment').child(temp[1].substring(10)).child("number").set(temp[1].substring(10));
+    alert("Upload Successful")
   }
 
   setCourse(c:string){

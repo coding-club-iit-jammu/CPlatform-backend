@@ -27,7 +27,8 @@ const routes: Routes = [
   {
     path: 'course',
     component: CoursehomeComponent
-  }
+  },
+  
 ];
 
 @NgModule({

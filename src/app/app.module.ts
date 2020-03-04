@@ -19,6 +19,7 @@ import { CoursehomeComponent } from './coursehome/coursehome.component';
 import { FormatdatePipe } from './formatdate.pipe';
 import { HttpClientModule } from '@angular/common/http';
 import { SpinnerComponent } from './spinner/spinner.component';
+import { QuizComponent } from './quiz/quiz.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import { SpinnerComponent } from './spinner/spinner.component';
     InstructorhomeComponent,
     CoursehomeComponent,
     FormatdatePipe,
-    SpinnerComponent
+    SpinnerComponent,
+    QuizComponent
   ],
   imports: [
     BrowserModule,

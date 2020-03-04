@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-
 @Injectable({
   providedIn: 'root'
 })
@@ -27,13 +26,9 @@ export class StoreInfoService {
     return this.userData.branch;
   }
 
-  getCourseData(course:string){
-
-  }
-
-  getCourseList(){
-    var list = [];
+  async getCourseList(){
     
+
   }
 
   getAssignments(course:string){

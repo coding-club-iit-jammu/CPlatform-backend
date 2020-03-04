@@ -12,35 +12,23 @@
           <a href="#">Past Tests</a>
           <a href="#">Courses</a>
           <a href="#">Teaching Assistant</a>
+          <button class="btn btn-danger signout" (click)="signout()">Sign out</button>
       </div>
       <div class="main">
           <br>
           <div>
-              <h2><b>Ongoing Tests</b></h2>
+              <h2 align="center"><b>Ongoing Tests</b></h2>
               <hr>
-              <!-- <ng-template [ngFor]="let test of ongoingTests">
-                  <div class="card bg-dark text-white">
-                      <div class="card-body">Secondary card</div>
-                  </div>
-                  <br>
-              </ng-template> -->
           </div>  
           <div>
-              <h2><b>Past Tests</b></h2>
+              <h2 align="center"><b>Past Tests</b></h2>
               <hr>
-              <!-- <ng-template [ngFor]="let test of pastTests">
-                  <div class="card bg-dark text-white">
-                      <div class="card-body">Secondary card</div>
-                  </div>
-                  <br>
-              </ng-template> -->
           </div>  
           <div>
-              <h2><b>Courses</b></h2>
+              <h2 align="center"><b>Courses</b></h2>
               <hr>
               <br>
               <div class="row">
-                <!-- <ng-template *ngFor="let item of courses"> -->
                   <div *ngFor="let item of courses" class="col-sm-6">
                     <div class="card">
                       <div class="card-body">
@@ -50,12 +38,11 @@
                       </div>
                     </div>
                   </div>
-                <!-- </ng-template> -->
               </div>
           </div>
           <br>
           <div>
-              <h2><b>Teaching Assistant</b></h2>
+              <h2 align="center"><b>Teaching Assistant</b></h2>
               <hr>
               <br>
           </div>

@@ -45,6 +45,11 @@
     width: 100%;
     height: 100%;
   }
+
+  .signout{
+    margin-top: 5vh;
+    bottom:   0;
+  }
   
   .spinner-wrapper {
     display: flex;

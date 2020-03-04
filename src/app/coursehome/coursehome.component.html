@@ -15,10 +15,10 @@
                         <div class="card-body">
                         <h5 class="card-title">{{assignment.title}}</h5>
                         <p class="card-text">{{assignment.description}}</p>
-                        <p class="card-text" *ngIf="assignment.securedmarks!=undefined && assignment.securedmarks!=null">Secured Marks: {{assignment.securedmarks}}/{{assignment.marks}}</p>
-                        <p class="card-text" *ngIf="assignment.securedmarks==undefined || assignment.securedmarks==null">Total Marks: {{assignment.marks}}</p>
-                        <p class="card-text" *ngIf="assignment.time!=undefined && assignment.time!=null">Last Submission: {{assignment.submission_time}}</p>
-                        <div *ngIf="checkStatus(assignment.deadline)==true && (assignment.securedmarks==undefined || assignment.securedmarks==null)">
+                        <p class="card-text" *ngIf="assignment.marks!=undefined && assignment.marks!=null">Secured Marks: {{assignment.marks}}/{{assignment.totalmarks}}</p>
+                        <p class="card-text" *ngIf="assignment.marks==undefined || assignment.marks==null">Total Marks: {{assignment.marks}}</p>
+                        <p class="card-text" *ngIf="assignment.time!=undefined && assignment.time!=null">Last Submission: {{assignment.time}}</p>
+                        <div *ngIf="checkStatus(assignment.deadline)==true && (assignment.marks==undefined || assignment.marks==null)">
                             <label for="exampleFormControlFile1" >Upload Here</label>
                             <input type="file" class="form-control-file" id="{{'uploadAssignment'+assignment.number}}" (change)="onFileChange($event)">
                             <br>

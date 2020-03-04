@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import {AngularFireDatabase} from '@angular/fire/database';
+import { AngularFireDatabase } from '@angular/fire/database';
 import { AngularFireStorage } from '@angular/fire/storage';
+import { AngularFireAuth } from '@angular/fire/auth';
 import { TimeAPIClientService } from './services/time-apiclient.service';
 import { StoreInfoService } from './services/store-info.service'
 import { finalize } from 'rxjs/operators';
@@ -15,7 +16,8 @@ export class FirebaseServicesService {
   constructor(private firedata: AngularFireDatabase,
               private firestore: AngularFireStorage,
               private timeApi: TimeAPIClientService,
-              private infoService: StoreInfoService) { }
+              private infoService: StoreInfoService,
+              private fireAuth: AngularFireAuth) { }
 
   async fetchUserType(username:string){
     const database = this.firedata.database;
@@ -73,7 +75,7 @@ export class FirebaseServicesService {
     });
     var tempUser;
     let userid = this.userid;
-    await database.ref("users").child(userid).child("courses").child(code).child("assignment").once('value',function(snapshot){
+    await database.ref("users").child(userid).child("courses").child(code).child("assignments").once('value',function(snapshot){
       tempUser = snapshot.val();
     }).then(()=>{
       console.log(tempUser);
@@ -92,20 +94,29 @@ export class FirebaseServicesService {
 
   async getCourseDetails(code:string){
     const database = this.firedata.database;
-    var temp = {
-      title:"",
-      instructor:""
-    };
+    var temp:any;
     await database.ref("courses").child(code).child(code.substring(8)).once('value',function(snapshot){
-      temp.title = snapshot.val().title;
-      temp.instructor = snapshot.val().instructor;
+      temp = snapshot.val()
     });
     return temp;
   }
 
-  async fillCourseNames(){
-    
+  async getCoursesData(){
+    var list = [];
+    var courseCodes = Object.keys(this.infoService.userData.courses);
+    console.log(courseCodes);
+    for(var x of courseCodes){
+      await this.getCourseData(x);
+    }
+    console.log(this.infoService.userData);
   }
+  async getCourseData(course:string){
+    
+    var temp = await this.getCourseDetails(course);
+    this.infoService.userData.courses.course = ""
+    this.infoService.userData.courses.course = Object.assign(this.infoService.userData.courses.course,temp);
+  }
+
   async getUserData(userid:string){
     const database = this.firedata.database;
     var temp;
@@ -113,6 +124,7 @@ export class FirebaseServicesService {
       temp = snapshot.val();
     }).then(()=>{
       this.infoService.userData = temp;
+      this.getCoursesData();
       return true;
     }).catch(()=>{
       return false;
@@ -129,11 +141,11 @@ export class FirebaseServicesService {
     });
     const fileRef = this.firestore.ref(path);
     const task = await this.firestore.upload(path, file);
-    await database.ref("users/").child(temp[2]).child('courses').child(temp[0]).child('assignment').child(temp[1].substring(10)).child("time").set(time.toString()).then(()=>{
+    await database.ref("users/").child(temp[2]).child('courses').child(temp[0]).child('assignments').child(temp[1].substring(10)).child("time").set(time.toString()).then(()=>{
     }).catch((error)=>{
       console.log(error);
     });
-    await database.ref("users/").child(temp[2]).child('courses').child(temp[0]).child('assignment').child(temp[1].substring(10)).child("number").set(temp[1].substring(10));
+    await database.ref("users/").child(temp[2]).child('courses').child(temp[0]).child('assignments').child(temp[1].substring(10)).child("number").set(temp[1].substring(10));
     alert("Upload Successful")
   }
 
@@ -151,6 +163,25 @@ export class FirebaseServicesService {
 
   getUserID(){
     return this.userid;
+  }
+
+  async getUserType(){
+    const database = this.firedata.database;
+    var username = this.userid;
+    var type:string;
+    await database.ref('users/').child(username).child('type').once('value',(snapshot)=>{
+      type = snapshot.val();
+    });
+    return type;
+  }
+
+  checkAuth(){
+    let username = this.fireAuth.auth.currentUser
+    console.log(username)
+    if(username!=undefined && username!=null)
+      return true;
+    else  
+      return false;
   }
 
 }

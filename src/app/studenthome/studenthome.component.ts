@@ -43,9 +43,11 @@ export class StudenthomeComponent implements OnInit {
     if(this.fireauth.auth.currentUser==undefined || this.fireauth.auth.currentUser==null){
       this.showSpinner = false;
       this.router.navigateByUrl('/');
+      return;
     }
-    this.student.username = this.fireauth.auth.currentUser.email.split('@')[0];
-    await this.firebaseService.getUserData(this.student.username).then((data)=>{
+    this.student.username = this.firebaseService.getUserID();
+    await this.firebaseService.getUserData(this.student.username).then(async (data)=>{
+      this.infoService.getCourseList();
       this.showSpinner = false;
       console.log(this.infoService.userData);
     }).catch(()=>{
@@ -53,15 +55,11 @@ export class StudenthomeComponent implements OnInit {
       this.showSpinner = false;
       this.router.navigateByUrl('/')
     })
-    if(this.infoService.name==undefined || this.infoService.name==null){
-      let temp = await this.firebaseService.fetchNameBranchStudent(this.student.username);
-      this.student.name = temp["name"];
-      this.student.branch = temp["branch"];
-      this.infoService.setUserDetails(this.student.username,this.student.name,this.student.branch);
-    } else {
-      this.student.name = this.infoService.name;
-      this.student.branch = this.infoService.branch;
-    }
+    
+    this.student.name = this.infoService.getName();
+    this.student.branch = this.infoService.getBranch()
+    this.infoService.userData.username = this.student.username;
+    
     if(this.infoService.courses==undefined || this.infoService.courses==null){
       let s = await this.firebaseService.fetchCourses(this.student.username);
       await this.fillCourses(s);
@@ -75,6 +73,15 @@ export class StudenthomeComponent implements OnInit {
   navToCourse(courseCode:string){
     this.firebaseService.setCourse(courseCode);
     this.router.navigateByUrl('/course'); 
+  }
+
+  signout(){
+    this.fireauth.auth.signOut().then(()=>{
+      alert("Logged Out")
+      this.router.navigateByUrl('')
+    }).catch(()=>{
+      alert("Try Again....");
+    })
   }
 
    

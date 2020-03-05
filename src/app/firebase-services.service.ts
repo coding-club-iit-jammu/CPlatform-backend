@@ -28,23 +28,6 @@ export class FirebaseServicesService {
     return type;
   }
 
-  async fetchNameBranchStudent(username:string){
-    const database = this.firedata.database;
-    let s = {};
-    var temp;
-    await database.ref('users/').child(username).child('name').once('value',snapshot=>{
-      temp = snapshot.val();
-    }).then(()=>{
-      s["name"] = temp;
-    });
-    await database.ref('users/').child(username).child('branch').once('value',snapshot=>{
-      temp = snapshot.val();
-    }).then(()=>{
-      s["branch"] = temp;
-    });
-    return s;
-  }
-
   async fetchCourses(username:string){
     const database = this.firedata.database;
     let s = [];
@@ -53,7 +36,6 @@ export class FirebaseServicesService {
       temp = snapshot.val();
     }).then(()=>{
         s = Object.keys(temp);
-        console.log(s);
     });
     return s;
   }
@@ -64,30 +46,6 @@ export class FirebaseServicesService {
     await database.ref("courses").child(code).child(code.substring(8)).once('value',function(snapshot){
       temp = snapshot.val().title;
     });
-    return temp;
-  }
-
-  async fetchCourseAssignments(code: string){
-    const database = this.firedata.database;
-    var temp;
-    await database.ref("courses").child(code).child(code.substring(8)).child("assignments").once('value',function(snapshot){
-      temp = snapshot.val();
-    });
-    var tempUser;
-    let userid = this.userid;
-    await database.ref("users").child(userid).child("courses").child(code).child("assignments").once('value',function(snapshot){
-      tempUser = snapshot.val();
-    }).then(()=>{
-      console.log(tempUser);
-      for(var i=0; i<tempUser.length;i++){
-        if(tempUser[i]!=undefined && tempUser[i]!=null){
-          temp[i]["securedmarks"]=tempUser[i].marks;
-          temp[i]["submission_time"]=tempUser[i]["submission_time"];
-          temp[i]["link"]=tempUser[i].link;
-        }
-      }
-    });
-    temp.shift();
     return temp;
   }
 
@@ -104,17 +62,14 @@ export class FirebaseServicesService {
   async getCoursesData(){
     var list = [];
     var courseCodes = Object.keys(this.infoService.userData.courses);
-    console.log(courseCodes);
+    var i = 0;
     for(var x of courseCodes){
-      await this.getCourseData(x);
+      await this.getCourseData(x,0);
     }
-    console.log(this.infoService.userData);
   }
-  async getCourseData(course:string){
-    
+  async getCourseData(course, i){
     var temp = await this.getCourseDetails(course);
-    this.infoService.userData.courses.course = ""
-    this.infoService.userData.courses.course = Object.assign(this.infoService.userData.courses.course,temp);
+    this.infoService.coursesData[course] = temp;
   }
 
   async getUserData(userid:string){
@@ -122,9 +77,9 @@ export class FirebaseServicesService {
     var temp;
     await database.ref('users').child(userid).once('value',function(snapshot){
       temp = snapshot.val();
-    }).then(()=>{
+    }).then(async ()=>{
       this.infoService.userData = temp;
-      this.getCoursesData();
+      await this.getCoursesData();
       return true;
     }).catch(()=>{
       return false;
@@ -171,11 +126,14 @@ export class FirebaseServicesService {
     var type:string;
     await database.ref('users/').child(username).child('type').once('value',(snapshot)=>{
       type = snapshot.val();
+    }).then(()=>{
+      this.infoService.userType = type;
     });
     return type;
   }
 
-  getCurrentUser(auth) {
+  getCurrentUser() {
+    const auth = this.fireAuth.auth;
     return new Promise((resolve, reject) => {
        const unsubscribe = auth.onAuthStateChanged(user => {
           unsubscribe();

@@ -7,9 +7,10 @@ export class StoreInfoService {
   userid:string;
   name:string;
   branch:string;
-  courses:any;
+  coursesData:any = {};
   userData:any;
-  
+  userType:string;
+  selectedCourse:string;
   constructor() { }
 
   setUserDetails(userid: string,name: string,branch: string){
@@ -26,12 +27,40 @@ export class StoreInfoService {
     return this.userData.branch;
   }
 
-  async getCourseList(){
-    
+  getAssignments(course:string){
 
   }
 
-  getAssignments(course:string){
+  async fetchCourseAssignments(code: string){
+    var temp = this.coursesData[code].assignments;
+    var tempUser = Object.values(this.userData["courses"][code].assignments);
+    for(var i=0; i < tempUser.length; i++){
+        var j = tempUser[i]["number"]
+        if(tempUser[i] != undefined && tempUser[i] != null){
+          temp[j]["securedmarks"]=tempUser[i]["marks"];
+          temp[j]["time"]=tempUser[i]["time"];
+          temp[j]["link"]=tempUser[i]["link"];
+        }
+    }
+    temp.shift();
+    console.log(temp)
+    return temp;
+  }
 
+  getCourseList(){
+    var courses = []
+    var t = Object.keys(this.coursesData);
+    for(let c of t){
+        let temp = {
+          code:c,
+          title:this.coursesData[c].title
+        };
+        courses.push(temp);
+    }
+    return courses;
+  }
+
+  getCourseDetails(course){
+    return this.coursesData[course]
   }
 }

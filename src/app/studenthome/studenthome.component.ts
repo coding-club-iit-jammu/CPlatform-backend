@@ -27,24 +27,9 @@ export class StudenthomeComponent implements OnInit {
               private router: Router,
               private infoService: StoreInfoService) { }
 
-
-  async fillCourses(codes){
-    this.courses=[]
-    for(let c of codes){
-        let ti = await this.firebaseService.fetchCourseTitle(c);
-        let temp = {
-          code:c,
-          title:ti
-        };
-        this.courses.push(temp);
-    }
-  }
-
   async fillData(){
     this.student.username = this.firebaseService.getUserID();
-    
     await this.firebaseService.getUserData(this.student.username).then(async (data)=>{
-      this.infoService.getCourseList();
       this.showSpinner = false;
     }).catch(()=>{
       alert("Something went wrong.....");
@@ -56,30 +41,25 @@ export class StudenthomeComponent implements OnInit {
     this.student.branch = this.infoService.getBranch()
     this.infoService.userData.username = this.student.username;
     
-    if(this.infoService.courses==undefined || this.infoService.courses==null){
-      let s = await this.firebaseService.fetchCourses(this.student.username);
-      await this.fillCourses(s);
-      this.infoService.courses = this.courses;
-    } else {
-      this.courses = this.infoService.courses;
-    }
+    this.courses = this.infoService.getCourseList()
   }
 
   async ngOnInit() {
-    var username = "";
-    await this.firebaseService.getCurrentUser(this.fireauth.auth).then((user)=>{
-        this.firebaseService.setUserID(user["email"].split('@')[0])
-      }
-    ).catch(()=>{
-      console.log("No user found")
-      this.router.navigateByUrl('');
-    })
+    if(this.firebaseService.userid == undefined || this.firebaseService.userid == null){
+      await this.firebaseService.getCurrentUser().then((user)=>{
+          this.firebaseService.setUserID(user["email"].split('@')[0])
+        }
+      ).catch(()=>{
+        this.router.navigateByUrl('');
+      })
+    }
     await this.fillData();
     this.showSpinner = false;
   }
 
   navToCourse(courseCode:string){
-    this.firebaseService.setCourse(courseCode);
+    this.infoService.selectedCourse = courseCode;
+    sessionStorage.setItem('selectedCourse',courseCode);
     this.router.navigateByUrl('/course'); 
   }
 

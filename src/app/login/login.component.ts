@@ -30,7 +30,7 @@ export class LoginComponent implements OnInit {
       username : this.formBuilder.control(''),
       password : this.formBuilder.control('')
     });
-    await this.firebaseService.getCurrentUser(this.fire.auth).then(async (user)=>{
+    await this.firebaseService.getCurrentUser().then(async (user)=>{
       this.firebaseService.setUserID(user["email"].split('@')[0])
       var type = await this.firebaseService.getUserType();
       this.router.navigateByUrl('/'+type)

@@ -2,6 +2,8 @@ import { Component, OnInit, Input } from '@angular/core';
 import { FirebaseServicesService } from '../firebase-services.service';
 import { FormatdatePipe } from '../formatdate.pipe';
 import { TimeAPIClientService } from '../services/time-apiclient.service';
+import { StoreInfoService } from '../services/store-info.service'
+import { Router } from '@angular/router'
 @Component({
   selector: 'app-coursehome',
   templateUrl: './coursehome.component.html',
@@ -10,9 +12,11 @@ import { TimeAPIClientService } from '../services/time-apiclient.service';
 export class CoursehomeComponent implements OnInit {
 
   constructor(private firebaseService: FirebaseServicesService,
-    private timeApi: TimeAPIClientService) { }
+    private timeApi: TimeAPIClientService,
+    private infoService: StoreInfoService,
+    private router: Router) { }
 
-  code:string;
+  code:string="";
   course:any={
     title:"",
     instructor:""
@@ -28,12 +32,25 @@ export class CoursehomeComponent implements OnInit {
     })
   }
   async ngOnInit() {
-    this.code = this.firebaseService.getCourse();
+    if(this.firebaseService.userid == undefined || this.firebaseService.userid == null){
+      await this.firebaseService.getCurrentUser().then(async (user)=>{
+          this.firebaseService.setUserID(user["email"].split('@')[0])
+        }
+      ).catch(()=>{
+        this.router.navigateByUrl('');
+      })
+    }
+    if(this.infoService.selectedCourse == undefined || this.infoService.selectedCourse == null){
+      await this.firebaseService.getUserType();
+      this.router.navigateByUrl('/'+this.infoService.userType)
+      return;
+    }
+    this.code = this.infoService.selectedCourse;
     await this.timeApi.getTime().then(data=>{
       this.time = new Date(data);
     });
-    this.course = await this.firebaseService.getCourseDetails(this.code);
-    this.assignments = await this.firebaseService.fetchCourseAssignments(this.code);
+    this.course = await this.infoService.getCourseDetails(this.code);
+    this.assignments = await this.infoService.fetchCourseAssignments(this.code);
   }
 
   checkStatus(date: string){

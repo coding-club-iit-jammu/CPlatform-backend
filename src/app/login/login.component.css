@@ -102,6 +102,19 @@ form {
     padding-top: 16px;
   }
   
+  .overlay1 {
+    position: absolute;
+    z-index: 1002;
+    background-color: rgba(255, 255, 255, 0.5);
+    width: 100%;
+    height: 100%;
+  }
+  
+  .spinner-wrapper1 {
+    display: flex;
+    justify-content: center;
+    justify-items: center;
+  }
   /* Change styles for span and cancel button on extra small screens */
   @media screen and (max-width: 300px) {
     span.psw {

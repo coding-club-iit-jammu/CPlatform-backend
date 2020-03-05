@@ -14,6 +14,7 @@ export class LoginComponent implements OnInit {
 
   form: FormGroup;
   showSpinner:boolean = false;
+  showSpinner1:boolean = false;
   constructor(private formBuilder: FormBuilder, 
     private fire: AngularFireAuth,
     private router: Router,
@@ -44,17 +45,20 @@ export class LoginComponent implements OnInit {
     const database = this.firedata.database;
     let type = ""
     let username = this.form.value.username;
+    this.showSpinner1 = true;
     await this.fire.auth.signInWithEmailAndPassword(this.form.value.username+"@iitjammu.ac.in", this.form.value.password)
       .then(async function(data){    
         await database.ref('users/').child(username).child('type').once('value',(snapshot)=>{
           type = snapshot.val();
         })
       })
-      .catch(error => {
+    .catch(error => {
         alert('Unable to Login.');
+        this.showSpinner1 = false;
         return;
-      })
-      this.router.navigateByUrl('/'+type);
+    })
+    this.showSpinner1 = false;
+    this.router.navigateByUrl('/'+type);
   }
 
 

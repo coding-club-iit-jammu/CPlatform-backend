@@ -2,7 +2,12 @@
     <div class="my-overlay" *ngIf="showSpinner">
         <i class="fa fa-spinner fa-spin" aria-hidden="true"></i>
     </div>
-    <div class="loaded-content" [class.blurred]="showSpinner">
+    <div class="overlay1" *ngIf="showSpinner1">
+        <div class="spinner-wrapper1">
+          <app-spinner></app-spinner>
+        </div>
+    </div>
+    <div class="loaded-content" [class.blurred]="showSpinner || showSpinner1">
         <h1 style="text-align:center">Indian Institute of Technology Jammu</h1>
         <h2 style="text-align:center">Coding Platform</h2>
         <div id="formDiv">

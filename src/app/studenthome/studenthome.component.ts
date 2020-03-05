@@ -3,7 +3,8 @@ import { AngularFireAuth} from '@angular/fire/auth';
 import { AngularFireDatabase } from '@angular/fire/database';
 import { FirebaseServicesService } from '../firebase-services.service';
 import { Router } from '@angular/router';
-import { StoreInfoService } from '../services/store-info.service'
+import { StoreInfoService } from '../services/store-info.service' 
+
 @Component({
   selector: 'app-studenthome',
   templateUrl: './studenthome.component.html',
@@ -16,7 +17,7 @@ export class StudenthomeComponent implements OnInit {
     username : "",
     branch : ""
   };
-
+  unsubscribe:any;
   courses:any=[];
   pastTests: Array<Test> = [];
   ongoingTests: Array<Test> = [];
@@ -39,17 +40,12 @@ export class StudenthomeComponent implements OnInit {
     }
   }
 
-  async ngOnInit() {
-    if(this.fireauth.auth.currentUser==undefined || this.fireauth.auth.currentUser==null){
-      this.showSpinner = false;
-      this.router.navigateByUrl('/');
-      return;
-    }
+  async fillData(){
     this.student.username = this.firebaseService.getUserID();
+    
     await this.firebaseService.getUserData(this.student.username).then(async (data)=>{
       this.infoService.getCourseList();
       this.showSpinner = false;
-      console.log(this.infoService.userData);
     }).catch(()=>{
       alert("Something went wrong.....");
       this.showSpinner = false;
@@ -67,6 +63,18 @@ export class StudenthomeComponent implements OnInit {
     } else {
       this.courses = this.infoService.courses;
     }
+  }
+
+  async ngOnInit() {
+    var username = "";
+    await this.firebaseService.getCurrentUser(this.fireauth.auth).then((user)=>{
+        this.firebaseService.setUserID(user["email"].split('@')[0])
+      }
+    ).catch(()=>{
+      console.log("No user found")
+      this.router.navigateByUrl('');
+    })
+    await this.fillData();
     this.showSpinner = false;
   }
 
@@ -84,7 +92,6 @@ export class StudenthomeComponent implements OnInit {
     })
   }
 
-   
 }
 
 interface Student{

@@ -175,13 +175,13 @@ export class FirebaseServicesService {
     return type;
   }
 
-  checkAuth(){
-    let username = this.fireAuth.auth.currentUser
-    console.log(username)
-    if(username!=undefined && username!=null)
-      return true;
-    else  
-      return false;
+  getCurrentUser(auth) {
+    return new Promise((resolve, reject) => {
+       const unsubscribe = auth.onAuthStateChanged(user => {
+          unsubscribe();
+          resolve(user);
+       }, reject);
+    });
   }
 
 }

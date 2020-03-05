@@ -14,7 +14,6 @@ export class LoginComponent implements OnInit {
 
   form: FormGroup;
   showSpinner:boolean = false;
-  
   constructor(private formBuilder: FormBuilder, 
     private fire: AngularFireAuth,
     private router: Router,
@@ -30,19 +29,18 @@ export class LoginComponent implements OnInit {
       username : this.formBuilder.control(''),
       password : this.formBuilder.control('')
     });
+    await this.firebaseService.getCurrentUser(this.fire.auth).then(async (user)=>{
+      this.firebaseService.setUserID(user["email"].split('@')[0])
+      var type = await this.firebaseService.getUserType();
+      this.router.navigateByUrl('/'+type)
+    }).catch(()=>{
 
-    this.fire.auth.onAuthStateChanged(async (user) => {
-      if (user) {
-        this.firebaseService.setUserID(user.email.split('@')[0])
-        var type = await this.firebaseService.getUserType();
-        this.zone.run( async () => this.router.navigateByUrl('/'+type));
-      }
+    }).finally(()=>{
       this.showSpinner = false;
-    });
+    })
   }
 
   async login(){
-    
     const database = this.firedata.database;
     let type = ""
     let username = this.form.value.username;
@@ -50,17 +48,15 @@ export class LoginComponent implements OnInit {
       .then(async function(data){    
         await database.ref('users/').child(username).child('type').once('value',(snapshot)=>{
           type = snapshot.val();
-        });
+        })
       })
       .catch(error => {
-        console.log('got an error .', error);
-      }) 
-    // console.log(this.authService.SignIn(username, this.form.value.password))
-    if(type!=""){
-      this.firebaseService.setUserID(username);
+        alert('Unable to Login.');
+        return;
+      })
       this.router.navigateByUrl('/'+type);
-    }
   }
+
 
   reset(){
     this.form = this.formBuilder.group({

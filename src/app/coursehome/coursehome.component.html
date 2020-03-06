@@ -1,47 +1,54 @@
-<div class="all">
-    <div class="sidenav">
-        <h2>{{code.substring(8)}}</h2>
-        <h2>{{course.title}}</h2>
-        <h3>{{course.instructor}}</h3>
+<div class="wrapper">
+    <div class="overlay" *ngIf="showSpinner">   
+        <div class="spinner-wrapper">
+        <app-spinner></app-spinner>
+      </div>
     </div>
-    <div class="main">
-        <br>
-        <div>
-            <h2><b>Assignments</b></h2>
-            <hr>
-            <div class="assignment row">
-                <div class="box" *ngFor="let assignment of assignments" >
-                    <div class="card" *ngIf="assignment!=undefined && assignment!=null">
-                        <div class="card-body">
-                        <h5 class="card-title">{{assignment.title}}</h5>
-                        <p class="card-text">{{assignment.description}}</p>
-                        <p class="card-text" *ngIf="assignment.securedmarks!=undefined && assignment.securedmarks!=null">Secured Marks: {{assignment.securedmarks}}/{{assignment.totalmarks}}</p>
-                        <p class="card-text" *ngIf="assignment.securedmarks==undefined || assignment.securedmarks==null">Total Marks: {{assignment.totalmarks}}</p>
-                        <p class="card-text" *ngIf="assignment.time!=undefined && assignment.time!=null">Last Submission: {{assignment.time}}</p>
-                        <div *ngIf="checkStatus(assignment.deadline)==true && (assignment.marks==undefined || assignment.marks==null)" style="display: flex; flex-direction: row;">
-                            <div>
-                                <input type="file" class="form-control-file" id="{{'uploadAssignment'+assignment.number}}" (change)="onFileChange($event)">
+    <div class="all" [class.blurred]="showSpinner"  >
+        <div class="sidenav">
+            <h2>{{code.substring(8)}}</h2>
+            <h2>{{course.title}}</h2>
+            <h3>{{course.instructor}}</h3>
+        </div>
+        <div class="main">
+            <br>
+            <div>
+                <h2><b>Assignments</b></h2>
+                <hr>
+                <div class="assignment row">
+                    <div class="box" *ngFor="let assignment of assignments" >
+                        <div class="card" *ngIf="assignment!=undefined && assignment!=null">
+                            <div class="card-body">
+                            <h5 class="card-title"><strong>{{assignment.title}}</strong></h5>
+                            <p class="card-text">{{assignment.description}}</p>
+                            <p class="card-text" *ngIf="assignment.securedmarks!=undefined && assignment.securedmarks!=null"><em>Secured Marks:</em> {{assignment.securedmarks}}/{{assignment.totalmarks}}</p>
+                            <p class="card-text" *ngIf="assignment.securedmarks==undefined || assignment.securedmarks==null">Total Marks: {{assignment.totalmarks}}</p>
+                            <p class="card-text" *ngIf="assignment.time!=undefined && assignment.time!=null">Last Submission: {{assignment.time | formatdate}}</p>
+                            <div *ngIf="checkStatus(assignment.deadline)==true && (assignment.marks==undefined || assignment.marks==null)" style="display: flex; flex-direction: row;">
+                                <div>
+                                    <input type="file" class="form-control-file" id="{{'uploadAssignment'+assignment.number}}" (change)="onFileChange($event)">
+                                </div>
+                                <div>
+                                    <button class="btn btn-dark" (click)="uploadSubmission(assignment.number)">Upload</button>
+                                </div>
                             </div>
-                            <div>
-                                <button class="btn btn-dark" (click)="uploadSubmission(assignment.number)">Upload</button>
+                            <br>
+                            <div *ngIf="assignment.time!=undefined && assignment.time!=null" class="text-center">
+                                <button class="btn btn-primary" (click)="downloadSubmission(assignment.link)">Download</button>
+                            </div>
+                            <br>
+                            <div class="card-footer"><b>Deadline:</b> {{assignment.deadline | formatdate}}</div>
+                        </div>
+                    </div>
+                    <div class="box" *ngIf="assignments==undefined || assignments==null">
+                        <div class="card">
+                            <div class="card-body">
+                            <p class="card-text">No Assignments</p>
                             </div>
                         </div>
-                        <br>
-                        <div *ngIf="assignment.time!=undefined && assignment.time!=null" class="text-center">
-                            <button class="btn btn-primary" (click)="downloadSubmission(assignment.link)">Download</button>
-                        </div>
-                        <br>
-                        <div class="card-footer">Deadline: {{assignment.deadline }}</div>
                     </div>
                 </div>
-                <div class="box" *ngIf="assignments==undefined || assignments==null">
-                    <div class="card">
-                        <div class="card-body">
-                        <p class="card-text">No Assignments</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>  
+            </div>  
+        </div>
     </div>
 </div>

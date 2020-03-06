@@ -51,7 +51,15 @@ export class StoreInfoService {
     return temp;
   }
 
-  getCourseList(){
+  updateCourseAssignments(code,result){
+    console.log()
+    this.userData["courses"][code].assignments[result.number].number = result.number;
+    this.userData["courses"][code].assignments[result.number].link = result.link;
+    this.userData["courses"][code].assignments[result.number].time = result.time;
+    return this.fetchCourseAssignments(code);
+  }
+
+  getCourseList(){  
     var courses = []
     var t = Object.keys(this.coursesData);
     for(let c of t){

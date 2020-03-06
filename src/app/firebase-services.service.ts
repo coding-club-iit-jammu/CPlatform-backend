@@ -13,6 +13,8 @@ export class FirebaseServicesService {
 
   course: string;
   userid: string;
+  userType: string;
+
   constructor(private firedata: AngularFireDatabase,
               private firestore: AngularFireStorage,
               private timeApi: TimeAPIClientService,
@@ -24,6 +26,8 @@ export class FirebaseServicesService {
     let type = "";
     await database.ref('users/').child(username).child('type').once('value',snapshot=>{
       type = snapshot.val();
+    }).then(()=>{
+      this.userType = type;
     });
     return type;
   }
@@ -100,18 +104,30 @@ export class FirebaseServicesService {
       await snapshot.ref.getDownloadURL().then(function(downloadURL){
         url = downloadURL;
       })
+    }).catch(()=>{
+      alert("Upload Unsuccessful")
+      return null;
     });
-
     await database.ref("users/").child(temp[2]).child('courses').child(temp[0]).child('assignments').child(temp[1].substring(10)).child("time").set(time.toString()).then(()=>{
     }).catch((error)=>{
       console.log(error);
     });
+  
     await database.ref("users/").child(temp[2]).child('courses').child(temp[0]).child('assignments').child(temp[1].substring(10)).child("link").set(url).then(()=>{
     }).catch((error)=>{
-      console.log(error);
+        console.log(error);
     });
+    
     await database.ref("users/").child(temp[2]).child('courses').child(temp[0]).child('assignments').child(temp[1].substring(10)).child("number").set(temp[1].substring(10));
     alert("Upload Successful")
+
+    var result = {
+      time: time.toString(),
+      link: url,
+      number:temp[1].substring(10)
+    }
+
+    return result;
   }
 
 

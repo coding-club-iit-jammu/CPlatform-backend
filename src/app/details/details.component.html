@@ -1,0 +1,60 @@
+<div class="wrapper">
+    <div class="overlay" *ngIf="showSpinner">
+      <div class="spinner-wrapper">
+        <app-spinner></app-spinner>
+      </div>
+    </div>
+    <div class="all" [class.blurred]="showSpinner">
+    <main class="my-form">
+                <div class="cotainer">
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                                <div class="card">
+                                    <div class="card-header">Register</div>
+                                    <div class="card-body">
+                                        <form [formGroup] = "form" (ngSubmit)="onSubmit()">
+                                            <div class="form-group row">
+                                                <label for="full_name" class="col-md-4 col-form-label text-md-right">Full Name</label>
+                                                <div class="col-md-6">
+                                                    <input type="text" id="full_name" class="form-control" name="full-name" required formControlName = "fullName">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row">
+                                                <label for="userType" class="col-md-4 col-form-label text-md-right">User Type</label>
+                                                <div class="col-md-6">
+                                                    <select class="form-control" name="userType" formControlName = "userType">
+                                                        <option [ngValue]="'student'">Student</option>
+                                                        <option [ngValue]="'instructor'">Instructor</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row">
+                                                <label for="branch" class="col-md-4 col-form-label text-md-right">Branch</label>
+                                                <div class="col-md-6">
+                                                    <select class="form-control" name="branch" formControlName = "branch">
+                                                        <option [ngValue]="'Computer Science'">Computer Science</option>
+                                                        <option [ngValue]="'Electrical'">Electrical</option>
+                                                        <option [ngValue]="'Mechanical'">Mechanical</option>
+                                                        <option [ngValue]="'Civil'">Civil</option>
+                                                        <option [ngValue]="'Chemical'">Chemical</option>
+                                                        <option [ngValue]="'Material'">Material</option>
+                                                        <option [ngValue]="'Others'">Others</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6 offset-md-4">
+                                                <button type="submit" class="btn btn-primary" [disabled]="!form.valid">
+                                                    Register
+                                                </button>
+                                            </div>
+                                            </form>
+                                    </div>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+    </main>
+</div>

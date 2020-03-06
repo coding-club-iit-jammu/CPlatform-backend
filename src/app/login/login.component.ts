@@ -32,8 +32,15 @@ export class LoginComponent implements OnInit {
     });
     await this.firebaseService.getCurrentUser().then(async (user)=>{
       this.firebaseService.setUserID(user["email"].split('@')[0])
-      var type = await this.firebaseService.getUserType();
-      this.router.navigateByUrl('/'+type)
+      try{
+        var type = await this.firebaseService.getUserType();
+        if(type == undefined || type == null)
+          this.router.navigateByUrl('/details')
+        else
+          this.router.navigateByUrl('/'+type)
+      } catch(e){
+        this.router.navigateByUrl('/details')
+      }
     }).catch(()=>{
 
     }).finally(()=>{
@@ -59,6 +66,18 @@ export class LoginComponent implements OnInit {
     })
     this.showSpinner1 = false;
     this.router.navigateByUrl('/'+type);
+  }
+
+  async googleLogin(){
+    await this.firebaseService.GoogleAuth();
+    var userExists = await this.firebaseService.userExists(this.firebaseService.userid);
+    if(userExists){
+        var type = await this.firebaseService.getUserType();
+        this.router.navigateByUrl('/'+type);
+    } else {
+      this.router.navigateByUrl('/details')
+    }
+
   }
 
 

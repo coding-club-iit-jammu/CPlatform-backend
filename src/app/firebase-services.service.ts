@@ -5,6 +5,7 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { TimeAPIClientService } from './services/time-apiclient.service';
 import { StoreInfoService } from './services/store-info.service'
 import { finalize } from 'rxjs/operators';
+import { auth } from 'firebase/app';
 
 @Injectable({
   providedIn: 'root'
@@ -174,4 +175,42 @@ export class FirebaseServicesService {
     });
   }
 
+  async AuthLogin(provider) {
+    return await this.fireAuth.auth.signInWithPopup(provider)
+    .then((res) => {
+      this.userid = res.user.email;
+      console.log(res)
+    }).catch((error) => {
+      console.log(error)
+    })
+  } 
+
+  async GoogleAuth() {
+    return await this.AuthLogin(new auth.GoogleAuthProvider());
+  }  
+
+  async userExists(userid){
+      const database = this.firedata.database;
+      var name = null;
+      try{
+        await database.ref('users').child(userid).child("name").once('value',function(snapshot){
+          name = snapshot.val()
+        }).catch(()=>{
+
+        });
+      } catch(err){
+        return false;
+      }
+      if(name == undefined || name == null)
+        return false
+      else 
+        return true;
+  }
+
+  async createUser(value){
+    const database = this.firedata.database;
+    await database.ref("users").child(this.userid).child("name").set(value.fullName);
+    await database.ref("users").child(this.userid).child("type").set(value.userType);
+    await database.ref("users").child(this.userid).child("branch").set(value.branch);
+  }
 }

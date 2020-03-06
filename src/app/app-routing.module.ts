@@ -5,6 +5,7 @@ import { AdminpageComponent } from './adminpage/adminpage.component';
 import { StudenthomeComponent } from './studenthome/studenthome.component';
 import { InstructorhomeComponent } from './instructorhome/instructorhome.component';
 import { CoursehomeComponent } from './coursehome/coursehome.component';
+import { DetailsComponent } from './details/details.component';
 
 
 const routes: Routes = [
@@ -28,6 +29,10 @@ const routes: Routes = [
     path: 'course',
     component: CoursehomeComponent
   },
+  {
+    path: 'details',
+    component: DetailsComponent
+  }
   
 ];
 

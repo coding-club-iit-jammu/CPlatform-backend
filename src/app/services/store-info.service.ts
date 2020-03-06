@@ -40,6 +40,10 @@ export class StoreInfoService {
           temp[j]["securedmarks"]=tempUser[i]["marks"];
           temp[j]["time"]=tempUser[i]["time"];
           temp[j]["link"]=tempUser[i]["link"];
+
+          if(temp[j]['time']!=undefined || temp[j]["time"]!=null){
+            
+          }
         }
     }
     temp.shift();

@@ -18,13 +18,19 @@
                         <p class="card-text" *ngIf="assignment.securedmarks!=undefined && assignment.securedmarks!=null">Secured Marks: {{assignment.securedmarks}}/{{assignment.totalmarks}}</p>
                         <p class="card-text" *ngIf="assignment.securedmarks==undefined || assignment.securedmarks==null">Total Marks: {{assignment.totalmarks}}</p>
                         <p class="card-text" *ngIf="assignment.time!=undefined && assignment.time!=null">Last Submission: {{assignment.time}}</p>
-                        <div *ngIf="checkStatus(assignment.deadline)==true && (assignment.marks==undefined || assignment.marks==null)">
-                            <label for="exampleFormControlFile1" >Upload Here</label>
-                            <input type="file" class="form-control-file" id="{{'uploadAssignment'+assignment.number}}" (change)="onFileChange($event)">
-                            <br>
-                            <button class="btn btn-primary" (click)="uploadSubmission(assignment.number)">Submit</button>
-                            <br>
+                        <div *ngIf="checkStatus(assignment.deadline)==true && (assignment.marks==undefined || assignment.marks==null)" style="display: flex; flex-direction: row;">
+                            <div>
+                                <input type="file" class="form-control-file" id="{{'uploadAssignment'+assignment.number}}" (change)="onFileChange($event)">
+                            </div>
+                            <div>
+                                <button class="btn btn-dark" (click)="uploadSubmission(assignment.number)">Upload</button>
+                            </div>
                         </div>
+                        <br>
+                        <div *ngIf="assignment.time!=undefined && assignment.time!=null" class="text-center">
+                            <button class="btn btn-primary" (click)="downloadSubmission(assignment.link)">Download</button>
+                        </div>
+                        <br>
                         <div class="card-footer">Deadline: {{assignment.deadline }}</div>
                     </div>
                 </div>

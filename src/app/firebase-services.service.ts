@@ -95,14 +95,30 @@ export class FirebaseServicesService {
       time = new Date(data);
     });
     const fileRef = this.firestore.ref(path);
-    const task = await this.firestore.upload(path, file);
+    var url;
+    await fileRef.put(file).then(async (snapshot)=>{
+      await snapshot.ref.getDownloadURL().then(function(downloadURL){
+        url = downloadURL;
+      })
+    });
+
     await database.ref("users/").child(temp[2]).child('courses').child(temp[0]).child('assignments').child(temp[1].substring(10)).child("time").set(time.toString()).then(()=>{
+    }).catch((error)=>{
+      console.log(error);
+    });
+    await database.ref("users/").child(temp[2]).child('courses').child(temp[0]).child('assignments').child(temp[1].substring(10)).child("link").set(url).then(()=>{
     }).catch((error)=>{
       console.log(error);
     });
     await database.ref("users/").child(temp[2]).child('courses').child(temp[0]).child('assignments').child(temp[1].substring(10)).child("number").set(temp[1].substring(10));
     alert("Upload Successful")
   }
+
+
+  async downloadFile(path:string){
+    window.open(path,"_blank");
+  }
+
 
   setCourse(c:string){
     this.course = c;

@@ -4,7 +4,7 @@
       <app-spinner></app-spinner>
     </div>
   </div>
-  <div class="loaded-content" [class.blurred]="showSpinner">
+  <div class="all" [class.blurred]="showSpinner">
       <div class="sidenav">
           <h2>{{student.name}}</h2>
           <h4>@{{student.username}}</h4>
@@ -13,6 +13,8 @@
           <a href="#">Courses</a>
           <a href="#">Teaching Assistant</a>
           <button class="btn btn-danger signout" (click)="signout()">Sign out</button>
+          <br>
+          <br>
       </div>
       <div class="main">
           <br>

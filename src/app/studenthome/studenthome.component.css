@@ -57,8 +57,37 @@
     justify-items: center;
   }
   
-  /* On smaller screens, where height is less than 450px, change the style of the sidebar (less padding and a smaller font size) */
-  @media screen and (max-height: 450px) {
-    .sidenav {padding-top: 15px;}
-    .sidenav a {font-size: 18px;}
+  @media only screen and (max-width: 700px) {
+    .all{
+      display: flex;
+      flex-direction: column;
+    }
+
+    .main {
+      padding-top: 5%;
+      margin-left: 0;
+      padding-left: 0;
+      width: 100%;
+      position: absolute;
+      margin-top: 55vh;
+      z-index: 0;
+      text-align: center  ;
+    }
+  
+
+    .sidenav {
+      height: 55vh;
+      width: 100%;
+      position: absolute;
+      z-index: 0;
+      top: 0;
+      left: 0;
+      display: block;
+      background-color: #111;
+      overflow-x: hidden;
+      padding-top: 0;
+      color: #f1f1f1;
+      text-align: center;
+    }
+
   }

@@ -29,6 +29,7 @@ export class CoursehomeComponent implements OnInit {
   fileName:string;
   userType:string;
   showSpinner:boolean = false;
+  instructor:boolean = false;
 
   async gettime(){
     await this.timeApi.getTime().then(data=>{
@@ -49,13 +50,14 @@ export class CoursehomeComponent implements OnInit {
         this.router.navigateByUrl('');
       })
     }
-  
+    await this.firebaseService.getUserType();
     if(this.infoService.selectedCourse == undefined || this.infoService.selectedCourse == null){
-      await this.firebaseService.getUserType();
+      
       this.router.navigateByUrl('/'+this.infoService.userType)
       return;
     }
-
+    if (this.infoService.userType === 'instructor')
+      this.instructor = true;
     // this.userType = this.infoService.userType;
     this.code = this.infoService.selectedCourse;
   
@@ -64,7 +66,7 @@ export class CoursehomeComponent implements OnInit {
     });
   
     this.course = await this.infoService.getCourseDetails(this.code);
-    this.assignments = await this.infoService.fetchCourseAssignments(this.code);
+    this.assignments = this.infoService.getAssignments(this.code);
   
     this.showSpinner = false;
   }
@@ -108,9 +110,26 @@ export class CoursehomeComponent implements OnInit {
     }
   }
 
-  downloadSubmission(link):void {
+  download(data){
+    var downloadLink = document.createElement("a");
+    console.log(data)
+		var blob = new Blob([JSON.stringify(data)], {type: "text/plain;charset=utf-8"});
+    var url = URL.createObjectURL(blob);
+		downloadLink.href = url;
+		downloadLink.download = "Submissions.json";
+		document.body.appendChild(downloadLink);
+		downloadLink.click();
+		document.body.removeChild(downloadLink);
+  }
+  
+  async downloadSubmission(link,number) {
     this.showSpinner = true;
-    this.firebaseService.downloadFile(link); 
+    if(!this.instructor)
+      this.firebaseService.downloadFile(link); 
+    else{
+      var submissions = await this.firebaseService.fetchAllSubmissions(this.code,number);
+      this.download(submissions);
+    }
     this.showSpinner = false;
   }
 

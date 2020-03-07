@@ -28,27 +28,44 @@ export class StoreInfoService {
   }
 
   getAssignments(course:string){
-
+    if(this.userType === 'student')
+      return this.fetchCourseAssignments(course);
+    else
+      return this.fetchCourseAssignmentsInstructor(course)
   }
 
-  async fetchCourseAssignments(code: string){
-    var temp = this.coursesData[code].assignments;
-    var tempUser = Object.values(this.userData["courses"][code].assignments);
-    for(var i=0; i < tempUser.length; i++){
-        var j = tempUser[i]["number"]
-        if(tempUser[i] != undefined && tempUser[i] != null){
-          temp[j]["securedmarks"]=tempUser[i]["marks"];
-          temp[j]["time"]=tempUser[i]["time"];
-          temp[j]["link"]=tempUser[i]["link"];
+  fetchCourseAssignments(code: string){
+    try{
+      var temp = this.coursesData[code].assignments;
+      var tempUser = Object.values(this.userData["courses"][code].assignments);
+      for(var i=0; i < tempUser.length; i++){
+          var j = tempUser[i]["number"]
+          if(tempUser[i] != undefined && tempUser[i] != null){
+            temp[j]["securedmarks"]=tempUser[i]["marks"];
+            temp[j]["time"]=tempUser[i]["time"];
+            temp[j]["link"]=tempUser[i]["link"];
 
-          if(temp[j]['time']!=undefined || temp[j]["time"]!=null){
-            
+            if(temp[j]['time']!=undefined || temp[j]["time"]!=null){
+              
+            }
           }
-        }
+      }
+      temp.shift();
+      console.log(temp)
+      return temp;
+    } catch(e){
+      console.log(e)
     }
-    temp.shift();
-    console.log(temp)
-    return temp;
+  }
+
+  fetchCourseAssignmentsInstructor(code: string){
+    try{
+      var temp = this.coursesData[code].assignments;
+      temp.shift();
+      return temp;
+    } catch(e){
+      console.log(e)
+    }
   }
 
   updateCourseAssignments(code,result){

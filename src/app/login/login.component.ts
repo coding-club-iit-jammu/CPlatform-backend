@@ -31,7 +31,8 @@ export class LoginComponent implements OnInit {
       password : this.formBuilder.control('')
     });
     await this.firebaseService.getCurrentUser().then(async (user)=>{
-      this.firebaseService.setUserID(user["email"].split('@')[0])
+      var userid = user["email"].split('@')[0].replace('.','');
+      this.firebaseService.setUserID(userid)
       try{
         var type = await this.firebaseService.getUserType();
         if(type == undefined || type == null)
@@ -64,6 +65,7 @@ export class LoginComponent implements OnInit {
         this.showSpinner1 = false;
         return;
     })
+    console.log(type)
     this.showSpinner1 = false;
     this.router.navigateByUrl('/'+type);
   }

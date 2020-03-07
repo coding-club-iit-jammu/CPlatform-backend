@@ -4,7 +4,6 @@ import { AngularFireStorage } from '@angular/fire/storage';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { TimeAPIClientService } from './services/time-apiclient.service';
 import { StoreInfoService } from './services/store-info.service'
-import { finalize } from 'rxjs/operators';
 import { auth } from 'firebase/app';
 
 @Injectable({
@@ -105,21 +104,29 @@ export class FirebaseServicesService {
       await snapshot.ref.getDownloadURL().then(function(downloadURL){
         url = downloadURL;
       })
+
+      await database.ref('courses').child(temp[0]).child('course').child("assignments").child(temp[1].substring(10)).child(temp[2]).set({
+        "time" : time.toString(),
+        "link" : url 
+      });
+
+      await database.ref("users/").child(temp[2]).child('courses').child(temp[0]).child('assignments').child(temp[1].substring(10)).child("time").set(time.toString()).then(()=>{
+      }).catch((error)=>{
+        console.log(error);
+      });
+    
+      await database.ref("users/").child(temp[2]).child('courses').child(temp[0]).child('assignments').child(temp[1].substring(10)).child("link").set(url).then(()=>{
+      }).catch((error)=>{
+          console.log(error);
+      });
+      
+      await database.ref("users/").child(temp[2]).child('courses').child(temp[0]).child('assignments').child(temp[1].substring(10)).child("number").set(temp[1].substring(10));
+
     }).catch(()=>{
       alert("Upload Unsuccessful")
       return null;
     });
-    await database.ref("users/").child(temp[2]).child('courses').child(temp[0]).child('assignments').child(temp[1].substring(10)).child("time").set(time.toString()).then(()=>{
-    }).catch((error)=>{
-      console.log(error);
-    });
-  
-    await database.ref("users/").child(temp[2]).child('courses').child(temp[0]).child('assignments').child(temp[1].substring(10)).child("link").set(url).then(()=>{
-    }).catch((error)=>{
-        console.log(error);
-    });
     
-    await database.ref("users/").child(temp[2]).child('courses').child(temp[0]).child('assignments').child(temp[1].substring(10)).child("number").set(temp[1].substring(10));
     alert("Upload Successful")
 
     var result = {
@@ -132,9 +139,21 @@ export class FirebaseServicesService {
   }
 
 
-  async downloadFile(path:string){
+  async fetchAllSubmissions(course,assignmentNo){
+    const database =  this.firedata.database;
+    var jsonObject;
+    await database.ref('courses').child(course).child('course').child('assignments').child(assignmentNo).once('value',function(snapshot){
+      jsonObject = snapshot.val()
+    }).catch(()=>{
+      alert("Unable to Download submissions.")
+    })
+    return jsonObject;
+  }
+
+  async downloadFile(path){
     window.open(path,"_blank");
   }
+
 
 
   setCourse(c:string){
@@ -161,6 +180,7 @@ export class FirebaseServicesService {
       type = snapshot.val();
     }).then(()=>{
       this.infoService.userType = type;
+      this.userType = type;
     });
     return type;
   }
@@ -178,8 +198,7 @@ export class FirebaseServicesService {
   async AuthLogin(provider) {
     return await this.fireAuth.auth.signInWithPopup(provider)
     .then((res) => {
-      this.userid = res.user.email;
-      console.log(res)
+      this.userid = res.user.email.split('@')[0].replace('.','');
     }).catch((error) => {
       console.log(error)
     })

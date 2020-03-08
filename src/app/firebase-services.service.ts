@@ -77,6 +77,12 @@ export class FirebaseServicesService {
     this.infoService.coursesData[course] = temp;
   }
 
+  async createCourse(courseInfo){
+    const database = this.firedata.database;
+    await database.ref("users").child(this.userid).child("courses").child(courseInfo.code).set(courseInfo.title);
+    await database.ref("courses").child(courseInfo.code).child(courseInfo.code.substring(8)).child("title").set(courseInfo.title);
+    await database.ref("courses").child(courseInfo.code).child(courseInfo.code.substring(8)).child("instructor").set(courseInfo.instructor);
+  }
   async getUserData(userid:string){
     const database = this.firedata.database;
     var temp;

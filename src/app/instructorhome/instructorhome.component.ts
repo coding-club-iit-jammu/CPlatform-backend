@@ -19,7 +19,11 @@ export class InstructorhomeComponent implements OnInit {
   };
   courses:any=[];
   showSpinner:boolean = true;
-  
+  newCourse:any ={
+    code:"",
+    title:"",
+    instructor:this.instructor.name
+  }
   constructor(private fireauth: AngularFireAuth, private firedata: AngularFireDatabase,
               private firebaseService: FirebaseServicesService,
               private router: Router,
@@ -51,12 +55,11 @@ export class InstructorhomeComponent implements OnInit {
         this.router.navigateByUrl('');
       })
     }
-    await this.firebaseService.getUserType().then(()=>{
-      if(this.firebaseService.userType!="instructor"){
-        alert("Access Denied");
-        this.router.navigateByUrl('');
-      }
-    })
+    await this.firebaseService.getUserType();
+    if(this.firebaseService.userType!="instructor"){
+      alert("Access Denied");
+      this.router.navigateByUrl('');
+    }
     await this.fillData();
     this.showSpinner = false;
   }
@@ -74,5 +77,19 @@ export class InstructorhomeComponent implements OnInit {
     }).catch(()=>{
       alert("Try Again....");
     })
+  }
+
+  async createCourse(newCourseCode,newCourseTitle){
+    this.showSpinner = true;
+    if(newCourseCode == "" || newCourseTitle == ""){
+      alert("Please fill all the fields.")
+    } else {
+      this.newCourse.code = newCourseCode;
+      this.newCourse.title = newCourseTitle;
+      this.newCourse.instructor = this.instructor.name
+      await this.firebaseService.createCourse(this.newCourse);
+      (this.courses).push({code:newCourseCode,title:newCourseTitle});
+    }
+    this.showSpinner = false;
   }
 }

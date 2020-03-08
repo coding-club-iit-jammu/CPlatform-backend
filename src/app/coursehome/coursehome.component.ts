@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FirebaseServicesService } from '../firebase-services.service';
 import { FormatdatePipe } from '../formatdate.pipe';
 import { TimeAPIClientService } from '../services/time-apiclient.service';
@@ -131,6 +131,76 @@ export class CoursehomeComponent implements OnInit {
       this.download(submissions);
     }
     this.showSpinner = false;
+  }
+
+  moveBack(){
+    if(this.instructor){
+      this.router.navigateByUrl('/instrutor')
+    } else {
+      this.router.navigateByUrl('/student')
+    }
+  }
+
+  signout(){
+    this.firebaseService.signout();
+  }
+
+
+  public records: any = {};  
+  fileToUpload:any;
+  async uploadListener($event: any){  
+    this.fileToUpload = $event;      
+  }  
+
+  async addStudents(){
+
+    this.showSpinner = true;
+    let files = this.fileToUpload.srcElement.files;
+    if (this.isValidCSVFile(files[0])) {  
+  
+      let input = this.fileToUpload.target;  
+      let reader = new FileReader();  
+      reader.readAsText(input.files[0]);  
+  
+      reader.onload = async () => {  
+        let csvData = reader.result;  
+        let csvRecordsArray = (<string>csvData).split(/\r\n|\n/);  
+        await this.getDataRecordsArrayFromCSVFile(csvRecordsArray, 2);  
+      };  
+      reader.onerror = function () {  
+        console.log('error is occured while reading file!');  
+      };  
+  
+    } else {  
+      alert("Please import valid .csv file.");  
+      this.fileReset();  
+      this.showSpinner = false;
+    }
+  }
+  
+  async getDataRecordsArrayFromCSVFile(csvRecordsArray: any, headerLength: any) {  
+    let csvArr = {};  
+  
+    for (let i = 0; i < csvRecordsArray.length; i++) {  
+      let curruntRecord = (<string>csvRecordsArray[i]).split(',');  
+      if (curruntRecord.length == headerLength) {  
+        var entryNo = curruntRecord[0].trim()
+        var name = curruntRecord[1].trim();
+        csvArr[entryNo] = name;  
+      }  
+    }  
+    await this.firebaseService.addStudentsInCourse(this.code,csvArr);
+    alert("Students Enrolled.")
+    this.showSpinner = false;
+    return csvArr;  
+  }  
+  
+  isValidCSVFile(file: any) {  
+    return file.name.endsWith(".csv");  
+  }  
+  
+  fileReset() {  
+    this.records = [];  
   }
 
 }

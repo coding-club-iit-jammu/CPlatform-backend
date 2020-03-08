@@ -5,7 +5,7 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { TimeAPIClientService } from './services/time-apiclient.service';
 import { StoreInfoService } from './services/store-info.service'
 import { auth } from 'firebase/app';
-
+import { Router } from '@angular/router';
 @Injectable({
   providedIn: 'root'
 })
@@ -19,7 +19,8 @@ export class FirebaseServicesService {
               private firestore: AngularFireStorage,
               private timeApi: TimeAPIClientService,
               private infoService: StoreInfoService,
-              private fireAuth: AngularFireAuth) { }
+              private fireAuth: AngularFireAuth,
+              private router: Router) { }
 
   async fetchUserType(username:string){
     const database = this.firedata.database;
@@ -231,5 +232,24 @@ export class FirebaseServicesService {
     await database.ref("users").child(this.userid).child("name").set(value.fullName);
     await database.ref("users").child(this.userid).child("type").set(value.userType);
     await database.ref("users").child(this.userid).child("branch").set(value.branch);
+  }
+
+  async addStudentsInCourse(courseCode,students){
+    const database = this.firedata.database;
+    await database.ref('courses').child(courseCode).child('course/students').set(students).then(async ()=>{
+      var entryNo = Object.keys(students);
+      for(let x of entryNo){
+        await database.ref("users").child(x).child("courses").child(courseCode).child("code").set(courseCode);
+      }
+    });
+  }
+
+  signout(){
+    this.fireAuth.auth.signOut().then(()=>{
+      alert("Logged Out")
+      this.router.navigateByUrl('')
+    }).catch(()=>{
+      alert("Try Again....");
+    })
   }
 }

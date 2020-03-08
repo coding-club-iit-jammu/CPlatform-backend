@@ -1,14 +1,21 @@
 <div class="wrapper">
     <div class="overlay" *ngIf="showSpinner">   
         <div class="spinner-wrapper">
-        <app-spinner></app-spinner>
-      </div>
+            <app-spinner></app-spinner>
+        </div>
     </div>
-    <div class="all" [class.blurred]="showSpinner"  >
+    <div class="all" [class.blurred]="showSpinner">
         <div class="sidenav">
             <h2>{{code.substring(8)}}</h2>
             <h2>{{course.title}}</h2>
             <h3>{{course.instructor}}</h3>
+            <div *ngIf="instructor">
+            <button class="btn btn-secondary signout" data-toggle="modal" data-target="#myModal">Add Students</button>
+            <br>
+            </div>
+            <button class="btn btn-danger signout" (click)="signout()">Sign out</button>
+            <br>
+            <br>
         </div>
         <div class="main">
             <br>
@@ -19,39 +26,61 @@
                     <div class="box" *ngFor="let assignment of assignments" >
                         <div class="card" *ngIf="assignment!=undefined && assignment!=null">
                             <div class="card-body">
-                            <h5 class="card-title"><strong>{{assignment.title}}</strong></h5>
-                            <p class="card-text">{{assignment.description}}</p>
-                            <p class="card-text" *ngIf="assignment.securedmarks==undefined || assignment.securedmarks==null">Total Marks: {{assignment.totalmarks}}</p>
-                            <div *ngIf="instructor==false">
-                                <p class="card-text" *ngIf="assignment.securedmarks!=undefined && assignment.securedmarks!=null"><em>Secured Marks: {{assignment.securedmarks}}/{{assignment.totalmarks}}</em></p>
-                                <p class="card-text" *ngIf="assignment.time!=undefined && assignment.time!=null">Last Submission: {{assignment.time | formatdate}}</p>
+                                <h5 class="card-title"><strong>{{assignment.title}}</strong></h5>
+                                <p class="card-text">{{assignment.description}}</p>
+                                <p class="card-text" *ngIf="assignment.securedmarks==undefined || assignment.securedmarks==null">Total Marks: {{assignment.totalmarks}}</p>
+                                <div *ngIf="instructor==false">
+                                    <p class="card-text" *ngIf="assignment.securedmarks!=undefined && assignment.securedmarks!=null"><em>Secured Marks: {{assignment.securedmarks}}/{{assignment.totalmarks}}</em></p>
+                                    <p class="card-text" *ngIf="assignment.time!=undefined && assignment.time!=null">Last Submission: {{assignment.time | formatdate}}</p>
                                 
-                                <div id="uploadDiv" *ngIf="checkStatus(assignment.deadline)==true && (assignment.marks==undefined || assignment.marks==null)">
-                                    <div id="inputFile">
-                                        <input type="file" class="form-control-file" id="{{'uploadAssignment'+assignment.number}}" (change)="onFileChange($event)">
-                                    </div>
-                                    <div>
-                                        <button class="btn btn-dark" (click)="uploadSubmission(assignment.number)" id="uploadBtn">Upload</button>
+                                    <div id="uploadDiv" *ngIf="checkStatus(assignment.deadline)==true && (assignment.marks==undefined || assignment.marks==null)">
+                                        <div id="inputFile">
+                                            <input type="file" class="form-control-file" id="{{'uploadAssignment'+assignment.number}}" (change)="onFileChange($event)" accept=".zip">
+                                        </div>
+                                        <div>
+                                            <button class="btn btn-dark" (click)="uploadSubmission(assignment.number)" id="uploadBtn">Upload</button>
+                                        </div>
                                     </div>
                                 </div>
+                                <br>
+                                <div *ngIf="instructor || (assignment.time!=undefined && assignment.time!=null)" class="text-center">
+                                    <button class="btn btn-primary" (click)="downloadSubmission(assignment.link,assignment.number)">Download</button>
+                                </div>
+                                <br>
+                                <div class="card-footer"><b>Deadline:</b> {{assignment.deadline | formatdate}}
+                                </div>
                             </div>
-                            <br>
-                            <div *ngIf="instructor || (assignment.time!=undefined && assignment.time!=null)" class="text-center">
-                                <button class="btn btn-primary" (click)="downloadSubmission(assignment.link,assignment.number)">Download</button>
+                        </div>
+                        <div class="box" *ngIf="assignments==undefined || assignments==null">
+                            <div class="card">
+                                <div class="card-body">
+                                    <p class="card-text">No Assignments</p>
+                                </div>
                             </div>
-                            <br>
-                            <div class="card-footer"><b>Deadline:</b> {{assignment.deadline | formatdate}}</div>
                         </div>
                     </div>
-                    <div class="box" *ngIf="assignments==undefined || assignments==null">
-                        <div class="card">
-                            <div class="card-body">
-                            <p class="card-text">No Assignments</p>
-                            </div>
-                        </div>
+                </div>  
+            </div>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="myModal" role="dialog" *ngIf="instructor">
+            <div class="modal-dialog">
+            <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Enroll Students</h4>
+                        <button type="button" class="close" data-dismiss="modal" style="float: right;">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Upload CSV file containing Entry numbers and Names of Students.</p>
+                        <input type="file" #csvReader class="form-control-file" id="addStudents" (change)="uploadListener($event)" accept=".csv">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" style="float: inline-start;" (click)="addStudents()">Upload</button>
+                        <button type="button" class="btn btn-danger" style="float: right;" data-dismiss="modal">Close</button>
                     </div>
                 </div>
-            </div>  
+            </div>
         </div>
     </div>
 </div>

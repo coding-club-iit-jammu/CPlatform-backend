@@ -51,6 +51,12 @@ export class InstructorhomeComponent implements OnInit {
         this.router.navigateByUrl('');
       })
     }
+    await this.firebaseService.getUserType().then(()=>{
+      if(this.firebaseService.userType!="instructor"){
+        alert("Access Denied");
+        this.router.navigateByUrl('');
+      }
+    })
     await this.fillData();
     this.showSpinner = false;
   }

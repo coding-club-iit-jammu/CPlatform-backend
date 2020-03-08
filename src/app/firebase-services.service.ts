@@ -244,6 +244,14 @@ export class FirebaseServicesService {
     });
   }
 
+  async uploadMarksForAssignment(courseCode, assignmentNo, marks){
+    const database = this.firedata.database;
+    var entryNo = Object.keys(marks);
+    for(var i = 0; i < entryNo.length; i++){
+      await database.ref("users").child(entryNo[i]).child("courses").child(courseCode).child("assignments").child(assignmentNo).child("marks").set(marks[entryNo[i]]);
+    }
+  }
+
   signout(){
     this.fireAuth.auth.signOut().then(()=>{
       alert("Logged Out")

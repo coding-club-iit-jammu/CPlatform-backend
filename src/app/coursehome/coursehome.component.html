@@ -47,7 +47,13 @@
                                     <button class="btn btn-primary" (click)="downloadSubmission(assignment.link,assignment.number)">Download</button>
                                 </div>
                                 <br>
-                                <div class="card-footer"><b>Deadline:</b> {{assignment.deadline | formatdate}}
+                                <div class="card-footer">
+                                    <b>Deadline:</b> {{assignment.deadline | formatdate}}
+                                    <br>
+                                    <br>
+                                    <div *ngIf="instructor && checkStatus(assignment.deadline)==false" class="text-center">
+                                        <button class="btn btn-secondary" data-toggle="modal" data-target="#uploadModal" (click)="selectedAssignment=assignment.number">Upload Marks</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -77,6 +83,26 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-primary" style="float: inline-start;" (click)="addStudents()">Upload</button>
+                        <button type="button" class="btn btn-danger" style="float: right;" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="uploadModal" role="dialog" *ngIf="instructor">
+            <div class="modal-dialog">
+            <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Upload Marks for Assignment{{selectedAssignment}}</h4>
+                        <button type="button" class="close" data-dismiss="modal" style="float: right;">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Upload CSV file containing Entry numbers and Marks of Students.</p>
+                        <input type="file" class="form-control-file" id="uploadMarks" (change)="uploadMarksListener($event)" accept=".csv">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" style="float: inline-start;" (click)="uploadMarks()">Upload</button>
                         <button type="button" class="btn btn-danger" style="float: right;" data-dismiss="modal">Close</button>
                     </div>
                 </div>

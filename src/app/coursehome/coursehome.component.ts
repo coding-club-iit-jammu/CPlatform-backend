@@ -23,6 +23,7 @@ export class CoursehomeComponent implements OnInit {
     instructor:""
   };
   assignments:any;
+  selectedAssignment:number;
   submissionPossible=true;
   time: Date;
   file:any;
@@ -30,7 +31,7 @@ export class CoursehomeComponent implements OnInit {
   userType:string;
   showSpinner:boolean = false;
   instructor:boolean = false;
-
+  marksUpload:any;
   async gettime(){
     await this.timeApi.getTime().then(data=>{
       this.time = new Date(data);
@@ -148,9 +149,39 @@ export class CoursehomeComponent implements OnInit {
 
   public records: any = {};  
   fileToUpload:any;
+
   async uploadListener($event: any){  
     this.fileToUpload = $event;      
-  }  
+  }
+  
+  async uploadMarksListener($event: any){  
+    this.marksUpload = $event;      
+  }
+
+  uploadMarks(){
+    this.showSpinner = true;
+    let files = this.marksUpload.srcElement.files;
+    if (this.isValidCSVFile(files[0])) {  
+  
+      let input = this.marksUpload.target;  
+      let reader = new FileReader();  
+      reader.readAsText(input.files[0]);  
+  
+      reader.onload = async () => {  
+        let csvData = reader.result;  
+        let csvRecordsArray = (<string>csvData).split(/\r\n|\n/);  
+        await this.getDataRecordsArrayFromCSVFile(csvRecordsArray, 2, 1);  
+      };  
+      reader.onerror = function () {  
+        console.log('error is occured while reading file!');  
+      };  
+  
+    } else {  
+      alert("Please import valid .csv file.");  
+      this.fileReset();  
+      this.showSpinner = false;
+    }
+  }
 
   async addStudents(){
 
@@ -165,7 +196,7 @@ export class CoursehomeComponent implements OnInit {
       reader.onload = async () => {  
         let csvData = reader.result;  
         let csvRecordsArray = (<string>csvData).split(/\r\n|\n/);  
-        await this.getDataRecordsArrayFromCSVFile(csvRecordsArray, 2);  
+        await this.getDataRecordsArrayFromCSVFile(csvRecordsArray, 2, 0);  
       };  
       reader.onerror = function () {  
         console.log('error is occured while reading file!');  
@@ -178,7 +209,7 @@ export class CoursehomeComponent implements OnInit {
     }
   }
   
-  async getDataRecordsArrayFromCSVFile(csvRecordsArray: any, headerLength: any) {  
+  async getDataRecordsArrayFromCSVFile(csvRecordsArray: any, headerLength: any,flag:number) {  
     let csvArr = {};  
   
     for (let i = 0; i < csvRecordsArray.length; i++) {  
@@ -188,9 +219,21 @@ export class CoursehomeComponent implements OnInit {
         var name = curruntRecord[1].trim();
         csvArr[entryNo] = name;  
       }  
-    }  
-    await this.firebaseService.addStudentsInCourse(this.code,csvArr);
-    alert("Students Enrolled.")
+    } 
+    if(flag==0){ 
+    await this.firebaseService.addStudentsInCourse(this.code,csvArr).then(()=>{
+      alert("Students Enrolled.")
+    }).catch(()=>{
+      alert("Operation Unsuccessful")
+    })
+    
+    } else {
+      await this.firebaseService.uploadMarksForAssignment(this.code,this.selectedAssignment,csvArr).then(()=>{
+        alert("Marks Uploaded.")
+      }).catch(()=>{
+        alert("Operation Unsuccessful")
+      })
+    }
     this.showSpinner = false;
     return csvArr;  
   }  

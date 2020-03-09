@@ -10,11 +10,13 @@
             <h2>{{course.title}}</h2>
             <h3>{{course.instructor}}</h3>
             <div *ngIf="instructor">
-            <button class="btn btn-secondary signout" data-toggle="modal" data-target="#myModal">Add Students</button>
+            <button class="btn btn-secondary" data-toggle="modal" data-target="#myModal">Add Students</button>
+            <br>
             <br>
             </div>
-            <button class="btn btn-danger signout" (click)="signout()">Sign out</button>
+            <button class="btn btn-warning" (click)="navToHome()">Home</button>
             <br>
+            <button class="btn btn-danger signout" (click)="signout()">Sign out</button>
             <br>
         </div>
         <div class="main">

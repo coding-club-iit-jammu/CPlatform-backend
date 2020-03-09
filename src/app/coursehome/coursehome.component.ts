@@ -272,6 +272,10 @@ export class CoursehomeComponent implements OnInit {
     this.showSpinner = false;
   }
 
+  navToHome(){
+    this.router.navigateByUrl('/'+this.firebaseService.userType)
+  }
+
 }
 
 interface Course{

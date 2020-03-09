@@ -28,6 +28,7 @@
                             <div class="card-body">
                                 <h5 class="card-title"><strong>{{assignment.title}}</strong></h5>
                                 <p class="card-text">{{assignment.description}}</p>
+                                <p class="card-text" *ngIf="assignment.files!=undefined && assignment.files != null && assignment.files!= ''"><a href="{{assignment.files}}" target="_blank">Assignment Document</a></p>
                                 <p class="card-text" *ngIf="assignment.securedmarks==undefined || assignment.securedmarks==null">Total Marks: {{assignment.totalmarks}}</p>
                                 <div *ngIf="instructor==false">
                                     <p class="card-text" *ngIf="assignment.securedmarks!=undefined && assignment.securedmarks!=null"><em>Secured Marks: {{assignment.securedmarks}}/{{assignment.totalmarks}}</em></p>
@@ -57,10 +58,14 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="box" *ngIf="assignments==undefined || assignments==null">
-                            <div class="card">
-                                <div class="card-body">
-                                    <p class="card-text">No Assignments</p>
+                    </div>
+                    <div class="box" *ngIf="instructor">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title"><strong>Add Assignment</strong></h5>
+                                <br>
+                                <div class="text-center">
+                                    <button class="btn btn-danger" data-toggle="modal" data-target="#addAssignment">Add</button>
                                 </div>
                             </div>
                         </div>
@@ -103,6 +108,45 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-primary" style="float: inline-start;" (click)="uploadMarks()">Upload</button>
+                        <button type="button" class="btn btn-danger" style="float: right;" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="addAssignment" role="dialog" *ngIf="instructor">
+            <div class="modal-dialog">
+            <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Create Assignment{{assignmentCounts+1}}</h4>
+                        <button type="button" class="close" data-dismiss="modal" style="float: right;">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="modal-body">
+                            <label>Title</label>
+                            <input #assignmentTitle type="text" class="form-control" placeholder="Enter Title Here" required>
+                            <br>
+                            
+                            <label>Description</label>
+                            <textarea #assignmentDesc class="form-control" placeholder="Enter Description Here"></textarea>
+                            <br>
+
+                            <label>Document</label>
+                            <input type="file" class="form-control-file" id="uploadAssignmentDoc" (change)="uploadAssignmentDocListener($event)">
+                            <br>
+
+                            <label>Deadline</label>
+                            <input #assignmentDeadline type="datetime-local" class="form-control" id="assignmentDeadline" required>
+                            <br>
+
+                            <label>Total Marks</label>
+                            <input #assignmentMarks type="number" class="form-control" id="assignmentMarks" required>
+                            <br>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" style="float: inline-start;" (click)="addAssignment(assignmentTitle.value,assignmentDesc.value,assignmentDeadline.value,assignmentMarks.value)">Upload</button>
                         <button type="button" class="btn btn-danger" style="float: right;" data-dismiss="modal">Close</button>
                     </div>
                 </div>

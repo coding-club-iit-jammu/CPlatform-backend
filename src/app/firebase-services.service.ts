@@ -258,6 +258,37 @@ export class FirebaseServicesService {
     }
   }
 
+  async addAssignment(code,data,file){
+    const database = this.firedata.database;
+    var path = code +"/Assignment"+data.number+"/document";
+    const fileRef = this.firestore.ref(path);
+    var url;
+    if(file!=null && file!=undefined){
+      await fileRef.put(file).then(async (snapshot)=>{
+        await snapshot.ref.getDownloadURL().then(function(downloadURL){
+          url = downloadURL;
+        })
+        data.files = url;
+        await database.ref('courses').child(code).child(code.substring(8)).child('assignments').child(data.number).set(data);
+
+      }).catch(()=>{
+        alert("Upload Unsuccessful")
+        return null;
+      });
+      
+      alert("Upload Successful")
+      return data;
+    } else {
+      await database.ref('courses').child(code).child(code.substring(8)).child('assignments').child(data.number).set(data).then(()=>{
+        alert("Upload Successful")
+        return data;
+      }).catch(()=>{
+        alert("Upload Unsuccessful")
+        return null;
+      });
+    }
+  }
+
   signout(){
     this.fireAuth.auth.signOut().then(()=>{
       alert("Logged Out")

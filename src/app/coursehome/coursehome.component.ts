@@ -24,6 +24,7 @@ export class CoursehomeComponent implements OnInit {
   };
   assignments:any;
   selectedAssignment:number;
+  assignmentCounts:number = 0;
   submissionPossible=true;
   time: Date;
   file:any;
@@ -32,6 +33,8 @@ export class CoursehomeComponent implements OnInit {
   showSpinner:boolean = false;
   instructor:boolean = false;
   marksUpload:any;
+  assignmentDoc:any = null;
+
   async gettime(){
     await this.timeApi.getTime().then(data=>{
       this.time = new Date(data);
@@ -68,7 +71,8 @@ export class CoursehomeComponent implements OnInit {
   
     this.course = await this.infoService.getCourseDetails(this.code);
     this.assignments = this.infoService.getAssignments(this.code);
-  
+    if(this.assignments != null && this.assignments != undefined)
+      this.assignmentCounts = this.assignments.length;
     this.showSpinner = false;
   }
 
@@ -244,6 +248,28 @@ export class CoursehomeComponent implements OnInit {
   
   fileReset() {  
     this.records = [];  
+  }
+
+  uploadAssignmentDocListener($event){
+    this.assignmentDoc = $event.target.files[0];
+  }
+
+  async addAssignment(assignmentTitle,assignmentDesc,assignmentDeadline,assignmentMarks){
+    this.showSpinner = true;
+    var temp = {
+      title: assignmentTitle,
+      description: assignmentDesc,
+      deadline: new Date(assignmentDeadline).toString(),
+      number: this.assignmentCounts+1,
+      totalmarks: assignmentMarks,
+      files: ""
+    }
+    var result = await this.firebaseService.addAssignment(this.code,temp,this.assignmentDoc); 
+    if(result != null){
+      this.assignmentCounts += 1
+      this.assignments.push(result)
+    }
+    this.showSpinner = false;
   }
 
 }

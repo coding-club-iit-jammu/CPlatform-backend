@@ -22,7 +22,7 @@ export class CoursehomeComponent implements OnInit {
     title:"",
     instructor:""
   };
-  assignments:any;
+  assignments:any = [];
   selectedAssignment:number;
   assignmentCounts:number = 0;
   submissionPossible=true;

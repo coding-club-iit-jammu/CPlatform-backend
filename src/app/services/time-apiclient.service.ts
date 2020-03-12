@@ -13,12 +13,12 @@ export class TimeAPIClientService {
   }
   async assignTime()
   {
-        var url = 'http://worldclockapi.com/api/json/utc/now';
+        var url = 'https://pratikparmar-timeapi.herokuapp.com/getTime';
         var onlineTime;
         let tt = await new Promise(resolve => {
         this.http.get(url).subscribe(data => {
-            var tt = data;//.currentDateTime;
-            onlineTime = tt['currentDateTime'];
+            var tt = data;
+            onlineTime = tt['time'];
             resolve(onlineTime);
             this.time = new Date(onlineTime);
           });

@@ -36,23 +36,25 @@ export class StoreInfoService {
 
   fetchCourseAssignments(code: string){
     try{
+      console.log(this.coursesData)
       var temp = this.coursesData[code].assignments;
-      var tempUser = Object.values(this.userData["courses"][code].assignments);
-      for(var i=0; i < tempUser.length; i++){
-          var j = tempUser[i]["number"]
-          if(tempUser[i] != undefined && tempUser[i] != null){
-            temp[j]["securedmarks"]=tempUser[i]["marks"];
-            temp[j]["time"]=tempUser[i]["time"];
-            temp[j]["link"]=tempUser[i]["link"];
-
-            if(temp[j]['time']!=undefined || temp[j]["time"]!=null){
-              
+      if(this.userData["courses"][code].assignments != undefined && this.userData["courses"][code].assignments != null){
+        var tempUser = Object.values(this.userData["courses"][code].assignments);
+        for(var i=0; i < tempUser.length; i++){
+            var j = tempUser[i]["number"]
+            if(tempUser[i] != undefined && tempUser[i] != null){
+              temp[j]["securedmarks"]=tempUser[i]["marks"];
+              temp[j]["time"]=tempUser[i]["time"];
+              temp[j]["link"]=tempUser[i]["link"];
             }
-          }
+        }
       }
-      temp.shift();
-      console.log(temp)
-      return temp;
+      if(temp != undefined && temp!=null){
+        temp.shift();
+        return temp;
+      } else {
+        return []
+      }
     } catch(e){
       console.log(e)
     }

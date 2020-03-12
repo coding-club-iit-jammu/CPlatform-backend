@@ -58,6 +58,9 @@ export class LoginComponent implements OnInit {
       .then(async function(data){    
         await database.ref('users/').child(username).child('type').once('value',(snapshot)=>{
           type = snapshot.val();
+        }).catch(()=>{
+          alert("No User data found, contact admin.")
+          this.firebaseService.signout();
         })
       })
     .catch(error => {

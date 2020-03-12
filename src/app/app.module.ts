@@ -33,7 +33,7 @@ import { DetailsComponent } from './details/details.component';
     FormatdatePipe,
     SpinnerComponent,
     QuizComponent,
-    DetailsComponent
+    DetailsComponent,
   ],
   imports: [
     BrowserModule,

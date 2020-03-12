@@ -7,7 +7,6 @@ import { InstructorhomeComponent } from './instructorhome/instructorhome.compone
 import { CoursehomeComponent } from './coursehome/coursehome.component';
 import { DetailsComponent } from './details/details.component';
 
-
 const routes: Routes = [
   {
     path:"",
@@ -33,7 +32,6 @@ const routes: Routes = [
     path: 'details',
     component: DetailsComponent
   }
-  
 ];
 
 @NgModule({

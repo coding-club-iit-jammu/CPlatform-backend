@@ -206,6 +206,10 @@ export class FirebaseServicesService {
     return await this.fireAuth.auth.signInWithPopup(provider)
     .then((res) => {
       this.userid = res.user.email.split('@')[0].replace('.','');
+      if(res.user.email.split('@')[1]!="iitjammu.ac.in"){
+        alert("User iitjammu email address.")
+        this.signout();
+      }
     }).catch((error) => {
       console.log(error)
     })

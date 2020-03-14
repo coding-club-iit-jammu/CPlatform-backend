@@ -102,16 +102,20 @@ export class CoursehomeComponent implements OnInit {
     this.showSpinner = true;
     var userId = this.firebaseService.getUserID();
     var path = this.code + "/Assignment" + assignmentNo + "/" + userId + "/" + this.fileName;  
-  
-    var result = await this.firebaseService.uploadFile(path, this.file);
-    // this.assignments = this.infoService.updateCourseAssignments(this.code,result);
-    this.showSpinner = false;
-    console.log(this.assignments[assignmentNo-1])
-    if(result != null){
-      this.assignments[assignmentNo-1].link = result.link
-      this.assignments[assignmentNo-1].time = result.time
-        // this.assignments[assignmentNo].link = result.link
-      // this.router.navigateByUrl('/'+this.infoService.userType)
+    if(this.file != null){
+        var result = await this.firebaseService.uploadFile(path, this.file);
+        // this.assignments = this.infoService.updateCourseAssignments(this.code,result);
+        this.showSpinner = false;
+        console.log(this.assignments[assignmentNo-1])
+        if(result != null){
+          this.assignments[assignmentNo-1].link = result.link
+          this.assignments[assignmentNo-1].time = result.time
+            // this.assignments[assignmentNo].link = result.link
+          // this.router.navigateByUrl('/'+this.infoService.userType)
+        }
+    } else {
+      alert("No file found.")
+      this.showSpinner = false;
     }
   }
 
@@ -189,6 +193,7 @@ export class CoursehomeComponent implements OnInit {
 
   async addStudents(){
 
+    document.getElementById("myModal").style.display = "hide";
     this.showSpinner = true;
     let files = this.fileToUpload.srcElement.files;
     if (this.isValidCSVFile(files[0])) {  
@@ -255,6 +260,7 @@ export class CoursehomeComponent implements OnInit {
   }
 
   async addAssignment(assignmentTitle,assignmentDesc,assignmentDeadline,assignmentMarks){
+    
     this.showSpinner = true;
     var temp = {
       title: assignmentTitle,

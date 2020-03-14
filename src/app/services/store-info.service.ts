@@ -63,9 +63,13 @@ export class StoreInfoService {
   fetchCourseAssignmentsInstructor(code: string){
     try{
       var temp = this.coursesData[code].assignments;
-      if(temp.length>0)
-          temp.shift();
-      return temp;
+      if(temp!=undefined &&  temp!= null){
+        if(temp.length>0)
+            temp.shift();
+        return temp;
+      } else {
+        return []
+      }
     } catch(e){
       console.log(e)
     }

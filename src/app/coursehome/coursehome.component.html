@@ -90,7 +90,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-primary" style="float: inline-start;" (click)="addStudents()">Upload</button>
-                        <button type="button" class="btn btn-danger" style="float: right;" data-dismiss="modal">Close</button>
+                        <button type="button" id="closeAddStudents" class="btn btn-danger" style="float: right;" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
@@ -110,7 +110,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-primary" style="float: inline-start;" (click)="uploadMarks()">Upload</button>
-                        <button type="button" class="btn btn-danger" style="float: right;" data-dismiss="modal">Close</button>
+                        <button type="button" id="closeUploadMarks" class="btn btn-danger" style="float: right;" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
@@ -132,7 +132,7 @@
                             
                             <label>Description</label>
                             <textarea #assignmentDesc class="form-control" placeholder="Enter Description Here"></textarea>
-                            <br>
+                            <br> 
 
                             <label>Document</label>
                             <input type="file" class="form-control-file" id="uploadAssignmentDoc" (change)="uploadAssignmentDocListener($event)">
@@ -149,7 +149,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-primary" style="float: inline-start;" (click)="addAssignment(assignmentTitle.value,assignmentDesc.value,assignmentDeadline.value,assignmentMarks.value)">Upload</button>
-                        <button type="button" class="btn btn-danger" style="float: right;" data-dismiss="modal">Close</button>
+                        <button type="button" id="closeAddAssignment" class="btn btn-danger" style="float: right;" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>

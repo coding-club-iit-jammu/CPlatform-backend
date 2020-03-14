@@ -36,7 +36,6 @@ export class StoreInfoService {
 
   fetchCourseAssignments(code: string){
     try{
-      console.log(this.coursesData)
       var temp = this.coursesData[code].assignments;
       if(this.userData["courses"][code].assignments != undefined && this.userData["courses"][code].assignments != null){
         var tempUser = Object.values(this.userData["courses"][code].assignments);
@@ -76,7 +75,6 @@ export class StoreInfoService {
   }
 
   updateCourseAssignments(code,result){
-    console.log()
     this.userData["courses"][code].assignments[result.number].number = result.number;
     this.userData["courses"][code].assignments[result.number].link = result.link;
     this.userData["courses"][code].assignments[result.number].time = result.time;

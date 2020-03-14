@@ -104,14 +104,10 @@ export class CoursehomeComponent implements OnInit {
     var path = this.code + "/Assignment" + assignmentNo + "/" + userId + "/" + this.fileName;  
     if(this.file != null){
         var result = await this.firebaseService.uploadFile(path, this.file);
-        // this.assignments = this.infoService.updateCourseAssignments(this.code,result);
         this.showSpinner = false;
-        console.log(this.assignments[assignmentNo-1])
         if(result != null){
           this.assignments[assignmentNo-1].link = result.link
           this.assignments[assignmentNo-1].time = result.time
-            // this.assignments[assignmentNo].link = result.link
-          // this.router.navigateByUrl('/'+this.infoService.userType)
         }
     } else {
       alert("No file found.")
@@ -121,8 +117,7 @@ export class CoursehomeComponent implements OnInit {
 
   download(data){
     var downloadLink = document.createElement("a");
-    console.log(data)
-		var blob = new Blob([JSON.stringify(data)], {type: "text/plain;charset=utf-8"});
+    var blob = new Blob([JSON.stringify(data)], {type: "text/plain;charset=utf-8"});
     var url = URL.createObjectURL(blob);
 		downloadLink.href = url;
 		downloadLink.download = "Submissions.json";

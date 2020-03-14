@@ -56,7 +56,6 @@ export class LoginComponent implements OnInit {
     this.showSpinner1 = true;
     await this.fire.auth.signInWithEmailAndPassword(this.form.value.username+"@iitjammu.ac.in", this.form.value.password)
       .then(async function(data){    
-        console.log("hello")
         await database.ref('users/').child(username).child('type').once('value',(snapshot)=>{
           type = snapshot.val();
         }).catch(()=>{
@@ -68,7 +67,6 @@ export class LoginComponent implements OnInit {
         this.showSpinner1 = false;
         return;
     })
-    console.log(type)
     this.showSpinner1 = false;
     this.router.navigateByUrl('/'+type);
   }

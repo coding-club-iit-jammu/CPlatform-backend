@@ -14,6 +14,8 @@ export class QuizComponent implements OnInit {
   currentQuestion = 0;
   quiz:any = {
     title: "Quiz 1",
+    startTime: "",
+    endTime: "",
     questions:[{
                 question:"What is the captial of India?",
                 options:{
@@ -24,7 +26,8 @@ export class QuizComponent implements OnInit {
                 },
                 selectedOption:"",
                 correctOption:'a',
-                marks:1
+                marks:1,
+                visited:true
               },
               {
                 question:"What is the captial of MP?",
@@ -36,7 +39,8 @@ export class QuizComponent implements OnInit {
                 },
                 selectedOption:"",
                 correctOption:'c',
-                marks:1
+                marks:1,
+                visited:false
               },
               {
                 question:"What is the captial of Gujrat?",
@@ -48,7 +52,8 @@ export class QuizComponent implements OnInit {
                 },
                 selectedOption:"",
                 correctOption:'d',
-                marks:1
+                marks:1,
+                visited:false
               },
               {
                 question:"What is the captial of Rajasthan?",
@@ -60,7 +65,8 @@ export class QuizComponent implements OnInit {
                 },
                 selectedOption:"",
                 correctOption:'b',
-                marks:1
+                marks:1,
+                visited:false
               },
               {
                 question:"What is the captial of Haryana?",
@@ -72,7 +78,8 @@ export class QuizComponent implements OnInit {
                 },
                 selectedOption:"",
                 correctOption:'a',
-                marks:1
+                marks:1,
+                visited:false
               },
               {
                 question:"What is the captial of Punjab?",
@@ -84,7 +91,8 @@ export class QuizComponent implements OnInit {
                 },
                 selectedOption:"",
                 correctOption:'a',
-                marks:1
+                marks:1,
+                visited:false
               },
               {
                 question:"What is the captial of UP?",
@@ -96,7 +104,8 @@ export class QuizComponent implements OnInit {
                 },
                 selectedOption:"",
                 correctOption:'b',
-                marks:1
+                marks:1,
+                visited:false
               },
               {
                 question:"What is the captial of West Bengal?",
@@ -108,7 +117,8 @@ export class QuizComponent implements OnInit {
                 },
                 selectedOption:"",
                 correctOption:'c',
-                marks:1
+                marks:1,
+                visited:false
               }
             ]
   }
@@ -119,6 +129,7 @@ export class QuizComponent implements OnInit {
 
   changeQuestion(q:number){
     this.currentQuestion = q;
+    this.quiz.questions[this.currentQuestion].visited = true
   }
 
   endTest(){
@@ -129,5 +140,12 @@ export class QuizComponent implements OnInit {
     this.quiz.questions[this.currentQuestion].selectedOption = q
   }
   
+  nextQuestion(){
+    this.changeQuestion(this.currentQuestion+1)
+  }
+
+  previousQuestion(){
+    this.changeQuestion(this.currentQuestion-1)
+  }
 
 }

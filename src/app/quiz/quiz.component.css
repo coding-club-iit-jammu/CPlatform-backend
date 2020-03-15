@@ -1,0 +1,128 @@
+.sidenav {
+    height: 100%; /* Full-height: remove this if you want "auto" height */
+    width: 25%; /* Set the width of the sidebar */
+    position: fixed; /* Fixed Sidebar (stay in place on scroll) */
+    z-index: 1; /* Stay on top */
+    top: 0; /* Stay at the top */
+    left: 0;
+    background-color: #111; /* Black */
+    overflow-x: hidden; /* Disable horizontal scroll */
+    padding-top: 20px;
+    color: #f1f1f1;
+    text-align: center;
+  }
+  
+  /* Style page content */
+  .main {
+    margin-left: 25%; /* Same as the width of the sidebar */
+    /* padding: 0px 10px; */
+    width: 75%;
+    min-height: 100vh;
+    background-color: white !important;
+  }
+
+  .wrapper {
+    width: 100%;
+    height: 100%;
+  }
+  
+  .overlay {
+    position: fixed;
+    z-index: 1002;
+    background-color: rgba(255, 255, 255, 0.5);
+    width: 100%;
+    height: 100%;
+  }
+
+  .spinner-wrapper {
+    display: flex;
+    justify-content: center;
+    justify-items: center;
+  }
+
+  .view1 {
+    width: 100%;
+    height: 100%;
+  }
+
+  .top{
+      padding-top: 1%;
+      display: flex;
+      flex-direction: row;
+        height: 10%;
+        /* background-color: cornflowerblue; */
+    }   
+
+  .time{
+    width: 90%;
+  }
+
+  .end{
+      width: 10%;
+  }
+
+  .quizQuestion{
+      min-height: 70vh;
+      width: 80%;
+      margin-left: 10%;
+      margin-top: 5%;
+      /* background-color: darkgoldenrod; */
+  }
+  .question-header{
+      min-height: 25vh;
+      height: auto;
+      line-height: auto;
+      vertical-align: middle;
+  }
+
+  .options{
+      display: flex;
+      flex-wrap: wrap;
+      flex-direction: row;
+  }
+
+  .option{
+      min-width: 48%;
+      min-height: 48%;
+      margin: 1%;
+      /* background-color: darkred; */
+      /* border: black solid; */
+  }
+
+  .questions{
+    width: 80%;
+    margin-top: 20%;
+    min-height: 70vh;
+    margin-left: 10%;
+  }
+
+  
+
+  .unattemptedQuestion{
+    width: 100%;
+    height: 8vh;
+    color: black;
+    margin-bottom: 1%;
+    background-color: white;
+  }
+
+  .unattemptedQuestion:hover{
+    background-color: lightblue;
+  }
+
+  .attemptedQuestion{
+    width: 100%;
+    height: 8vh;
+    color: black;
+    margin-bottom: 1%;
+    background-color: #92e526 !important;
+  }
+
+  .attemptedQuestion:hover{
+    background-color: lightgreen !important;
+  }
+
+  .greenColor{
+    background-color: #80da67 !important;
+    color: black;
+  }

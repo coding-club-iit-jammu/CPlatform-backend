@@ -1,1 +1,73 @@
-<p>quiz works!</p>
+<div>
+    <div class="overlay" *ngIf="showSpinner">
+        <div class="spinner-wrapper">
+          <app-spinner></app-spinner>
+        </div>
+    </div>
+    <div [class.blurred]="showSpinner">
+        <!-- Div for First View -->
+        <div *ngIf="!view" class="jumbotron text-center">
+            <div class = "container">
+                <button class="btn btn-danger">Start Test</button>
+            </div>
+        </div>
+        <!-- Div for Second View -->
+        <div *ngIf="view">
+            <!-- Div for Side Section -->
+            <div class="sidenav">
+                <!-- Quiz Title -->
+                <div>
+                    <h2 align="center">{{quiz.title}}</h2>
+                </div>
+                <!-- Questions -->
+                <div class="questions">
+                    <!-- Question
+                        Use Ng Class to select CSS
+                    -->
+                    <div *ngFor="let q of questions">
+                        <div class="btn btn-secondary" (click)="changeQuestion(q)" [ngClass]="{'attemptedQuestion': quiz.questions[q].selectedOption != '','unattemptedQuestion': quiz.questions[q].selectedOption === ''}">
+                            Question {{q+1}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Div for Main Section -->
+            <div class="main">
+                <!-- Top Bar to Show Time and End Test Button -->
+                <div class="top">
+                    <!-- Show Remaining Time Here -->
+                    <div class="time text-center">
+                        <h3>{{remainTime}}</h3>
+                    </div>
+                    <!-- End Test Button Here -->
+                    <div class="end text-center">
+                        <button class="btn btn-danger" (click)="endTest()">End Test</button>
+                    </div>
+                </div>
+                <!-- Quiz Part here -->
+                <div class="quizQuestion card">
+                    <!-- Show Question here -->
+                    <div class="card-header text-center question-header align-center">
+                        {{quiz.questions[currentQuestion].question}}
+                    </div>
+                    <!-- Show Options here -->
+                    <div class="card-body options">
+                        <!-- Show an Option -->
+                        <div class = "option text-center btn btn-dark" (click)="markSubmit('a')" [ngClass]="{'greenColor': quiz.questions[currentQuestion].selectedOption === 'a'}">
+                            {{quiz.questions[currentQuestion].options.a}}
+                        </div>
+                        <div class = "option text-center btn btn-dark" (click)="markSubmit('b')" [ngClass]="{'greenColor': quiz.questions[currentQuestion].selectedOption === 'b'}">
+                            {{quiz.questions[currentQuestion].options.b}}
+                        </div>
+                        <div class = "option text-center btn btn-dark" (click)="markSubmit('c')" [ngClass]="{'greenColor': quiz.questions[currentQuestion].selectedOption === 'c'}">
+                            {{quiz.questions[currentQuestion].options.c}}
+                        </div>
+                        <div class = "option text-center btn btn-dark" (click)="markSubmit('d')" [ngClass]="{'greenColor': quiz.questions[currentQuestion].selectedOption === 'd'}">
+                            {{quiz.questions[currentQuestion].options.d}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

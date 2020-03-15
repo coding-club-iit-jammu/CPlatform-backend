@@ -24,8 +24,9 @@
                     <!-- Question
                         Use Ng Class to select CSS
                     -->
-                    <div *ngFor="let q of questions">
-                        <div class="btn btn-secondary" (click)="changeQuestion(q)" [ngClass]="{'attemptedQuestion': quiz.questions[q].selectedOption != '','unattemptedQuestion': quiz.questions[q].selectedOption === '' && !quiz.questions[q].visited , 'seenUnattemptedQuestion': quiz.questions[q].selectedOption === '' && quiz.questions[q].visited}">
+                    <h3>Section {{current.section+1}}</h3>
+                    <div *ngFor="let q of questions[current.section]">
+                        <div class="btn btn-secondary" (click)="changeQuestion(q)" [ngClass]="{'attemptedQuestion': quiz.sections[current.section].questions[q].selectedOption != '','unattemptedQuestion': quiz.sections[current.section].questions[q].selectedOption === '' && !quiz.sections[current.section].questions[q].visited , 'seenUnattemptedQuestion': quiz.sections[current.section].questions[q].selectedOption === '' && quiz.sections[current.section].questions[q].visited}">
                             Question {{q+1}}
                         </div>
                     </div>
@@ -48,28 +49,32 @@
                 <div class="quizQuestion card">
                     <!-- Show Question here -->
                     <div class="card-header text-center question-header align-center">
-                        {{quiz.questions[currentQuestion].question}}
+                        {{quiz.sections[current.section].questions[current.question].question}}
                     </div>
                     <!-- Show Options here -->
                     <div class="card-body options">
                         <!-- Show an Option -->
-                        <div class = "option text-center btn btn-dark" (click)="markSubmit('a')" accesskey="q" title="ShortCut: Alt + q" [ngClass]="{'greenColor': quiz.questions[currentQuestion].selectedOption === 'a'}">
-                            {{quiz.questions[currentQuestion].options.a}}
+                        <div class = "option text-center btn btn-dark" (click)="markSubmit('a')" accesskey="q" title="ShortCut: Alt + q" [ngClass]="{'greenColor': quiz.sections[current.section].questions[current.question].selectedOption === 'a'}">
+                            {{quiz.sections[current.section].questions[current.question].options.a}}
                         </div>
-                        <div class = "option text-center btn btn-dark" (click)="markSubmit('b')" accesskey="w" title="ShortCut: Alt + w" [ngClass]="{'greenColor': quiz.questions[currentQuestion].selectedOption === 'b'}">
-                            {{quiz.questions[currentQuestion].options.b}}
+                        <div class = "option text-center btn btn-dark" (click)="markSubmit('b')" accesskey="w" title="ShortCut: Alt + w" [ngClass]="{'greenColor': quiz.sections[current.section].questions[current.question].selectedOption === 'b'}">
+                            {{quiz.sections[current.section].questions[current.question].options.b}}
                         </div>
-                        <div class = "option text-center btn btn-dark" (click)="markSubmit('c')" accesskey="a" title="ShortCut: Alt + a" [ngClass]="{'greenColor': quiz.questions[currentQuestion].selectedOption === 'c'}">
-                            {{quiz.questions[currentQuestion].options.c}}
+                        <div class = "option text-center btn btn-dark" (click)="markSubmit('c')" accesskey="a" title="ShortCut: Alt + a" [ngClass]="{'greenColor': quiz.sections[current.section].questions[current.question].selectedOption === 'c'}">
+                            {{quiz.sections[current.section].questions[current.question].options.c}}
                         </div>
-                        <div class = "option text-center btn btn-dark" (click)="markSubmit('d')" accesskey="s" title="ShortCut: Alt + s" [ngClass]="{'greenColor': quiz.questions[currentQuestion].selectedOption === 'd'}">
-                            {{quiz.questions[currentQuestion].options.d}}
+                        <div class = "option text-center btn btn-dark" (click)="markSubmit('d')" accesskey="s" title="ShortCut: Alt + s" [ngClass]="{'greenColor': quiz.sections[current.section].questions[current.question].selectedOption === 'd'}">
+                            {{quiz.sections[current.section].questions[current.question].options.d}}
                         </div>
                     </div>
-                    <div class="card-footer container">
-                        <button class="btn btn-info" style="float: left;" [disabled]="currentQuestion == 0" (click)="previousQuestion()" accesskey="p" title="ShortCut: Alt + p">Previous</button>
-                        <button class="btn btn-info" style="float: right;" [disabled]="currentQuestion == quiz.questions.length-1" (click)="nextQuestion()" accesskey="n" title="ShortCut: Alt + n">Next</button>
+                    <div class="card-footer container text-center">
+                        <button class="btn btn-info" style="float: left;" [disabled]="current.question == 0" (click)="previousQuestion()" accesskey="p" title="ShortCut: Alt + p">Previous</button>
+                        <button class="btn btn-info" style="float: right;" [disabled]="current.question == quiz.sections[current.section].questions.length-1" (click)="nextQuestion()" accesskey="n" title="ShortCut: Alt + n">Next</button>
                     </div>
+                </div>
+                <br>
+                <div class="text-center">
+                    <button class="btn btn-info" style="float: none;" data-toggle="modal" data-target="#nextSectionModal" [disabled]="current.section == quiz.sections.length-1" accesskey="b" title="ShortCut: Alt + b">Next Section</button>
                 </div>
             </div>
         </div>
@@ -83,6 +88,24 @@
                         <div class="container">
                             <button class="btn btn-primary" style="float: left;">No</button>
                             <button class="btn btn-danger" style="float: right;"(click)="endTest()">Yes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id = "nextSectionModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header text-center">
+                        Are you Sure?
+                    </div>  
+                    <div class="modal-body">
+                        <p>You will not be able to come back to this section again.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="container">
+                            <button class="btn btn-primary" data-dismiss="modal" style="float: left;">No</button>
+                            <button class="btn btn-danger" style="float: right;"(click)="nextSection()" data-dismiss="modal">Yes</button>
                         </div>
                     </div>
                 </div>

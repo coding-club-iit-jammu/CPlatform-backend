@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-quiz',
@@ -16,6 +17,7 @@ export class QuizComponent implements OnInit {
     question: 0
   }
   quiz:any = {
+    id: "2019_02_EFC004U1M_Quiz1",
     title: "Quiz 1",
     startTime: "",
     endTime: "",
@@ -231,14 +233,21 @@ export class QuizComponent implements OnInit {
       visited:false
     }
       ],
-      previousComplete:false
+      previousCompleted:false
     }
   ]
     
   }
-  constructor() { }
+  constructor(private http: HttpClient) { }
 
-  ngOnInit() {
+  async ngOnInit() {
+    this.showSpinner = true;
+    this.http.post('http://localhost:8080/login',{'username': "2016ucs0049",'quizCode': "IN0101",'courseCode':'2019_02_CSL100'}).pipe().subscribe((data)=>{
+      console.log(data);
+    },error =>{
+      console.log(error);
+    })
+    this.showSpinner = false;
   }
 
   changeQuestion(q:number){

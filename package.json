@@ -25,6 +25,7 @@
     "file-saver": "^2.0.2",
     "firebase": "^7.7.0",
     "jquery": "^3.4.1",
+    "materialize-css": "^1.0.0",
     "ngx-spinner": "^8.1.0",
     "rxjs": "~6.4.0",
     "tslib": "^1.10.0",

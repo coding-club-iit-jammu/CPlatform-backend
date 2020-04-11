@@ -1,0 +1,139 @@
+<div class="wrapper">
+    <div class="overlay" *ngIf="showSpinner">
+      <div class="spinner-wrapper">
+        <app-spinner></app-spinner>
+      </div>
+    </div>
+    <div class="all" [class.blurred]="showSpinner">
+        <div class="sidenav">
+            <h2>{{userData.name}}</h2>
+            <h5>{{userData.email}}</h5>
+            <h5>Department: {{userData.branch}}</h5>
+            <button class="btn btn-block btn-warning gap" data-toggle="modal" data-target="#createCourseModal">Create Course</button>
+            <br>
+            <button class="btn btn-block btn-success gap" data-toggle="modal" data-target="#joinCourseModal">Join Course</button>
+            <br>
+            <button class="btn btn-block btn-danger gap" (click)="signout()">Sign out</button>
+            <br>
+            <br>
+        </div>
+        <br>
+        <div class="main">
+            <div *ngIf="userData.courses.teaching.length > 0">
+                <h3 align="center"><b>Teaching</b></h3>
+                <hr>
+                <br>
+                <div class="row" >
+                    <div *ngFor="let item of userData.courses.teaching" class="col-sm-4">
+                      <div class="card" *ngIf="item.code">
+                        <div class="card-body">
+                          <h5 class="card-title">{{item.code.substring(8)}}</h5>
+                          <p class="card-text">{{item.title}}</p>
+                          <button class="btn btn-primary">Open</button>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+                <br>
+            </div>
+            <br>
+            <div *ngIf="userData.courses.studying.length > 0">
+              <h3 align="center"><b>Studying</b></h3>
+              <hr>
+              <br>
+              <div class="row">
+                  <div *ngFor="let item of userData.courses.studying.length" class="col-sm-4">
+                    <div class="card">
+                      <div class="card-body">
+                        <h5 class="card-title">{{item.code.substring(8)}}</h5>
+                        <p class="card-text">{{item.title}}</p>
+                        <button class="btn btn-primary">Open</button>
+                      </div>
+                    </div>
+                  </div>
+              </div>
+              <br>
+            </div>
+            <br>
+            <div *ngIf="userData.courses.teachingAssistant.length > 0">
+              <h3 align="center"><b>Teaching Assistant</b></h3>
+              <hr>
+              <br>
+              <div class="row">
+                  <div *ngFor="let item of userData.courses.teachingAssistant" class="col-sm-4">
+                    <div class="card">
+                      <div class="card-body">
+                        <h5 class="card-title">{{item.code.substring(8)}}</h5>
+                        <p class="card-text">{{item.title}}</p>
+                        <button class="btn btn-primary">Open</button>
+                      </div>
+                    </div>
+                  </div>
+              </div>
+              <br>
+            </div>
+            <br>
+        </div>
+        
+        
+        <div class="modal fade" id="createCourseModal" role="dialog">
+          <div class="modal-dialog">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h4 class="modal-title">Add Course</h4>
+                      <button type="button" class="close" data-dismiss="modal" style="float: right;">&times;</button>
+                  </div>
+                  <div class="modal-body">
+                  <form [formGroup]="addCourseForm">
+                    <label for="code" >Course Code</label>
+                    <input type="text" class="form-control" name="code" formControlName="code" placeholder="Enter Course Title Here"  required>
+                    <br>
+                    <label for="title">Course Title</label>
+                    <input type="text" class="form-control" name="title" formControlName="title" placeholder="Enter Course Code Here" required>
+                    <br>
+                    <label>Access Code</label>
+                    <input type="text" class="form-control" formControlName="instructorCode" placeholder="Enter Access Code for Instructor" required>
+                    <br>
+                    <input type="text" class="form-control" formControlName="teachingAssistantCode" placeholder="Enter Access Code for Teaching Assistants" required>
+                    <br>
+                    <input type="text" class="form-control" formControlName="studentCode" placeholder="Enter Access Code for Students" required>
+                    <div class="modal-footer footerModal">
+                      <div class="text-left">
+                        <button type="button" class="btn btn-danger" style="float: left;" data-dismiss="modal">Close</button>
+                      </div>
+                      <div class="text-right">
+                        <button type="submit" class="btn btn-primary" style="float: right;" (click)="addCourse()">Add</button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+          </div>
+        </div>
+
+        <div class="modal fade" id="joinCourseModal" role="dialog">
+          <div class="modal-dialog">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h4 class="modal-title">Join Course</h4>
+                      <button type="button" class="close" data-dismiss="modal" style="float: right;">&times;</button>
+                  </div>
+                  <div class="modal-body">
+                  <form [formGroup] = "joinCourseForm">
+                    <label for="code">Course Code</label>
+                    <input type="text" class="form-control" name="code" placeholder="Enter Course Code Here" formControlName="code" required>
+                    <br>
+                    <label for="joiningCode">Access Code</label>
+                    <input type="text" class="form-control" name="joiningCode" placeholder="Enter Access Code Here" formControlName="joiningCode" required>
+                    <div class="modal-footer">
+                      <button type="submit" class="btn btn-primary" style="float: inline-start;" (click)="joinCourse()">Join</button>
+                      <button type="button" class="btn btn-danger" style="float: right;" data-dismiss="modal">Close</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+          </div>
+        </div>
+    
+    </div>
+</div>

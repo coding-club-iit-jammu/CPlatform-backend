@@ -9,7 +9,8 @@
 
 # dependencies
 /node_modules
-
+/Old_Server/node_modules
+/CodingPlatformServer/node_modules
 # profiling files
 chrome-profiler-events*.json
 speed-measure-plugin*.json

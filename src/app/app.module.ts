@@ -10,7 +10,6 @@ import { environment } from 'src/environments/environment';
 import { AngularFireDatabaseModule } from '@angular/fire/database';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 import { AngularFireStorageModule } from '@angular/fire/storage';
-import { AdminpageComponent } from './adminpage/adminpage.component';
 import { StudenthomeComponent } from './studenthome/studenthome.component';
 import { InstructorhomeComponent } from './instructorhome/instructorhome.component';
 import { FirebaseServicesService } from './firebase-services.service';
@@ -21,12 +20,12 @@ import { HttpClientModule } from '@angular/common/http';
 import { SpinnerComponent } from './spinner/spinner.component';
 import { QuizComponent } from './quiz/quiz.component';
 import { DetailsComponent } from './details/details.component';
+import { HomeComponent } from './home/home.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
-    AdminpageComponent,
     StudenthomeComponent,
     InstructorhomeComponent,
     CoursehomeComponent,
@@ -34,6 +33,7 @@ import { DetailsComponent } from './details/details.component';
     SpinnerComponent,
     QuizComponent,
     DetailsComponent,
+    HomeComponent,
   ],
   imports: [
     BrowserModule,

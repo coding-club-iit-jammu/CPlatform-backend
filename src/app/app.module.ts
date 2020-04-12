@@ -21,6 +21,7 @@ import { SpinnerComponent } from './spinner/spinner.component';
 import { QuizComponent } from './quiz/quiz.component';
 import { DetailsComponent } from './details/details.component';
 import { HomeComponent } from './home/home.component';
+import { IdeComponent } from './ide/ide.component';
 
 @NgModule({
   declarations: [
@@ -34,6 +35,7 @@ import { HomeComponent } from './home/home.component';
     QuizComponent,
     DetailsComponent,
     HomeComponent,
+    IdeComponent,
   ],
   imports: [
     BrowserModule,

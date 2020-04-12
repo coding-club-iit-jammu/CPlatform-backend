@@ -13,6 +13,10 @@
     text-align: center;
   }
   
+  .completeView{
+    display: flex;
+    flex-direction: row;
+  }
   /* The navigation menu links */
   .sidenav a {
     padding: 6px 8px 6px 16px;
@@ -79,6 +83,30 @@
     bottom:   0;
   }
   
+  .navBarCss{
+    cursor: hand !important;
+    height: 6vh;
+  }
+
+  .mainClass{
+    padding-top: 2vh;
+    overflow-x: auto;
+    width: 80vw;
+    /* overflow-y: auto; */
+  }
+
+  .width45{
+    width: 45%;
+  }
+
+  .sideInfo{
+    padding-top: 2vh;
+    min-height: 91vh;
+    width: 20vw;
+    overflow-y: unset;
+    z-index: 2;
+  }
+
   .spinner-wrapper {
     display: fixed;
     justify-content: center;
@@ -88,6 +116,11 @@
   #uploadDiv{
     display: flex; 
     flex-direction: row;
+  }
+
+  .bigButton{
+    height: 60px;
+    width: 60px;
   }
 
   @media only screen and (max-width: 700px) {
@@ -100,6 +133,25 @@
       flex-direction: column;
     }
 
+    .completeView{
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sideInfo{
+      padding-top: 2vh;
+      min-height: 100%;
+      width: 100vw;
+      overflow-y: unset;
+    }
+
+    .mainClass{
+      padding-top: 2vh;
+      overflow-x: auto;
+      width: 100vw;
+      /* overflow-y: auto; */
+    }
+
     .main {
       margin-left: 0;
       padding-left: 0;
@@ -110,6 +162,9 @@
       text-align: center  ;
     }
   
+    .width45{
+      width: 90%;
+    }
 
     .sidenav {
       height: 30vh;

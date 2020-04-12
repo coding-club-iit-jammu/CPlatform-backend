@@ -1,10 +1,198 @@
 <div class="wrapper">
-    <div class="overlay" *ngIf="showSpinner">   
+    <div class="overlay" *ngIf="">   
         <div class="spinner-wrapper">
             <app-spinner></app-spinner>
         </div>
     </div>
-    <div class="all" [class.blurred]="showSpinner">
+    <div [class.blurred]="showSpinner">
+        <div class="navBarCss">
+            <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+                <span class="navbar-brand mb-0 h1">Code</span>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+                </button>
+            
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item" [ngClass]='{active: view==1}'>
+                            <a class="nav-link" (click) = "setView(1)"> Stream</a>
+                        </li>
+                        <li class="nav-item" [ngClass]='{active: view==2}'>
+                            <a class="nav-link" (click) = "setView(2)"> Assignments</a>
+                        </li>
+                        <li class="nav-item" [ngClass]='{active: view==3}'>
+                            <a class="nav-link" (click) = "setView(3)"> Tests</a>
+                        </li>
+                    </ul>
+                    <button class="btn btn-warning mr-2 my-sm-0" type="button">Home</button>
+                    &nbsp;&nbsp;<br>
+                    <button class="btn btn-danger my-2 my-sm-0" type="button">Sign Out</button>
+                </div>
+            </nav>
+        </div>
+        <div class="completeView">
+            <div class = "mainClass" >
+                <div class="view1 mt-6 pb-3" *ngIf="view==1">
+                    <div class="row mx-3 pl-4">
+                        <div class="card text-center mt-3 mx-2 border-info width45">
+                            <div class="card-header border-info">
+                              Featured
+                            </div>
+                            <div class="card-body">
+                              <h5 class="card-title">Special title treatment</h5>
+                              <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                              <a href="#" class="btn btn-info">Go somewhere</a>
+                            </div>
+                            <div class="card-footer border-info text-muted">
+                              2 days ago
+                            </div>
+                        </div>
+                        <div class="card text-center mt-3 mx-2 border-info width45">
+                            <div class="card-header border-info">
+                              Featured
+                            </div>
+                            <div class="card-body">
+                              <h5 class="card-title">Special title treatment</h5>
+                              <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                              <a href="#" class="btn btn-info">Go somewhere</a>
+                            </div>
+                            <div class="card-footer border-info text-muted">
+                              2 days ago
+                            </div>
+                        </div>
+                        <div class="card text-center mt-3 mx-2 border-info width45">
+                            <div class="card-header border-info">
+                              Featured
+                            </div>
+                            <div class="card-body">
+                              <h5 class="card-title">Special title treatment</h5>
+                              <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                              <a href="#" class="btn btn-info">Go somewhere</a>
+                            </div>
+                            <div class="card-footer border-info text-muted">
+                              2 days ago
+                            </div>
+                        </div>
+                        <div class="card text-center mt-3 mx-2 border-info width45">
+                            <div class="card-header border-info">
+                              Featured
+                            </div>
+                            <div class="card-body">
+                              <h5 class="card-title">Special title treatment</h5>
+                              <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                              <a href="#" class="btn btn-info">Go somewhere</a>
+                            </div>
+                            <div class="card-footer border-info text-muted">
+                              2 days ago
+                            </div>
+                        </div>
+                        <div class="card text-center mt-3 mx-2 border-info width45">
+                            <div class="card-header border-info">
+                              Featured
+                            </div>
+                            <div class="card-body">
+                              <h5 class="card-title">Special title treatment</h5>
+                              <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                              <a href="#" class="btn btn-info">Go somewhere</a>
+                            </div>
+                            <div class="card-footer border-info text-muted">
+                              2 days ago
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mx-3 pl-4 fixed-bottom mb-4">
+                        <button class="btn btn-success border-success mx-auto bigButton rounded-circle btn-lg">+</button>
+                    </div>
+                </div>
+                
+                <div class="view2" *ngIf="view==2">
+                    <div class="row mx-3 pl-4">
+                        <div class="card text-center mt-3 mx-2 border-warning width45">
+                            <div class="card-header border-warning">
+                              Featured
+                            </div>
+                            <div class="card-body">
+                              <h5 class="card-title">Special title treatment</h5>
+                              <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                              <a href="#" class="btn btn-warning">Go somewhere</a>
+                            </div>
+                            <div class="card-footer text-muted border-warning">
+                              2 days ago
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mx-3 pl-4 fixed-bottom mb-4">
+                        <button class="btn btn-success border-success mx-auto bigButton rounded-circle btn-lg">+</button>
+                    </div>
+                </div>
+    
+                <div class="view3" *ngIf="view==3">
+                    <div class="row mx-3 pl-4">
+                        <div class="card text-center mt-3 mx-2 border-danger width45">
+                            <div class="card-header border-danger">
+                              Featured
+                            </div>
+                            <div class="card-body">
+                              <h5 class="card-title">Special title treatment</h5>
+                              <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                              <a href="#" class="btn btn-danger">Go somewhere</a>
+                            </div>
+                            <div class="card-footer border-danger text-muted">
+                              2 days ago
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mx-3 pl-4 fixed-bottom mb-4">
+                        <button class="btn btn-success border-success mx-auto bigButton rounded-circle btn-lg">+</button>
+                    </div>
+                </div>
+            </div>
+            <div class="sideInfo">
+                <div class="text-center">
+                    <div class="card w-75 mx-auto my-3 border-primary">
+                        <div class="card-content">
+                            <div class="card-header font-weight-bold border-primary">
+                                Instructors
+                            </div>
+                            <div class="card-body">
+                                <p>Instructor 1</p>
+                                <p>Instructor 2</p>
+                                <p>Instructor 3</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <div class="card w-75 mx-auto my-3 border-primary">
+                        <div class="card-content">
+                            <div class="card-header font-weight-bold border-primary">
+                                Teaching Assistants
+                            </div>
+                            <div class="card-body">
+                                <p>TA 1</p>
+                                <p>TA 2</p>
+                                <p>TA 3</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bottom text-center">
+                    <button class="btn btn-primary">Access Codes</button>
+                </div>
+            </div>
+        </div>
+        <div class="bottom bg-dark text-center">
+            Footer
+            <br>
+            Footer
+            <br>
+            Footer
+            <br>
+            Footer
+            <br>
+        </div>
+    </div>
+    <!-- <div class="all" >
         <div class="sidenav">
             <h2>{{code.substring(8)}}</h2>
             <h2>{{course.title}}</h2>
@@ -75,10 +263,8 @@
                 </div>  
             </div>
         </div>
-        <!-- Modal -->
         <div class="modal fade" id="myModal" role="dialog" *ngIf="instructor">
             <div class="modal-dialog">
-            <!-- Modal content-->
                 <div class="modal-content">
                     <div class="modal-header">
                         <h4 class="modal-title">Enroll Students</h4>
@@ -95,10 +281,8 @@
                 </div>
             </div>
         </div>
-        <!-- Modal -->
         <div class="modal fade" id="uploadModal" role="dialog" *ngIf="instructor">
             <div class="modal-dialog">
-            <!-- Modal content-->
                 <div class="modal-content">
                     <div class="modal-header">
                         <h4 class="modal-title">Upload Marks for Assignment{{selectedAssignment}}</h4>
@@ -115,10 +299,8 @@
                 </div>
             </div>
         </div>
-        <!-- Modal -->
         <div class="modal fade" id="addAssignment" role="dialog" *ngIf="instructor">
             <div class="modal-dialog">
-            <!-- Modal content-->
                 <div class="modal-content">
                     <div class="modal-header">
                         <h4 class="modal-title">Create Assignment{{assignmentCounts+1}}</h4>
@@ -154,5 +336,5 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 </div>

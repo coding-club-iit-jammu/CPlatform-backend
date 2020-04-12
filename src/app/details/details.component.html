@@ -16,22 +16,19 @@
                                             <div class="form-group row">
                                                 <label for="full_name" class="col-md-4 col-form-label text-md-right">Full Name</label>
                                                 <div class="col-md-6">
-                                                    <input type="text" id="full_name" class="form-control" name="full-name" required formControlName = "fullName">
+                                                    <input type="text" id="full_name" class="form-control" name="name" required formControlName = "name">
                                                 </div>
                                             </div>
 
                                             <div class="form-group row">
-                                                <label for="userType" class="col-md-4 col-form-label text-md-right">User Type</label>
+                                                <label for="email" class="col-md-4 col-form-label text-md-right">Email</label>
                                                 <div class="col-md-6">
-                                                    <select class="form-control" name="userType" formControlName = "userType">
-                                                        <option [ngValue]="'student'">Student</option>
-                                                        <!-- <option [ngValue]="'instructor'">Instructor</option> -->
-                                                    </select>
+                                                    <input type="email" name="email" required formControlName="email">
                                                 </div>
                                             </div>
 
                                             <div class="form-group row">
-                                                <label for="branch" class="col-md-4 col-form-label text-md-right">Branch</label>
+                                                <label for="branch" class="col-md-4 col-form-label text-md-right">Department</label>
                                                 <div class="col-md-6">
                                                     <select class="form-control" name="branch" formControlName = "branch">
                                                         <option [ngValue]="'Computer Science'">Computer Science</option>
@@ -45,9 +42,23 @@
                                                 </div>
                                             </div>
 
+                                            <div class="form-group row">
+                                                <label for="password" class="col-md-4 col-form-label text-md-right">Password</label>
+                                                <div class="col-md-6">
+                                                    <input type="password" name="password" required formControlName="password">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row">
+                                                <label for="confirmPassword" class="col-md-4 col-form-label text-md-right">Confirm Password</label>
+                                                <div class="col-md-6">
+                                                    <input type="password" name="confirmPassword" required formControlName="confirmPassword">
+                                                </div>
+                                            </div>
+
                                             <div class="col-md-6 offset-md-4">
-                                                <button type="submit" class="btn btn-primary" [disabled]="!form.valid">
-                                                    Register
+                                                <button type="submit" class="btn btn-primary" [disabled]="!form.valid" (click)="onSubmit(form.value)">
+                                                    Sign Up
                                                 </button>
                                             </div>
                                             </form>

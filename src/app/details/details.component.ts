@@ -39,9 +39,11 @@ export class DetailsComponent implements OnInit {
     this.showSpinner = true;
     if(data.confirmPassword === data.password){
       this.http.post(this.storeInfo.serverUrl + '/createUser',data).subscribe((response)=>{
-        console.log(response);
-        console.log(response);
+        if(!data.added){
+          alert('Sign Up Failed.')
+        }
         this.showSpinner = false;
+        this.router.navigate(['/']);
       },error=>{
         console.log(error)
         this.showSpinner = false
@@ -50,6 +52,10 @@ export class DetailsComponent implements OnInit {
     } else {
       this.showSpinner = false;
     }
-    }
+  }
+
+  navToLogin(){
+    this.router.navigate(['/']);
+  }
 
 }

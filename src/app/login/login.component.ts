@@ -1,9 +1,6 @@
 import { Component, OnInit, NgZone } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { AngularFireAuth } from '@angular/fire/auth';
 import { Router } from '@angular/router';
-import { AngularFireDatabase } from '@angular/fire/database';
-import { FirebaseServicesService } from '../firebase-services.service';
 import { HttpClient } from '@angular/common/http';
 import { StoreInfoService }  from '../services/store-info.service';
 
@@ -24,8 +21,7 @@ export class LoginComponent implements OnInit {
       private formBuilder: FormBuilder, 
       private router: Router,
       private http: HttpClient,
-      private storeInfo: StoreInfoService,
-      private zone: NgZone
+      private storeInfo: StoreInfoService
     ){ 
       
     }
@@ -53,7 +49,8 @@ export class LoginComponent implements OnInit {
       this.showSpinner1 = false;
       this.router.navigateByUrl('/home');
     },error =>{
-      console.log(error);
+      this.showSpinner1 = false;
+      alert('Network Problem.');
     })
   }
 
@@ -62,5 +59,9 @@ export class LoginComponent implements OnInit {
       email : this.formBuilder.control(''),
       password : this.formBuilder.control('')
     });
+  }
+
+  signUp(){
+    this.router.navigate(['signup']);
   }
 }

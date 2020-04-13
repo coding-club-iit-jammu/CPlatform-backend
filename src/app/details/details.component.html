@@ -1,16 +1,16 @@
-<div class="wrapper">
+<div class="wrapper bg-dark">
     <div class="overlay" *ngIf="showSpinner">
       <div class="spinner-wrapper">
         <app-spinner></app-spinner>
       </div>
     </div>
     <div class="all" [class.blurred]="showSpinner">
-    <main class="my-form">
+    <main class="my-form w-75 mx-auto">
                 <div class="cotainer">
                     <div class="row justify-content-center">
                         <div class="col-md-8">
-                                <div class="card">
-                                    <div class="card-header">Register</div>
+                                <div class="card border-dark">
+                                    <div class="card-header text-center border-dark text-dark font-weight-bold">Register</div>
                                     <div class="card-body">
                                         <form [formGroup] = "form" (ngSubmit)="onSubmit()">
                                             <div class="form-group row">
@@ -23,7 +23,7 @@
                                             <div class="form-group row">
                                                 <label for="email" class="col-md-4 col-form-label text-md-right">Email</label>
                                                 <div class="col-md-6">
-                                                    <input type="email" name="email" required formControlName="email">
+                                                    <input type="email" class="form-control" name="email" required formControlName="email">
                                                 </div>
                                             </div>
 
@@ -31,7 +31,7 @@
                                                 <label for="branch" class="col-md-4 col-form-label text-md-right">Department</label>
                                                 <div class="col-md-6">
                                                     <select class="form-control" name="branch" formControlName = "branch">
-                                                        <option [ngValue]="'Computer Science'">Computer Science</option>
+                                                        <option selected [ngValue]="'Computer Science'">Computer Science</option>
                                                         <option [ngValue]="'Electrical'">Electrical</option>
                                                         <option [ngValue]="'Mechanical'">Mechanical</option>
                                                         <option [ngValue]="'Civil'">Civil</option>
@@ -45,19 +45,19 @@
                                             <div class="form-group row">
                                                 <label for="password" class="col-md-4 col-form-label text-md-right">Password</label>
                                                 <div class="col-md-6">
-                                                    <input type="password" name="password" required formControlName="password">
+                                                    <input type="password" class="form-control" name="password" required formControlName="password">
                                                 </div>
                                             </div>
 
                                             <div class="form-group row">
                                                 <label for="confirmPassword" class="col-md-4 col-form-label text-md-right">Confirm Password</label>
                                                 <div class="col-md-6">
-                                                    <input type="password" name="confirmPassword" required formControlName="confirmPassword">
+                                                    <input type="password" class="form-control" name="confirmPassword" required formControlName="confirmPassword">
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-6 offset-md-4">
-                                                <button type="submit" class="btn btn-primary" [disabled]="!form.valid" (click)="onSubmit(form.value)">
+                                            <div class="text-center mt-4">
+                                                <button type="submit" class="btn btn-danger" [disabled]="!form.valid" (click)="onSubmit(form.value)">
                                                     Sign Up
                                                 </button>
                                             </div>

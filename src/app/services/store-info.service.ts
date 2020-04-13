@@ -6,6 +6,8 @@ export class StoreInfoService {
 
   token:string;
   serverUrl: string = "http://localhost:8080";
+  role = {
+  };
 
   userid:string;
   name:string;

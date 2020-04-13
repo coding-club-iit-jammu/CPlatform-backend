@@ -2,6 +2,8 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormatdatePipe } from '../formatdate.pipe';
 import { StoreInfoService } from '../services/store-info.service'
 import { Router, ActivatedRoute, Params } from '@angular/router'
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { FormGroup, FormBuilder } from '@angular/forms';
 
 @Component({
   selector: 'app-coursehome',
@@ -11,18 +13,41 @@ import { Router, ActivatedRoute, Params } from '@angular/router'
 export class CoursehomeComponent implements OnInit {
 
   constructor(
-              private infoService: StoreInfoService,
+              private storeInfo: StoreInfoService,
               private router: Router,
-              private activatedRoute: ActivatedRoute
+              private activatedRoute: ActivatedRoute,
+              private http: HttpClient,
+              private formBuilder: FormBuilder
               ) { }
 
   view:number = 1;
+
+  instructors:Array<String> =[];
+  teachingAssistants:Array<String> =[];
+  joiningCode = {};
+  showSpinner:boolean = false;
   code:string="";
+  role:string;
+  joiningCodes: Object = {
+    instructor: '',
+    teachingAssistant: '',
+    student: ''
+  }
+
+  posts:Array<Object> = [];
+  assignments:Array<Object> = [];
+  tests:Array<Object> = [];
+
+  postForm: FormGroup;
+  assignmentForm: FormGroup;
+  testForm: FormGroup;
+
   course:any={
     title:"",
-    instructor:""
+    instructors:[],
+    teachingAssistants:[]
   };
-  assignments:any = [];
+  // assignments:any = [];
   selectedAssignment:number;
   assignmentCounts:number = 0;
   submissionPossible=true;
@@ -30,7 +55,6 @@ export class CoursehomeComponent implements OnInit {
   file:any;
   fileName:string;
   userType:string;
-  showSpinner:boolean = false;
   instructor:boolean = false;
   marksUpload:any;
   assignmentDoc:any = null;
@@ -45,7 +69,45 @@ export class CoursehomeComponent implements OnInit {
   async ngOnInit() {
   
     this.showSpinner = true;
-    console.log(this.activatedRoute.snapshot.paramMap.get('courseId'));
+
+    this.postForm = this.formBuilder.group({
+      title: this.formBuilder.control(''),
+      description: this.formBuilder.control('')
+    })
+
+    this.code = this.activatedRoute.snapshot.paramMap.get('courseId');
+    this.role = this.storeInfo.role[this.code];
+    console.log(this.role);
+    if(!this.role){
+      this.router.navigateByUrl('/home');
+      return;
+    }
+    
+    const options = {
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json',
+        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+      }),
+      params: new HttpParams().set('role',this.role).set('code',this.code)
+    };
+    
+    // Retrieving Title Instructors and TA info from 
+    await this.http.get(this.storeInfo.serverUrl+'/course/getInfo', options).toPromise().then(data=>{
+      
+      this.course = data;
+      this.posts = data['posts'];
+
+      if(this.role == 'instructor'){
+        this.getJoiningCodes();
+      }
+      this.showSpinner = false;
+    },error => {
+      alert(error.message)
+      this.showSpinner = false;
+    })
+    
+
+    
     // if(this.firebaseService.userid == undefined || this.firebaseService.userid == null){
     //   await this.firebaseService.getCurrentUser().then(async (user)=>{
     //       this.firebaseService.setUserID(user["email"].split('@')[0])
@@ -73,14 +135,120 @@ export class CoursehomeComponent implements OnInit {
     // this.assignments = this.infoService.getAssignments(this.code);
     // if(this.assignments != null && this.assignments != undefined)
     //   this.assignmentCounts = this.assignments.length;
+  }
+  
+  async setView(tabvalue){
+    this.view = tabvalue;
+    if(tabvalue == 1){
+      await this.getPosts();
+    }
+  }
+  
+  
+  getJoiningCodes(){
+    this.showSpinner = true;
+    const options = {
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json',
+        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+      }),
+      params: new HttpParams().set('courseId',this.course._id)
+    };
+    
+    this.http.get(this.storeInfo.serverUrl+'/course/getJoiningCodes', options).subscribe(data=>{
+      this.joiningCodes = data['joiningCode'];
+    },error => {
+    })
+    
+  }
+
+  async createPost(data: Object){
+    const options = {
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json',
+        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+      })
+    };
+    data['courseId'] = this.course._id;
+    document.getElementById('postModalClose').click();
+    this.showSpinner = true;
+    await this.http.post(this.storeInfo.serverUrl+'/course/addPost', data, options).toPromise().then( async (resData) => {
+      await this.getPosts();
+      console.log(resData);
+      this.resetPostForm();
+    },error => {
+    })
     this.showSpinner = false;
   }
 
-  setView(tabvalue){
-    this.view = tabvalue;
+  resetPostForm(){
+    this.postForm = this.formBuilder.group({
+      title: this.formBuilder.control(''),
+      description: this.formBuilder.control('')
+    })
   }
 
-  
+  createAssignment(data: Object){
+    const options = {
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json',
+        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+      })
+    };
+    
+    this.http.post(this.storeInfo.serverUrl+'/course/addAssignment', data, options).subscribe( resData => {
+      console.log(resData);
+    },error => {
+    })
+  }
+
+  resetAssignmentForm(){
+
+  }
+
+  createTest(data: Object){
+    const options = {
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json',
+        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+      })
+    };
+    
+    this.http.post(this.storeInfo.serverUrl+'/course/addTest', data, options).subscribe( resData => {
+      console.log(resData);
+    },error => {
+    })
+  }
+
+  resetTestForm(){
+
+  }
+
+  async getPosts(){
+    this.showSpinner = true;
+    const options = {
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json',
+        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+      }),
+      params : new HttpParams().set('courseId',this.course._id)
+    };
+    
+    this.http.get(this.storeInfo.serverUrl+'/course/getPosts', options).subscribe( resData => {
+      this.posts = resData['posts'];
+      this.showSpinner = false;
+    },error => {
+    })
+  }
+
+  getAssignments(){
+    console.log("Getting Assignments")
+  }
+
+  getTests(){
+    console.log("Getting Tests")
+  }
+
   // checkStatus(date: string){
   
   //   var dd = new Date(date);
@@ -276,5 +444,6 @@ export class CoursehomeComponent implements OnInit {
   navToHome(){
     this.router.navigateByUrl('/home')
   }
+
 
 }

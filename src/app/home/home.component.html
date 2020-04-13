@@ -21,15 +21,15 @@
         <div class="main">
             <div *ngIf="userData.courses.teaching.length > 0">
                 <h3 align="center"><b>Teaching</b></h3>
-                <hr>
+                <hr class="border-dark">
                 <br>
                 <div class="row" >
                     <div *ngFor="let item of userData.courses.teaching" class="col-sm-4">
-                      <div class="card" *ngIf="item.code">
-                        <div class="card-body">
+                      <div class="card border-dark" *ngIf="item.code">
+                        <div class="card-body text-center">
                           <h5 class="card-title">{{item.code.substring(8)}}</h5>
                           <p class="card-text">{{item.title}}</p>
-                          <button class="btn btn-primary">Open</button>
+                          <button class="btn btn-dark btn-block" (click)="openCourse(item.code,'instructor')">Open</button>
                         </div>
                       </div>
                     </div>
@@ -39,15 +39,15 @@
             <br>
             <div *ngIf="userData.courses.studying.length > 0">
               <h3 align="center"><b>Studying</b></h3>
-              <hr>
+              <hr class="border-dark">
               <br>
               <div class="row">
                   <div *ngFor="let item of userData.courses.studying.length" class="col-sm-4">
-                    <div class="card">
+                    <div class="card border-dark">
                       <div class="card-body">
                         <h5 class="card-title">{{item.code.substring(8)}}</h5>
                         <p class="card-text">{{item.title}}</p>
-                        <button class="btn btn-primary">Open</button>
+                        <button class="btn btn-dark" (click)="openCourse(item.code,'student')">Open</button>
                       </div>
                     </div>
                   </div>
@@ -57,15 +57,15 @@
             <br>
             <div *ngIf="userData.courses.teachingAssistant.length > 0">
               <h3 align="center"><b>Teaching Assistant</b></h3>
-              <hr>
+              <hr class="border-dark">
               <br>
               <div class="row">
                   <div *ngFor="let item of userData.courses.teachingAssistant" class="col-sm-4">
-                    <div class="card">
+                    <div class="card border-dark">
                       <div class="card-body">
                         <h5 class="card-title">{{item.code.substring(8)}}</h5>
                         <p class="card-text">{{item.title}}</p>
-                        <button class="btn btn-primary">Open</button>
+                        <button class="btn btn-dark" (click)="openCourse(item.code,'teachingAssistant')">Open</button>
                       </div>
                     </div>
                   </div>

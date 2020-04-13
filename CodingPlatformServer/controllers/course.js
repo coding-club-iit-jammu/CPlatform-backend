@@ -1,5 +1,6 @@
 const Course = require('../models/course');
 const User = require('../models/user');
+const Post = require('../models/post');
 
 exports.addCourse = (req,res,next) => {
     console.log(req.body);
@@ -101,4 +102,131 @@ exports.joinCourse = (req,res,next) => {
         console.log(err);
         res.status(200).json({"message":"Joining Failed, Try Again"}); 
     });
+}
+
+exports.getCourseInfo = (req,res,next) => {
+    
+    const courseId = req.courseId;
+    console.log(courseId);
+
+    Course.findById(courseId)
+    .select('_id title instructors teachingAssistants posts')
+    .populate('instructors','name email')
+    .populate('teachingAssistants','name email')
+    .populate('posts')
+    .then( course => {
+        if(!course){
+            res.status(404).json({message:"Course Not Found"});
+            return;
+        }
+        res.status(200).json(course);
+    })
+}
+
+exports.getPosts = (req,res,next) => {
+    
+    const courseId = req.courseId;
+
+    Course.findById(courseId)
+    .select('posts')
+    .populate('posts')
+    .then( course => {
+        if(!course){
+            res.status(404).json({message:"Course Not Found"});
+            return;
+        }
+        res.status(200).json(course);
+    })
+}
+
+exports.getTests = (req,res,next) => {
+    
+    const courseId = req.courseId;
+
+    Course.findById(courseId)
+    .select('posts')
+    .populate('posts','name email')
+    .then( course => {
+        if(!course){
+            res.status(404).json({message:"Course Not Found"});
+            return;
+        }
+        res.status(200).json(course);
+    })
+}
+
+exports.getAssignments = (req,res,next) => {
+    
+    const courseId = req.courseId;
+
+    Course.findById(courseId)
+    .select('posts')
+    .populate('posts')
+    .then( course => {
+        if(!course){
+            res.status(404).json({message:"Course Not Found"});
+            return;
+        }
+        res.status(200).json(course);
+    })
+}
+
+exports.getJoiningCodes = (req,res,next) => {
+    
+    const courseId = req.courseId;
+
+    Course.findById(courseId)
+    .select('joiningCode')
+    .then( course => {
+
+        if(!course){
+            res.status(404).json({message:"Joining Code Not Found"});
+            return;
+        }
+        res.status(200).json(course);
+    })
+}
+
+exports.addPost = async (req,res,next) => {
+    
+    const courseId = req.courseId;
+    const by = req.userId;
+    const title = req.body.title;
+    const description = req.body.description;
+
+    let name;
+
+    await User.findById(by).then((user)=>{
+        if(!user){
+            res.status(400).json({message:'Bad request.'})
+        }
+        name = user.name;
+    })
+    const post = new Post({
+        by: name,
+        date: new Date().toLocaleString('en-In'),
+        title: title,
+        description: description
+    });
+
+    post.save().then((post)=>{
+        if(!post){
+            res.status(400).json({message: "Unable to Post it."});
+            return;
+        }
+
+        Course.findById(courseId).then((course)=>{
+            if(!course){
+                Post.findByIdAndDelete(post._id).exec();
+            }
+            course.addPost(post._id).then((result)=>{
+                if(!result){
+                    Post.findByIdAndDelete(post._id).exec();
+                }
+                res.status(200).json({message:'Post Added'});
+            })
+        })
+    })
+    
+    
 }

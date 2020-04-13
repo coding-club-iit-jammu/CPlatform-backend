@@ -12,5 +12,16 @@ const assignmentSchema = new Schema({
     submissionDate:{
         type:Date,
         required:true
+    },
+    maximumMarks:{
+        type: Number,
+        required: true
+    },
+    course: {
+        type: Schema.Types.ObjectId,
+        ref: 'Course'
     }
 })
+
+const Assignment = mongoose.model('Assignment', assignmentSchema);
+module.exports = Assignment;

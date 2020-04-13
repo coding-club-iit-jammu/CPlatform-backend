@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-
+import { Router } from '@angular/router';
 import { StoreInfoService } from '../services/store-info.service';
 
 @Component({
@@ -30,7 +30,8 @@ export class HomeComponent implements OnInit {
   }
   constructor(private http: HttpClient,
               private storeInfo: StoreInfoService,
-              private formBuilder: FormBuilder) { 
+              private formBuilder: FormBuilder,
+              private router: Router) { 
               }
 
   ngOnInit() {
@@ -108,6 +109,7 @@ export class HomeComponent implements OnInit {
     this.http.get(this.storeInfo.serverUrl + '/user/get',options).subscribe((data)=>{
       console.log(data);
       this.userData = data;
+      this.storeInfo.userData = data;
       this.showSpinner = false;
     }, error =>{
       console.log(error);
@@ -131,4 +133,8 @@ export class HomeComponent implements OnInit {
     }); 
   }
 
+  openCourse(code,role){
+    this.storeInfo.role[code] = role;
+    this.router.navigate(['/course',code]);
+  }
 }

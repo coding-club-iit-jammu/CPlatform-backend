@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const schema = mongoose.Schema;
+const Schema = mongoose.Schema;
 
 const postSchema = new Schema({
     title:{
@@ -11,16 +11,14 @@ const postSchema = new Schema({
         type: String,
         required:true
     },
-    file:[],
     by:{
-        type:String,
-        required:true
+        type: String,
+        required : true
     },
-    audience:[],
     date:{
         type:Date,
         required:true
     }
 })
 
-module.exports = mongoose.model("Post",courseSchema);
+module.exports = mongoose.model("Post",postSchema);

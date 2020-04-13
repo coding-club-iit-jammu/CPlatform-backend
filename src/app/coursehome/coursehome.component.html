@@ -1,13 +1,13 @@
 <div class="wrapper">
-    <div class="overlay" *ngIf="">   
+    <div class="overlay" *ngIf="showSpinner">   
         <div class="spinner-wrapper">
             <app-spinner></app-spinner>
         </div>
     </div>
-    <div [class.blurred]="showSpinner">
+    <div [class.blurred]="!showSpinner">
         <div class="navBarCss">
             <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
-                <span class="navbar-brand mb-0 h1">Code</span>
+                <span class="navbar-brand mb-0 h1">{{code.substring(8)}}</span>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
                 </button>
@@ -24,7 +24,7 @@
                             <a class="nav-link" (click) = "setView(3)"> Tests</a>
                         </li>
                     </ul>
-                    <button class="btn btn-warning mr-2 my-sm-0" type="button">Home</button>
+                    <button class="btn btn-warning mr-2 my-sm-0" type="button" (click)="moveBack()">Home</button>
                     &nbsp;&nbsp;<br>
                     <button class="btn btn-danger my-2 my-sm-0" type="button">Sign Out</button>
                 </div>
@@ -34,74 +34,22 @@
             <div class = "mainClass" >
                 <div class="view1 mt-6 pb-3" *ngIf="view==1">
                     <div class="row mx-3 pl-4">
-                        <div class="card text-center mt-3 mx-2 border-info width45">
-                            <div class="card-header border-info">
-                              Featured
+                        <div class="card text-center mt-3 mx-2 border-info width45" *ngFor="let post of posts">
+                            <div class="card-header border-info text-left">
+                              {{post.by}}
                             </div>
                             <div class="card-body">
-                              <h5 class="card-title">Special title treatment</h5>
-                              <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                              <a href="#" class="btn btn-info">Go somewhere</a>
+                              <h5 class="card-title">{{post.title}}</h5>
+                              <p class="card-text">{{post.description}}</p>
+                              <!-- <a href="#" class="btn btn-info">Go somewhere</a> -->
                             </div>
                             <div class="card-footer border-info text-muted">
-                              2 days ago
-                            </div>
-                        </div>
-                        <div class="card text-center mt-3 mx-2 border-info width45">
-                            <div class="card-header border-info">
-                              Featured
-                            </div>
-                            <div class="card-body">
-                              <h5 class="card-title">Special title treatment</h5>
-                              <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                              <a href="#" class="btn btn-info">Go somewhere</a>
-                            </div>
-                            <div class="card-footer border-info text-muted">
-                              2 days ago
-                            </div>
-                        </div>
-                        <div class="card text-center mt-3 mx-2 border-info width45">
-                            <div class="card-header border-info">
-                              Featured
-                            </div>
-                            <div class="card-body">
-                              <h5 class="card-title">Special title treatment</h5>
-                              <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                              <a href="#" class="btn btn-info">Go somewhere</a>
-                            </div>
-                            <div class="card-footer border-info text-muted">
-                              2 days ago
-                            </div>
-                        </div>
-                        <div class="card text-center mt-3 mx-2 border-info width45">
-                            <div class="card-header border-info">
-                              Featured
-                            </div>
-                            <div class="card-body">
-                              <h5 class="card-title">Special title treatment</h5>
-                              <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                              <a href="#" class="btn btn-info">Go somewhere</a>
-                            </div>
-                            <div class="card-footer border-info text-muted">
-                              2 days ago
-                            </div>
-                        </div>
-                        <div class="card text-center mt-3 mx-2 border-info width45">
-                            <div class="card-header border-info">
-                              Featured
-                            </div>
-                            <div class="card-body">
-                              <h5 class="card-title">Special title treatment</h5>
-                              <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                              <a href="#" class="btn btn-info">Go somewhere</a>
-                            </div>
-                            <div class="card-footer border-info text-muted">
-                              2 days ago
+                              {{post.date | date:'medium'}}
                             </div>
                         </div>
                     </div>
                     <div class="row mx-3 pl-4 fixed-bottom mb-4">
-                        <button class="btn btn-success border-success mx-auto bigButton rounded-circle btn-lg">+</button>
+                        <button class="btn btn-success border-success mx-auto bigButton rounded-circle btn-lg" data-toggle="modal" data-target="#createPostModal">+</button>
                     </div>
                 </div>
                 
@@ -122,7 +70,7 @@
                         </div>
                     </div>
                     <div class="row mx-3 pl-4 fixed-bottom mb-4">
-                        <button class="btn btn-success border-success mx-auto bigButton rounded-circle btn-lg">+</button>
+                        <button class="btn btn-success border-success mx-auto bigButton rounded-circle btn-lg" *ngIf="role=='instructor'" data-toggle="modal" data-target="#createAssignmentModal">+</button>
                     </div>
                 </div>
     
@@ -143,7 +91,7 @@
                         </div>
                     </div>
                     <div class="row mx-3 pl-4 fixed-bottom mb-4">
-                        <button class="btn btn-success border-success mx-auto bigButton rounded-circle btn-lg">+</button>
+                        <button class="btn btn-success border-success mx-auto bigButton rounded-circle btn-lg" *ngIf="role=='instructor'" data-toggle="modal" data-target="#createTestModal">+</button>
                     </div>
                 </div>
             </div>
@@ -154,30 +102,26 @@
                             <div class="card-header font-weight-bold border-primary">
                                 Instructors
                             </div>
-                            <div class="card-body">
-                                <p>Instructor 1</p>
-                                <p>Instructor 2</p>
-                                <p>Instructor 3</p>
+                            <div class="card-body" *ngFor="let instructor of course.instructors">
+                                <p>{{instructor.name}}</p>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="text-center">
+                <div class="text-center" *ngIf="course.teachingAssistants.length > 0">
                     <div class="card w-75 mx-auto my-3 border-primary">
                         <div class="card-content">
                             <div class="card-header font-weight-bold border-primary">
                                 Teaching Assistants
                             </div>
-                            <div class="card-body">
-                                <p>TA 1</p>
-                                <p>TA 2</p>
-                                <p>TA 3</p>
+                            <div class="card-body" *ngFor="let instructor of course.teachingAssistants">
+                                <p>{{instructor.name}}</p>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="bottom text-center">
-                    <button class="btn btn-primary">Access Codes</button>
+                    <button class="btn btn-primary" *ngIf="role=='instructor'" data-toggle="modal" data-target="#accessCodesModal">Access Codes</button>
                 </div>
             </div>
         </div>
@@ -190,6 +134,88 @@
             <br>
             Footer
             <br>
+        </div>
+
+
+        <!-- Modals -->
+        <div class="modal fade" id="accessCodesModal" role="dialog" *ngIf="role=='instructor'">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Access Codes</h4>
+                        <button type="button" class="close" data-dismiss="modal" style="float: right;">&times;</button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <p>Instructor : {{joiningCodes.instructor}}</p>
+                        <p>Teaching Assistant : {{joiningCodes.teachingAssistant}}</p>
+                        <p>Student : {{joiningCodes.student}}</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" style="float: right;" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="createPostModal" role="dialog">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Add Post</h4>
+                        <button type="button" class="close" data-dismiss="modal" style="float: right;">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <form [formGroup]="postForm">
+                            <label class="my-2" for="title">Title</label>
+                            <input type="text" class="form-control" name="title" formControlName="title" placeholder="Title" required>
+                            <label class="my-2" for="description">Description</label>
+                            <textarea name="description" class="w-100 form-control" rows="10" formControlName="description" placeholder="Enter your Content here." required></textarea>
+                            <div class="modal-footer">
+                                <div>
+                                    <button type="button" class="btn btn-danger" id="postModalClose" data-dismiss="modal" style="float: left;">Close</button>
+                                </div>
+                                <div>
+                                    <button type="button" class="btn btn-success" [disabled]="!postForm.valid" style="float: right;" (click)="createPost(postForm.value)">Add</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="createAssignmentModal" role="dialog">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Create Assignment</h4>
+                        <button type="button" class="close" data-dismiss="modal" style="float: right;">&times;</button>
+                    </div>
+                    <div class="modal-body text-center">
+                        
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" [disabled]="true" style="float: right;" data-dismiss="modal">Create</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="createTestModal" role="dialog">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Create Test</h4>
+                        <button type="button" class="close" data-dismiss="modal" style="float: right;">&times;</button>
+                    </div>
+                    <div class="modal-body text-center">
+                        
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" [disabled]="true" style="float: right;" data-dismiss="modal">Create</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <!-- <div class="all" >

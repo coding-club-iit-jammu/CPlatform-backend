@@ -51,7 +51,7 @@ courseSchema.methods.addStudent = function(userId){
 }
 
 courseSchema.methods.addPost = function(postId){
-    this.posts.push(userId);
+    this.posts.push(postId);
     return this.save()
 }
 

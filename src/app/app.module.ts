@@ -22,6 +22,13 @@ import { QuizComponent } from './quiz/quiz.component';
 import { DetailsComponent } from './details/details.component';
 import { HomeComponent } from './home/home.component';
 import { IdeComponent } from './ide/ide.component';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+
+import {MatSnackBarModule} from '@angular/material/snack-bar';
+
+import { MaterialComponentService } from './services/material-component.service';
+
+import { QuillModule } from 'ngx-quill'
 
 @NgModule({
   declarations: [
@@ -45,11 +52,15 @@ import { IdeComponent } from './ide/ide.component';
     AngularFireStorageModule,
     AngularFireDatabaseModule,
     AngularFireAuthModule,
-    HttpClientModule
+    HttpClientModule,
+    NoopAnimationsModule,
+    MatSnackBarModule,
+    QuillModule.forRoot()
   ],
   providers: [
     FirebaseServicesService,
-    TimeAPIClientService
+    TimeAPIClientService,
+    MaterialComponentService
   ],
   bootstrap: [AppComponent]
 })

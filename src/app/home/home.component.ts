@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { StoreInfoService } from '../services/store-info.service';
+import { MaterialComponentService } from '../services/material-component.service';
 
 @Component({
   selector: 'app-home',
@@ -31,7 +32,9 @@ export class HomeComponent implements OnInit {
   constructor(private http: HttpClient,
               private storeInfo: StoreInfoService,
               private formBuilder: FormBuilder,
-              private router: Router) { 
+              private router: Router,
+              private matComp: MaterialComponentService
+              ) { 
               }
 
   ngOnInit() {
@@ -67,7 +70,7 @@ export class HomeComponent implements OnInit {
     .subscribe((data)=>{
       console.log(data);
       this.showSpinner = false;
-      alert(data['message']);
+      this.matComp.openSnackBar(data['message'],2000);
       this.resetAddCourseForm();
 
     },(error)=>{
@@ -85,9 +88,8 @@ export class HomeComponent implements OnInit {
     }
     this.http.post(this.storeInfo.serverUrl + '/course/join',this.joinCourseForm.value,options)
     .subscribe((data)=>{
-      console.log(data);
       this.showSpinner = false;
-      alert(data['message']);
+      this.matComp.openSnackBar(data['message'],2000);
       this.resetJoinCourseForm();
 
     },(error)=>{
@@ -107,11 +109,11 @@ export class HomeComponent implements OnInit {
       })
     };
     this.http.get(this.storeInfo.serverUrl + '/user/get',options).subscribe((data)=>{
-      console.log(data);
       this.userData = data;
       this.storeInfo.userData = data;
       this.showSpinner = false;
     }, error =>{
+      this.matComp.openSnackBar('Network Problem!',2000);
       console.log(error);
     });
   }

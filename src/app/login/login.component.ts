@@ -3,6 +3,7 @@ import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { StoreInfoService }  from '../services/store-info.service';
+import { MaterialComponentService } from '../services/material-component.service';
 
 @Component({
   selector: 'app-login',
@@ -21,7 +22,8 @@ export class LoginComponent implements OnInit {
       private formBuilder: FormBuilder, 
       private router: Router,
       private http: HttpClient,
-      private storeInfo: StoreInfoService
+      private storeInfo: StoreInfoService,
+      private material: MaterialComponentService
     ){ 
       
     }
@@ -39,7 +41,7 @@ export class LoginComponent implements OnInit {
     this.showSpinner1 = true;
     this.http.post(this.storeInfo.serverUrl + '/login',this.form.value).pipe().subscribe((data)=>{
       if(!data["userId"]){
-        alert(data['message']);
+        this.material.openSnackBar(data['message'],2000);
         this.router.navigateByUrl('/');
         return;
       }
@@ -50,7 +52,7 @@ export class LoginComponent implements OnInit {
       this.router.navigateByUrl('/home');
     },error =>{
       this.showSpinner1 = false;
-      alert('Network Problem.');
+      this.material.openSnackBar('Network Problem',3000);
     })
   }
 

@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { StoreInfoService } from '../services/store-info.service';
+import { MaterialComponentService } from '../services/material-component.service';
 
 @Component({
   selector: 'app-details',
@@ -18,7 +19,8 @@ export class DetailsComponent implements OnInit {
         private formBuilder: FormBuilder,
         private router: Router,
         private http: HttpClient,
-        private storeInfo: StoreInfoService
+        private storeInfo: StoreInfoService,
+        private matComp: MaterialComponentService
       ) {
     }
 
@@ -40,12 +42,12 @@ export class DetailsComponent implements OnInit {
     if(data.confirmPassword === data.password){
       this.http.post(this.storeInfo.serverUrl + '/createUser',data).subscribe((response)=>{
         if(!data.added){
-          alert('Sign Up Failed.')
+          this.matComp.openSnackBar('Sign Up Failed!',2500);
         }
         this.showSpinner = false;
         this.router.navigate(['/']);
       },error=>{
-        console.log(error)
+        this.matComp.openSnackBar('Network Problem!',2500);
         this.showSpinner = false
       })
 

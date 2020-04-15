@@ -3,7 +3,7 @@ import { FormatdatePipe } from '../formatdate.pipe';
 import { StoreInfoService } from '../services/store-info.service'
 import { Router, ActivatedRoute, Params } from '@angular/router'
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-coursehome',
@@ -41,7 +41,8 @@ export class CoursehomeComponent implements OnInit {
   postForm: FormGroup;
   assignmentForm: FormGroup;
   testForm: FormGroup;
-
+  file:any;
+  
   course:any={
     title:"",
     instructors:[],
@@ -52,28 +53,18 @@ export class CoursehomeComponent implements OnInit {
   assignmentCounts:number = 0;
   submissionPossible=true;
   time: Date;
-  file:any;
   fileName:string;
   userType:string;
   instructor:boolean = false;
   marksUpload:any;
   assignmentDoc:any = null;
 
-  // async gettime(){
-  //   await this.timeApi.getTime().then(data=>{
-  //     this.time = new Date(data);
-  //   })
-  // }
-
-
   async ngOnInit() {
   
     this.showSpinner = true;
 
-    this.postForm = this.formBuilder.group({
-      title: this.formBuilder.control(''),
-      description: this.formBuilder.control('')
-    })
+    this.resetPostForm();
+    this.resetAssignmentForm();
 
     this.code = this.activatedRoute.snapshot.paramMap.get('courseId');
     this.role = this.storeInfo.role[this.code];
@@ -195,15 +186,28 @@ export class CoursehomeComponent implements OnInit {
         'Authorization': 'Bearer ' + sessionStorage.getItem('token')
       })
     };
+    if(this.file)
+      data['file'] = this.file;
+    let tempData = new FormData();
     
-    this.http.post(this.storeInfo.serverUrl+'/course/addAssignment', data, options).subscribe( resData => {
+    for(let x in data){
+      tempData.append(x,data[x]);
+    }
+    console.log(tempData);
+    this.http.post(this.storeInfo.serverUrl+'/course/addAssignment', tempData, options).subscribe( resData => {
       console.log(resData);
     },error => {
     })
   }
 
   resetAssignmentForm(){
-
+    this.assignmentForm = this.formBuilder.group({
+      title : this.formBuilder.control('',Validators.required),
+      description : this.formBuilder.control('',Validators.required),
+      marks: this.formBuilder.control('',Validators.required),
+      deadline: this.formBuilder.control('',Validators.required),
+      file: this.formBuilder.control('')
+    });
   }
 
   createTest(data: Object){
@@ -249,6 +253,12 @@ export class CoursehomeComponent implements OnInit {
     console.log("Getting Tests")
   }
 
+  onFileChange(event) {
+    if (event.target.files && event.target.files.length) {
+      this.fileName = event.target.files[0].name;
+      this.file = event.target.files[0];
+    }
+  }
   // checkStatus(date: string){
   
   //   var dd = new Date(date);
@@ -257,16 +267,6 @@ export class CoursehomeComponent implements OnInit {
   
   // }
 
-  public onFileChange(event) {
-  
-    const reader = new FileReader();
- 
-    if (event.target.files && event.target.files.length) {
-      this.fileName = event.target.files[0].name;
-      this.file = event.target.files[0];
-    }
-  
-  }
   
   
   async uploadSubmission(assignmentNo:number){

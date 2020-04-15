@@ -1,6 +1,7 @@
 const Course = require('../models/course');
 const User = require('../models/user');
 const Post = require('../models/post');
+const Assignment = require('../models/assignment');
 
 exports.addCourse = (req,res,next) => {
     console.log(req.body);
@@ -227,6 +228,49 @@ exports.addPost = async (req,res,next) => {
             })
         })
     })
+    
+    
+}
+
+exports.addAssignment = async (req,res,next) => {
+    
+    const courseId = req.courseId;
+    const title = req.body.title;
+    const description = req.body.description;
+    console.log(req.body);
+    // let name;
+
+    // await User.findById(by).then((user)=>{
+    //     if(!user){
+    //         res.status(400).json({message:'Bad request.'})
+    //     }
+    //     name = user.name;
+    // })
+    // const post = new Post({
+    //     by: name,
+    //     date: new Date().toLocaleString('en-In'),
+    //     title: title,
+    //     description: description
+    // });
+
+    // post.save().then((post)=>{
+    //     if(!post){
+    //         res.status(400).json({message: "Unable to Post it."});
+    //         return;
+    //     }
+
+    //     Course.findById(courseId).then((course)=>{
+    //         if(!course){
+    //             Post.findByIdAndDelete(post._id).exec();
+    //         }
+    //         course.addPost(post._id).then((result)=>{
+    //             if(!result){
+    //                 Post.findByIdAndDelete(post._id).exec();
+    //             }
+    //             res.status(200).json({message:'Post Added'});
+    //         })
+    //     })
+    // })
     
     
 }

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 const assignmentSchema = new Schema({
     title:{
@@ -9,7 +10,7 @@ const assignmentSchema = new Schema({
         type: String,
         required:true
     },
-    submissionDate:{
+    deadline:{
         type:Date,
         required:true
     },
@@ -17,9 +18,8 @@ const assignmentSchema = new Schema({
         type: Number,
         required: true
     },
-    course: {
-        type: Schema.Types.ObjectId,
-        ref: 'Course'
+    fileUrl:{
+        type: String
     }
 })
 

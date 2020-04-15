@@ -39,8 +39,8 @@
                               {{post.by}}
                             </div>
                             <div class="card-body">
-                              <h5 class="card-title">{{post.title}}</h5>
-                              <p class="card-text">{{post.description}}</p>
+                                <h5 class="card-title">{{post.title}}</h5>
+                                <p class="card-text text-left" [innerHtml]="post.description"></p>
                               <!-- <a href="#" class="btn btn-info">Go somewhere</a> -->
                             </div>
                             <div class="card-footer border-info text-muted">
@@ -125,15 +125,16 @@
                 </div>
             </div>
         </div>
-        <div class="bottom bg-dark text-center">
-            Footer
+        <div class="bottom bg-dark py-3 text-light text-center">
+            <h3>{{course.title}}</h3>
+            <!-- Footer
             <br>
             Footer
             <br>
             Footer
             <br>
             Footer
-            <br>
+            <br> -->
         </div>
 
 
@@ -146,9 +147,9 @@
                         <button type="button" class="close" data-dismiss="modal" style="float: right;">&times;</button>
                     </div>
                     <div class="modal-body text-center">
-                        <p>Instructor : {{joiningCodes.instructor}}</p>
-                        <p>Teaching Assistant : {{joiningCodes.teachingAssistant}}</p>
-                        <p>Student : {{joiningCodes.student}}</p>
+                        <p class="form-control">Instructor : {{joiningCodes.instructor}}</p>
+                        <p class="form-control">Teaching Assistant : {{joiningCodes.teachingAssistant}}</p>
+                        <p class="form-control">Student : {{joiningCodes.student}}</p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" style="float: right;" data-dismiss="modal">Close</button>
@@ -166,10 +167,15 @@
                     </div>
                     <div class="modal-body">
                         <form [formGroup]="postForm">
-                            <label class="my-2" for="title">Title</label>
-                            <input type="text" class="form-control" name="title" formControlName="title" placeholder="Title" required>
-                            <label class="my-2" for="description">Description</label>
-                            <textarea name="description" class="w-100 form-control" rows="10" formControlName="description" placeholder="Enter your Content here." required></textarea>
+                            <div>
+                                <label class="my-2" for="title">Title</label>
+                                <input type="text" class="form-control" name="title" formControlName="title" placeholder="Title" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Description</label>
+                                <quill-editor placeholder="Enter Text" formControlName="description" required>
+                                </quill-editor>
+                            </div>
                             <div class="modal-footer">
                                 <div>
                                     <button type="button" class="btn btn-danger" id="postModalClose" data-dismiss="modal" style="float: left;">Close</button>
@@ -184,18 +190,40 @@
             </div>
         </div>
 
-        <div class="modal fade" id="createAssignmentModal" role="dialog">
-            <div class="modal-dialog modal-dialog-centered">
+        <div class="modal fade mx-auto" id="createAssignmentModal" role="dialog">
+            <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h4 class="modal-title">Create Assignment</h4>
                         <button type="button" class="close" data-dismiss="modal" style="float: right;">&times;</button>
                     </div>
-                    <div class="modal-body text-center">
-                        
+                    <div class="modal-body">
+                        <form [formGroup]="assignmentForm">
+                            <div class="form-group">
+                                <label>Title</label>
+                                <input formControlName="title" type="text" class="form-control" placeholder="Enter Title Here" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Description</label>
+                                <quill-editor placeholder="Enter Text" formControlName="description" required>
+                                </quill-editor>
+                            </div>
+                            <div class="form-group">
+                                <label>Document</label>
+                                <input type="file" class="form-control-file" formControlName="file" id="uploadAssignmentDoc" (change)="uploadAssignmentDocListener($event)">
+                            </div>
+                            <div class="form-group">
+                                <label>Deadline</label>
+                                <input formControlName="deadline" type="datetime-local" class="form-control" id="assignmentDeadline" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Marks</label>
+                                <input formControlName="marks" type="number" class="form-control" id="assignmentMarks" required>
+                            </div>
+                        </form>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-success" [disabled]="true" style="float: right;" data-dismiss="modal">Create</button>
+                        <button type="button" class="btn btn-success" style="float: right;" data-dismiss="modal" (click)="createAssignment(assignmentForm.value)">Create</button>
                     </div>
                 </div>
             </div>

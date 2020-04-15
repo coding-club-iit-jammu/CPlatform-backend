@@ -12,6 +12,7 @@ const router = express.Router();
 router.post('/add', isAuth, courseController.addCourse);
 router.post('/join', isAuth, courseController.joinCourse);
 router.post('/addPost', isAuth, isEnrol, courseController.addPost);
+router.post('/addAssignment', isAuth, isEnrol, courseController.addAssignment);
 
 router.get('/getInfo', isAuth, verifyRole, courseController.getCourseInfo);
 router.get('/getPosts', isAuth, isEnrol, courseController.getPosts);

@@ -3,7 +3,7 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
-
+const multer = require('multer');
 const authRoute = require('./routes/auth');
 const courseRoute = require('./routes/course');
 const userRoute = require('./routes/user');
@@ -11,8 +11,9 @@ const userRoute = require('./routes/user');
 const app = express();
 
 app.use(cors());
+app.use(multer().single('file'));
+app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
-
 app.use(authRoute);
 app.use('/course',courseRoute);
 app.use('/user',userRoute);

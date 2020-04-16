@@ -14,11 +14,11 @@ const assignmentSchema = new Schema({
         type:Date,
         required:true
     },
-    maximumMarks:{
+    marks:{
         type: Number,
         required: true
     },
-    fileUrl:{
+    file:{
         type: String
     }
 })

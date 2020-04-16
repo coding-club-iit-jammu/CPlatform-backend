@@ -161,8 +161,8 @@ exports.getAssignments = (req,res,next) => {
     const courseId = req.courseId;
 
     Course.findById(courseId)
-    .select('posts')
-    .populate('posts')
+    .select('assignments')
+    .populate('assignments')
     .then( course => {
         if(!course){
             res.status(404).json({message:"Course Not Found"});
@@ -237,40 +237,41 @@ exports.addAssignment = async (req,res,next) => {
     const courseId = req.courseId;
     const title = req.body.title;
     const description = req.body.description;
+    const deadline = req.body.deadline;
+    const marks = req.body.marks;
+    
+    let assignment;
+    
     console.log(req.body);
-    // let name;
 
-    // await User.findById(by).then((user)=>{
-    //     if(!user){
-    //         res.status(400).json({message:'Bad request.'})
-    //     }
-    //     name = user.name;
-    // })
-    // const post = new Post({
-    //     by: name,
-    //     date: new Date().toLocaleString('en-In'),
-    //     title: title,
-    //     description: description
-    // });
+    if(req.file){
+        assignment = new Assignment({
+            title : title,
+            description : description,
+            deadline : deadline,
+            file : req.file.path,
+            marks : marks
+        });
+    } else {
+        assignment = new Assignment({
+            title : title,
+            description : description,
+            deadline : deadline,
+            marks : marks
+        });
+    }
 
-    // post.save().then((post)=>{
-    //     if(!post){
-    //         res.status(400).json({message: "Unable to Post it."});
-    //         return;
-    //     }
+    assignment.save().then( async assignment => {
+        if(!assignment){
+            res.status(500).json({message: "Try Again"});
+        }
 
-    //     Course.findById(courseId).then((course)=>{
-    //         if(!course){
-    //             Post.findByIdAndDelete(post._id).exec();
-    //         }
-    //         course.addPost(post._id).then((result)=>{
-    //             if(!result){
-    //                 Post.findByIdAndDelete(post._id).exec();
-    //             }
-    //             res.status(200).json({message:'Post Added'});
-    //         })
-    //     })
-    // })
-    
-    
+        const course = await Course.findById(courseId);
+        course.addAssignment(assignment._id).then((result)=>{
+            if(!result){
+                assignment.findByIdAndDelete(assignment._id).exec();
+            }
+            res.status(201).json({message:'Assignment Added'});
+        })
+    })
 }

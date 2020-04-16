@@ -4,7 +4,7 @@ import { StoreInfoService } from '../services/store-info.service'
 import { Router, ActivatedRoute, Params } from '@angular/router'
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-
+import { MaterialComponentService } from '../services/material-component.service';
 @Component({
   selector: 'app-coursehome',
   templateUrl: './coursehome.component.html',
@@ -17,7 +17,8 @@ export class CoursehomeComponent implements OnInit {
               private router: Router,
               private activatedRoute: ActivatedRoute,
               private http: HttpClient,
-              private formBuilder: FormBuilder
+              private formBuilder: FormBuilder,
+              private matComp: MaterialComponentService
               ) { }
 
   view:number = 1;
@@ -179,25 +180,25 @@ export class CoursehomeComponent implements OnInit {
     })
   }
 
-  createAssignment(data: Object){
-    const options = {
-      headers: new HttpHeaders({
-        'Content-Type':  'application/json',
-        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
-      })
-    };
-    if(this.file)
-      data['file'] = this.file;
-    let tempData = new FormData();
+  async createAssignment(data: Object){
+    this.showSpinner = true;
+
+    let formData: any = new FormData();
+    formData.append("title", this.assignmentForm.get('title').value);
+    formData.append("file", this.assignmentForm.get('doc').value);
+    formData.append("description", this.assignmentForm.get('description').value);
+    formData.append("deadline", this.assignmentForm.get('deadline').value);
+    formData.append("marks", this.assignmentForm.get('marks').value);
+    formData.append("courseId", this.course._id);
     
-    for(let x in data){
-      tempData.append(x,data[x]);
-    }
-    console.log(tempData);
-    this.http.post(this.storeInfo.serverUrl+'/course/addAssignment', tempData, options).subscribe( resData => {
-      console.log(resData);
+    await this.http.post(this.storeInfo.serverUrl+'/course/addAssignment', formData,{observe: 'response',headers: new HttpHeaders({
+      'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+    })}).toPromise().then( resData => {
+        console.log(resData);
     },error => {
     })
+
+    this.showSpinner = false;
   }
 
   resetAssignmentForm(){
@@ -206,7 +207,7 @@ export class CoursehomeComponent implements OnInit {
       description : this.formBuilder.control('',Validators.required),
       marks: this.formBuilder.control('',Validators.required),
       deadline: this.formBuilder.control('',Validators.required),
-      file: this.formBuilder.control('')
+      doc: this.formBuilder.control(null)
     });
   }
 
@@ -251,6 +252,14 @@ export class CoursehomeComponent implements OnInit {
 
   getTests(){
     console.log("Getting Tests")
+  }
+
+  uploadFile(event) {
+    const file = (event.target as HTMLInputElement).files[0];
+    this.assignmentForm.patchValue({
+      doc : file
+    });
+    this.assignmentForm.get('doc').updateValueAndValidity()
   }
 
   onFileChange(event) {

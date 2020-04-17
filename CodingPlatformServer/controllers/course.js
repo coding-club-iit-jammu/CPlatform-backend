@@ -1,3 +1,8 @@
+const fs = require('fs');
+const path = require('path');
+
+const mkdirp = require('mkdirp');
+
 const Course = require('../models/course');
 const User = require('../models/user');
 const Post = require('../models/post');
@@ -174,6 +179,28 @@ exports.getAssignments = (req,res,next) => {
     })
 }
 
+exports.getAssignmentDoc = (req, res, next) => {
+    const assignmentId = req.query.assignmentId;
+
+    Assignment.findById(assignmentId).then((assignment)=>{
+        if(!assignment){
+            res.status(404).json({message:'Assignment not found.'});
+            return;
+        }
+        
+        console.log(assignment);
+
+        res.download(assignment.file,(err)=>{
+            if(err){
+                console.log(err);
+                res.status(404).json({message:'File not found.'});
+                return;   
+            }
+        })
+
+    })
+}
+
 exports.getJoiningCodes = (req,res,next) => {
     
     const courseId = req.courseId;
@@ -245,13 +272,38 @@ exports.addAssignment = async (req,res,next) => {
     const requiresSubmission = req.body.requiresSubmission;
 
     let assignment;
+
+    console.log(req.body);
     
     if(req.file){
+
+        const fileExt = path.parse(path.basename(req.file.path)).ext;
+        let oldPath = req.file.path;
+        let newPath = path.join(__dirname,'..','data',req.body.courseCode,title).toString();
+        
+        await mkdirp(newPath);
+        newPath = path.join(newPath,title+fileExt);
+
+        let moved = true;
+        await fs.renameSync(oldPath, newPath, function (err) {
+            if (err) {
+                moved = false;
+                throw err
+            }
+            else{
+                console.log('Successfully renamed - AKA moved!')
+            }
+        })
+
+        if(!moved)
+            newPath = oldPath;
+
+        console.log(newPath);
         assignment = new Assignment({
             title : title,
             description : description,
             deadline : deadline,
-            file : req.file.path,
+            file : newPath.toString(),
             marks : marks,
             requiresSubmission: requiresSubmission
         });
@@ -264,7 +316,7 @@ exports.addAssignment = async (req,res,next) => {
             requiresSubmission : requiresSubmission
         });
     }
-
+    console.log(assignment);
     assignment.save().then( async assignment => {
         if(!assignment){
             res.status(500).json({message: "Try Again"});
@@ -278,6 +330,8 @@ exports.addAssignment = async (req,res,next) => {
                 res.status(500).json({message: "Try Again"});
                 return;
             }
+
+            
             res.status(201).json({message:'Assignment Added'});
         })
     })

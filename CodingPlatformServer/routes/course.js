@@ -32,7 +32,10 @@ router.post('/addAssignment', isAuth, upload.single('file'), getRole,
 router.get('/getInfo', isAuth, getRole, courseController.getCourseInfo);
 router.get('/getPosts', isAuth, getRole, courseController.getPosts);
 router.get('/getTests', isAuth, getRole, courseController.getTests);
+
 router.get('/getAssignments', isAuth, getRole, courseController.getAssignments);
+router.get('/getAssignmentDoc', isAuth, getRole, courseController.getAssignmentDoc);
+
 router.get('/getJoiningCodes', isAuth, getRole, isInstructor, courseController.getJoiningCodes);
 
 module.exports = router;

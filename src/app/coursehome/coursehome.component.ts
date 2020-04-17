@@ -202,7 +202,7 @@ export class CoursehomeComponent implements OnInit {
     const options = {
       observe: 'response' as 'body',
       headers: new HttpHeaders({
-        'Content-Type':  'application/json',
+        // 'Content-Type':  'application/json',
         'Authorization': 'Bearer ' + sessionStorage.getItem('token')
       })
     };
@@ -235,7 +235,8 @@ export class CoursehomeComponent implements OnInit {
       description : this.formBuilder.control('',Validators.required),
       marks: this.formBuilder.control('',Validators.required),
       deadline: this.formBuilder.control('',Validators.required),
-      requiresSubmission: this.formBuilder.control(true)
+      requiresSubmission: this.formBuilder.control(true),
+      doc: this.formBuilder.control(null)
     });
   }
 
@@ -296,6 +297,37 @@ export class CoursehomeComponent implements OnInit {
         this.course.assignments = resData['body']['assignments'].reverse();
       } else {
         this.matComp.openSnackBar(resData['body']['message'],2000);
+      }
+    },error => {
+      this.matComp.openSnackBar(error,2000);
+    })
+    this.showSpinner = false;
+  }
+
+  async getAssignmentDoc(assignmentId){
+    this.showSpinner = true;
+    const options = {
+      observe: 'response' as 'body',
+      responseType: 'blob' as 'json',
+      headers: new HttpHeaders({
+        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+      }),
+      params : new HttpParams().set('courseCode',this.code).set('assignmentId',assignmentId)
+    };
+    
+    this.http.get(this.storeInfo.serverUrl+'/course/getAssignmentDoc', options).subscribe( (resData : Blob) => {
+      if(resData['status'] == 200){
+        let dataType = resData['body'].type;
+        let binaryData = [];
+        console.log(dataType);
+        binaryData.push(resData['body']);
+        let downloadLink = document.createElement('a');
+        downloadLink.href = window.URL.createObjectURL(new Blob(binaryData,{type : dataType}));
+        downloadLink.target = "_blank";
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+      } else {
+        this.matComp.openSnackBar(resData['body']['message'],2000);  
       }
     },error => {
       this.matComp.openSnackBar(error,2000);

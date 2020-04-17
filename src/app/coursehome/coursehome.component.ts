@@ -44,10 +44,14 @@ export class CoursehomeComponent implements OnInit {
   testForm: FormGroup;
   file:any;
   
-  course:any={
+  course : any ={
     title:"",
     instructors:[],
-    teachingAssistants:[]
+    teachingAssistants:[],
+    posts:[],
+    assignments:[],
+    _id:'',
+    role:''
   };
   // assignments:any = [];
   selectedAssignment:number;
@@ -68,29 +72,29 @@ export class CoursehomeComponent implements OnInit {
     this.resetAssignmentForm();
 
     this.code = this.activatedRoute.snapshot.paramMap.get('courseId');
-    this.role = this.storeInfo.role[this.code];
-    console.log(this.role);
-    if(!this.role){
-      this.router.navigateByUrl('/home');
+    
+    if(!sessionStorage.getItem('token')){
+      this.router.navigateByUrl('/');
       return;
     }
-    
     const options = {
+      observe: 'response' as 'body',
       headers: new HttpHeaders({
         'Content-Type':  'application/json',
         'Authorization': 'Bearer ' + sessionStorage.getItem('token')
       }),
-      params: new HttpParams().set('role',this.role).set('code',this.code)
+      params: new HttpParams().set('courseCode',this.code)
     };
     
-    // Retrieving Title Instructors and TA info from 
     await this.http.get(this.storeInfo.serverUrl+'/course/getInfo', options).toPromise().then(data=>{
-      
-      this.course = data;
-      this.posts = data['posts'];
-
-      if(this.role == 'instructor'){
-        this.getJoiningCodes();
+      if(data['status'] == 200){
+        this.course = data['body'];
+        this.course.posts = this.course.posts.reverse();
+        if(this.course.role == 'instructor'){
+          this.getJoiningCodes();
+        }
+      } else {
+        this.matComp.openSnackBar(data['body']['message'],2000);
       }
       this.showSpinner = false;
     },error => {
@@ -133,6 +137,8 @@ export class CoursehomeComponent implements OnInit {
     this.view = tabvalue;
     if(tabvalue == 1){
       await this.getPosts();
+    } else {
+      await this.getAssignments();
     }
   }
   
@@ -140,35 +146,45 @@ export class CoursehomeComponent implements OnInit {
   getJoiningCodes(){
     this.showSpinner = true;
     const options = {
+      observe: 'response' as 'body',
       headers: new HttpHeaders({
         'Content-Type':  'application/json',
         'Authorization': 'Bearer ' + sessionStorage.getItem('token')
       }),
-      params: new HttpParams().set('courseId',this.course._id)
+      params: new HttpParams().set('courseCode',this.code)
     };
     
     this.http.get(this.storeInfo.serverUrl+'/course/getJoiningCodes', options).subscribe(data=>{
-      this.joiningCodes = data['joiningCode'];
+      if(data['status'] == 200){
+        this.joiningCodes = data['body']['joiningCode'];
+      } else {
+        this.matComp.openSnackBar(data['body']['message'],2000);
+      }
     },error => {
+      this.matComp.openSnackBar(error,2000);
     })
     
   }
 
   async createPost(data: Object){
     const options = {
+      observe: 'response' as 'body',
       headers: new HttpHeaders({
         'Content-Type':  'application/json',
         'Authorization': 'Bearer ' + sessionStorage.getItem('token')
       })
     };
-    data['courseId'] = this.course._id;
+    data['courseCode'] = this.code;
     document.getElementById('postModalClose').click();
     this.showSpinner = true;
     await this.http.post(this.storeInfo.serverUrl+'/course/addPost', data, options).toPromise().then( async (resData) => {
-      await this.getPosts();
-      console.log(resData);
-      this.resetPostForm();
+      if(resData['status'] == 201){
+        await this.getPosts();
+        this.resetPostForm();
+      } 
+      this.matComp.openSnackBar(resData['body']['message'],2000);
     },error => {
+      this.matComp.openSnackBar(error,2000);
     })
     this.showSpinner = false;
   }
@@ -180,22 +196,34 @@ export class CoursehomeComponent implements OnInit {
     })
   }
 
-  async createAssignment(data: Object){
+  async createAssignment(){
     this.showSpinner = true;
-
+    
+    const options = {
+      observe: 'response' as 'body',
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json',
+        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+      })
+    };
+    
     let formData: any = new FormData();
     formData.append("title", this.assignmentForm.get('title').value);
     formData.append("file", this.assignmentForm.get('doc').value);
     formData.append("description", this.assignmentForm.get('description').value);
     formData.append("deadline", this.assignmentForm.get('deadline').value);
     formData.append("marks", this.assignmentForm.get('marks').value);
-    formData.append("courseId", this.course._id);
+    formData.append("courseCode", this.code);
+    formData.append("requiresSubmission",this.assignmentForm.get('requiresSubmission').value);
     
-    await this.http.post(this.storeInfo.serverUrl+'/course/addAssignment', formData,{observe: 'response',headers: new HttpHeaders({
-      'Authorization': 'Bearer ' + sessionStorage.getItem('token')
-    })}).toPromise().then( resData => {
-        console.log(resData);
+    await this.http.post(this.storeInfo.serverUrl+'/course/addAssignment', formData, options).toPromise().then(async resData => {
+      this.matComp.openSnackBar(resData['body']['message'],2000);  
+      if(resData['status'] == 201){
+        await this.getAssignments();
+        this.resetAssignmentForm();
+      }
     },error => {
+      this.matComp.openSnackBar(error,2000);
     })
 
     this.showSpinner = false;
@@ -207,7 +235,7 @@ export class CoursehomeComponent implements OnInit {
       description : this.formBuilder.control('',Validators.required),
       marks: this.formBuilder.control('',Validators.required),
       deadline: this.formBuilder.control('',Validators.required),
-      doc: this.formBuilder.control(null)
+      requiresSubmission: this.formBuilder.control(true)
     });
   }
 
@@ -231,23 +259,48 @@ export class CoursehomeComponent implements OnInit {
 
   async getPosts(){
     this.showSpinner = true;
-    const options = {
+    let options = {
+      observe: 'response' as 'body',
       headers: new HttpHeaders({
         'Content-Type':  'application/json',
         'Authorization': 'Bearer ' + sessionStorage.getItem('token')
       }),
-      params : new HttpParams().set('courseId',this.course._id)
+      params : new HttpParams().set('courseCode',this.code)
     };
     
-    this.http.get(this.storeInfo.serverUrl+'/course/getPosts', options).subscribe( resData => {
-      this.posts = resData['posts'];
-      this.showSpinner = false;
+    await this.http.get(this.storeInfo.serverUrl+'/course/getPosts', options).toPromise().then( resData => {
+      if(resData['status'] == 200){
+        this.course.posts = resData['body']['posts'].reverse();
+      } else {
+        this.matComp.openSnackBar(resData['body']['message'],3000);
+      }
     },error => {
+      this.matComp.openSnackBar(error,2000);
     })
+    this.showSpinner = false;
   }
 
-  getAssignments(){
-    console.log("Getting Assignments")
+  async getAssignments(){
+    this.showSpinner = true;
+    const options = {
+      observe: 'response' as 'body',
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json',
+        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+      }),
+      params : new HttpParams().set('courseCode',this.code)
+    };
+    
+    await this.http.get(this.storeInfo.serverUrl+'/course/getAssignments', options).toPromise().then( resData => {
+      if(resData['status'] == 200){
+        this.course.assignments = resData['body']['assignments'].reverse();
+      } else {
+        this.matComp.openSnackBar(resData['body']['message'],2000);
+      }
+    },error => {
+      this.matComp.openSnackBar(error,2000);
+    })
+    this.showSpinner = false;
   }
 
   getTests(){
@@ -262,12 +315,17 @@ export class CoursehomeComponent implements OnInit {
     this.assignmentForm.get('doc').updateValueAndValidity()
   }
 
-  onFileChange(event) {
-    if (event.target.files && event.target.files.length) {
-      this.fileName = event.target.files[0].name;
-      this.file = event.target.files[0];
-    }
+  signOut(){
+    this.storeInfo.signOut();
+    this.router.navigateByUrl('/');
   }
+
+  // onFileChange(event) {
+  //   if (event.target.files && event.target.files.length) {
+  //     this.fileName = event.target.files[0].name;
+  //     this.file = event.target.files[0];
+  //   }
+  // }
   // checkStatus(date: string){
   
   //   var dd = new Date(date);

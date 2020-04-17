@@ -34,6 +34,9 @@ export class LoginComponent implements OnInit {
       email : this.formBuilder.control(''),
       password : this.formBuilder.control('')
     });
+    if(sessionStorage.getItem('token')){
+      this.router.navigateByUrl('/home');
+    }
     this.showSpinner = false;
   }
 

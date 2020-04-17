@@ -24,6 +24,12 @@ export class StoreInfoService {
     this.userid = userid;
   }
 
+  signOut(){
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('userId');
+    sessionStorage.removeItem('email');
+  }
+
   getName(){
     return this.userData.name;
   }

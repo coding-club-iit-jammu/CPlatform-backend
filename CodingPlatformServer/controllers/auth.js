@@ -13,6 +13,7 @@ exports.login = (req,res,next) =>{
                     const token = jwt.sign(
                                     {
                                         email:result.email,
+                                        name: result.name,
                                         userId:result._id.toString()
                                     },
                                     "ThisIsASecretKeyPratikParmarASDFGHJKLZXCVBNMQWERTYUIOP",

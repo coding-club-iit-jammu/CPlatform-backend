@@ -16,6 +16,8 @@ const isAuth = require('../middleware/is-auth');
 const isEnrol = require('../middleware/is-enrol');
 const isInstructor = require('../middleware/is-instructor');
 const verifyRole = require('../middleware/verify-role');
+const getRole = require('../middleware/get-role');
+const isNotStudent = require('../middleware/is-not-student');
 
 const courseController = require('../controllers/course');
 
@@ -23,13 +25,14 @@ const router = express.Router();
 
 router.post('/add', isAuth, courseController.addCourse);
 router.post('/join', isAuth, courseController.joinCourse);
-router.post('/addPost', isAuth, isEnrol, courseController.addPost);
-router.post('/addAssignment', isAuth, upload.single('file'), isInstructor, courseController.addAssignment);
+router.post('/addPost', isAuth, getRole, courseController.addPost);
+router.post('/addAssignment', isAuth, upload.single('file'), getRole,
+                            isNotStudent, courseController.addAssignment);
 
-router.get('/getInfo', isAuth, verifyRole, courseController.getCourseInfo);
-router.get('/getPosts', isAuth, isEnrol, courseController.getPosts);
-router.get('/getTests', isAuth, verifyRole, courseController.getTests);
-router.get('/getAssignments', isAuth, verifyRole, courseController.getAssignments);
-router.get('/getJoiningCodes', isAuth, isInstructor, courseController.getJoiningCodes);
+router.get('/getInfo', isAuth, getRole, courseController.getCourseInfo);
+router.get('/getPosts', isAuth, getRole, courseController.getPosts);
+router.get('/getTests', isAuth, getRole, courseController.getTests);
+router.get('/getAssignments', isAuth, getRole, courseController.getAssignments);
+router.get('/getJoiningCodes', isAuth, getRole, isInstructor, courseController.getJoiningCodes);
 
 module.exports = router;

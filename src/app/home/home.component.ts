@@ -52,8 +52,12 @@ export class HomeComponent implements OnInit {
       studentCode: this.formBuilder.control('')
     });
 
+    if(!sessionStorage.getItem('token')){
+      this.router.navigateByUrl('/');
+    }
+
     this.fetchUserData().then(()=>{
-      console.log("Fetch Complete.");
+      // console.log("Fetch Complete.");
     });
 
   }
@@ -61,41 +65,41 @@ export class HomeComponent implements OnInit {
   async addCourse(){
     this.showSpinner = true;
     const options = {
+      observe : 'response' as 'body',
       headers : new HttpHeaders({
         'Authorization' : 'Bearer ' + sessionStorage.getItem('token')
       })
     }
-    console.log(this.addCourseForm.value);
-    this.http.post(this.storeInfo.serverUrl + '/course/add',this.addCourseForm.value,options)
-    .subscribe((data)=>{
-      console.log(data);
-      this.showSpinner = false;
-      this.matComp.openSnackBar(data['message'],2000);
-      this.resetAddCourseForm();
-
+    await this.http.post(this.storeInfo.serverUrl + '/course/add',this.addCourseForm.value,options)
+    .toPromise().then((data)=>{
+      this.matComp.openSnackBar(data['body']['message'],2000);
+      if(data['status'] == 201)
+        this.resetAddCourseForm();
+      
     },(error)=>{
-      alert(error);
-      this.showSpinner = false;
+      this.matComp.openSnackBar('Try Again',3000);
     })
+    this.showSpinner = false;
   }
 
   async joinCourse(){
     this.showSpinner = true;
     const options = {
+      observe : 'resposne' as 'body',
       headers : new HttpHeaders({
         'Authorization' : 'Bearer ' + sessionStorage.getItem('token')
       })
     }
-    this.http.post(this.storeInfo.serverUrl + '/course/join',this.joinCourseForm.value,options)
-    .subscribe((data)=>{
-      this.showSpinner = false;
-      this.matComp.openSnackBar(data['message'],2000);
-      this.resetJoinCourseForm();
-
+    await this.http.post(this.storeInfo.serverUrl + '/course/join',this.joinCourseForm.value,options)
+    .toPromise().then((data)=>{
+      this.matComp.openSnackBar(data['body']['message'],2000);
+      if(data['status'] == 202)
+        this.resetJoinCourseForm();
+      
     },(error)=>{
-      alert(error);
-      this.showSpinner = false;
+      this.matComp.openSnackBar(error,2000);
     })
+    this.showSpinner = false;
   }
 
 
@@ -103,19 +107,23 @@ export class HomeComponent implements OnInit {
   async fetchUserData(){
     this.showSpinner = true;
     const options = {
+      observe : 'response' as 'body',
       headers: new HttpHeaders({
         'Content-Type':  'application/json',
         'Authorization': 'Bearer ' + sessionStorage.getItem('token')
       })
     };
-    this.http.get(this.storeInfo.serverUrl + '/user/get',options).subscribe((data)=>{
-      this.userData = data;
-      this.storeInfo.userData = data;
-      this.showSpinner = false;
+    await this.http.get(this.storeInfo.serverUrl + '/user/get',options).toPromise().then((data)=>{
+      if(data['status'] == 200){
+        this.userData = data['body'];
+        this.storeInfo.userData = data['body'];
+      } else {
+        this.matComp.openSnackBar(data['body']['message'],2000);
+      }
     }, error =>{
       this.matComp.openSnackBar('Network Problem!',2000);
-      console.log(error);
     });
+    this.showSpinner = false;
   }
 
   resetAddCourseForm(){
@@ -136,7 +144,11 @@ export class HomeComponent implements OnInit {
   }
 
   openCourse(code,role){
-    this.storeInfo.role[code] = role;
     this.router.navigate(['/course',code]);
+  }
+
+  signOut(){
+    this.storeInfo.signOut();
+    this.router.navigateByUrl('/');
   }
 }

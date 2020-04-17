@@ -33,6 +33,11 @@ export class DetailsComponent implements OnInit {
         password: this.formBuilder.control('',Validators.required),
         confirmPassword: this.formBuilder.control('',Validators.required)
       });
+
+      if(sessionStorage.getItem('token')){
+        this.router.navigateByUrl('/home');
+        return;
+      }
       
       this.showSpinner = false;
     }

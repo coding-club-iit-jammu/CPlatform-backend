@@ -10,7 +10,7 @@ export class MaterialComponentService {
 
   openSnackBar(message,duration) {
     this._snackBar.open(message,'',{
-      verticalPosition: "top",
+      verticalPosition: "bottom",
       duration: duration,
       panelClass: ['bg-light', 'text-dark']
     });

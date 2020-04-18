@@ -42,10 +42,13 @@ exports.joinCourse = (req,res,next) => {
     const joiningCode = req.body.joiningCode;
     Course.findOne({code:code}).then((course)=>{
         if(!course){
+            console.log("Course not found.");
             res.status(500).json({
                 message:"Course Not Found."
             })
+            return;
         }
+        console.log(course);
         if(joiningCode == course.joiningCode.instructor){
             course.addInstructor(req.userId).then((result)=>{
                 if(!result){
@@ -166,40 +169,76 @@ exports.getTests = (req,res,next) => {
 exports.getAssignments = (req,res,next) => {
     
     const courseId = req.courseId;
+    const email = req.userEmail;
 
-    Course.findById(courseId)
-    .select('assignments')
-    .populate('assignments')
-    .then( course => {
-        if(!course){
-            res.status(404).json({message:"Course Not Found"});
-            return;
-        }
-        res.status(200).json(course);
-    })
-}
-
-exports.getAssignmentDoc = (req, res, next) => {
-    const assignmentId = req.query.assignmentId;
-
-    Assignment.findById(assignmentId).then((assignment)=>{
-        if(!assignment){
-            res.status(404).json({message:'Assignment not found.'});
-            return;
-        }
-        
-        console.log(assignment);
-
-        res.download(assignment.file,(err)=>{
-            if(err){
-                console.log(err);
-                res.status(404).json({message:'File not found.'});
-                return;   
+    if(req.role != 'student'){
+        Course.findById(courseId)
+        .select('assignments')
+        .populate('assignments', '_id title description deadline marks file')
+        .then( course => {
+            if(!course){
+                res.status(404).json({message:"Course Not Found"});
+                return;
+            }
+            res.status(200).json(course);
+        })
+    } else {
+        Course.findById(courseId)
+        .select('assignments')
+        .populate({
+            path: 'assignments',
+            model: 'Assignment',
+            select: 'title description deadline marks file submissions requiresSubmission',
+            populate:{
+                path:'submissions',
+                model:'Submission'
             }
         })
+        .populate({
+            path: 'submissions',
+            match: {email:email}
+        })
+        .then( course => {
+            if(!course){
+                res.status(404).json({message:"Course Not Found"});
+                return;
+            }
+            let data = {'assignments':[]};
+            let temp = course.assignments;
+            let l = temp.length;
+            for(let d = 0; d < l; d+=1){
+                data['assignments'][d] = {
+                    title : temp[d].title,
+                    description : temp[d].description,
+                    deadline : temp[d].deadline,
+                    requiresSubmission : temp[d].requiresSubmission,
+                    marks : temp[d].marks,
+                    _id : temp[d]._id
+                }
+                
+                if(temp[d]['submissions'].length == 0){
+                    continue;
+                } 
+                
+                if(!temp[d]['submissions'][0]['email']){
+                    continue;
+                }
+                
+                data['assignments'][d]['submissionTime'] = temp[d]['submissions'][0]['submissionTime'];
+                data['assignments'][d]['submissionUrl'] = temp[d]['submissions'][0]['submissionUrl'];
+                
+                if(!temp[d]['submissions'][0]['obtainedMarks']){
+                    continue;
+                }
 
-    })
+                data['assignments'][d]['obtainedMarks'] = temp[d]['submissions'][0]['obtainedMarks'];
+            }
+
+            res.status(200).json(data);
+        })
+    }
 }
+
 
 exports.getJoiningCodes = (req,res,next) => {
     
@@ -273,8 +312,6 @@ exports.addAssignment = async (req,res,next) => {
 
     let assignment;
 
-    console.log(req.body);
-    
     if(req.file){
 
         const fileExt = path.parse(path.basename(req.file.path)).ext;
@@ -290,15 +327,11 @@ exports.addAssignment = async (req,res,next) => {
                 moved = false;
                 throw err
             }
-            else{
-                console.log('Successfully renamed - AKA moved!')
-            }
         })
 
         if(!moved)
             newPath = oldPath;
 
-        console.log(newPath);
         assignment = new Assignment({
             title : title,
             description : description,
@@ -316,7 +349,7 @@ exports.addAssignment = async (req,res,next) => {
             requiresSubmission : requiresSubmission
         });
     }
-    console.log(assignment);
+    
     assignment.save().then( async assignment => {
         if(!assignment){
             res.status(500).json({message: "Try Again"});

@@ -42,6 +42,7 @@ export class CoursehomeComponent implements OnInit {
   postForm: FormGroup;
   assignmentForm: FormGroup;
   testForm: FormGroup;
+  submitAssignmentForm: FormGroup;
   file:any;
   
   course : any ={
@@ -70,6 +71,7 @@ export class CoursehomeComponent implements OnInit {
 
     this.resetPostForm();
     this.resetAssignmentForm();
+    this.resetSubmitAssignmentForm();
 
     this.code = this.activatedRoute.snapshot.paramMap.get('courseId');
     
@@ -196,13 +198,20 @@ export class CoursehomeComponent implements OnInit {
     })
   }
 
+  resetSubmitAssignmentForm(){
+    this.submitAssignmentForm = this.formBuilder.group({
+      file: this.formBuilder.control(null,Validators.required),
+      assignmentId: this.formBuilder.control('',Validators.required),
+      title: this.formBuilder.control('',Validators.required)
+    });
+  }
+
   async createAssignment(){
     this.showSpinner = true;
     
     const options = {
       observe: 'response' as 'body',
       headers: new HttpHeaders({
-        // 'Content-Type':  'application/json',
         'Authorization': 'Bearer ' + sessionStorage.getItem('token')
       })
     };
@@ -298,6 +307,7 @@ export class CoursehomeComponent implements OnInit {
       } else {
         this.matComp.openSnackBar(resData['body']['message'],2000);
       }
+      console.log(resData);
     },error => {
       this.matComp.openSnackBar(error,2000);
     })
@@ -347,6 +357,43 @@ export class CoursehomeComponent implements OnInit {
     this.assignmentForm.get('doc').updateValueAndValidity()
   }
 
+  uploadSubmissionFile(event){
+    const file = (event.target as HTMLInputElement).files[0];
+    this.submitAssignmentForm.patchValue({
+      file : file,
+    });
+    this.submitAssignmentForm.get('file').updateValueAndValidity()
+  }
+
+  setSubmissionAssignment(id,title){
+    this.submitAssignmentForm.controls['title'].setValue(title);
+    this.submitAssignmentForm.controls['assignmentId'].setValue(id);
+  }
+
+  async submitAssignment(){
+    this.showSpinner = true;
+    const options = {
+      observe: 'response' as 'body',
+      responseType: 'blob' as 'json',
+      headers: new HttpHeaders({
+        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+      })
+    };
+
+    let formData: any = new FormData();
+    formData.append("assignmentId", this.submitAssignmentForm.get('assignmentId').value);
+    formData.append("file", this.submitAssignmentForm.get('file').value);
+    formData.append("courseCode", this.code);
+    
+    await this.http.post(this.storeInfo.serverUrl+'/course/submitAssignment', formData, options).toPromise().then((resData)=>{
+      console.log(resData);
+    }, (error) => {
+      console.log(error)
+    })
+
+    this.showSpinner = false;
+  }
+
   signOut(){
     this.storeInfo.signOut();
     this.router.navigateByUrl('/');
@@ -358,19 +405,18 @@ export class CoursehomeComponent implements OnInit {
   //     this.file = event.target.files[0];
   //   }
   // }
-  // checkStatus(date: string){
+  checkStatus(date: string){
   
-  //   var dd = new Date(date);
+    let dd = new Date(date);
+    return dd.getTime() > new Date().getTime();
   
-  //   return dd.getTime() > this.time.getTime();
-  
-  // }
+  }
 
   
   
-  async uploadSubmission(assignmentNo:number){
+  // async uploadSubmission(assignmentNo:number){
   
-    this.showSpinner = true;
+    // this.showSpinner = true;
     // var userId = this.firebaseService.getUserID();
     // var path = this.code + "/Assignment" + assignmentNo + "/" + userId + "/" + this.fileName;  
     // if(this.file != null){
@@ -384,7 +430,7 @@ export class CoursehomeComponent implements OnInit {
     //   alert("No file found.")
     //   this.showSpinner = false;
     // }
-  }
+  // }
 
   download(data){
     var downloadLink = document.createElement("a");
@@ -397,14 +443,34 @@ export class CoursehomeComponent implements OnInit {
 		document.body.removeChild(downloadLink);
   }
   
-  async downloadSubmission(link,number) {
+  async downloadSubmission(assignmentId) {
     this.showSpinner = true;
-    // if(!this.instructor)
-    //   this.firebaseService.downloadFile(link); 
-    // else{
-    //   var submissions = await this.firebaseService.fetchAllSubmissions(this.code,number);
-    //   this.download(submissions);
-    // }
+    const options = {
+      observe: 'response' as 'body',
+      responseType: 'blob' as 'json',
+      headers: new HttpHeaders({
+        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+      }),
+      params : new HttpParams().set('courseCode',this.code).set('assignmentId',assignmentId)
+    };
+    
+    this.http.get(this.storeInfo.serverUrl+'/course/getAssignmentSubmission', options).subscribe( (resData : Blob) => {
+      if(resData['status'] == 200){
+        let dataType = resData['body'].type;
+        let binaryData = [];
+        console.log(dataType);
+        binaryData.push(resData['body']);
+        let downloadLink = document.createElement('a');
+        downloadLink.href = window.URL.createObjectURL(new Blob(binaryData,{type : dataType}));
+        downloadLink.target = "_blank";
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+      } else {
+        this.matComp.openSnackBar(resData['body']['message'],2000);  
+      }
+    },error => {
+      this.matComp.openSnackBar(error,2000);
+    })
     this.showSpinner = false;
   }
 

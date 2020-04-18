@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+const Submission = require('../models/submission');
+
 const assignmentSchema = new Schema({
     title:{
         type: String,
@@ -25,21 +27,33 @@ const assignmentSchema = new Schema({
     file:{
         type: String
     },
-    submissions:{}
+    submissions:[{
+        type: Schema.Types.ObjectId,
+        ref: 'Submission'
+    }]
 })
 
-//marks,submissionURL,date and time of submission | key will be email
-assignmentSchema.methods.addSubmission = function(userEmail,data){
-    this.submissions[userEmail] = {
-        submissionUrl : data.submissionUrl,
-        submissionTime :  new Date().toLocaleString('en-In')
-    }
+assignmentSchema.methods.addSubmission = function(userEmail,submissionUrl){
+    const submission = new Submission({
+        submissionUrl : submissionUrl,
+        submissionTime :  new Date().toLocaleString('en-In'),
+        email : userEmail
+    })
+    return submission.save().then((result)=>{
+        if(!result){
+            res.status(500).json({message:"Network Error"});
+            return;
+        }
+        this.submissions.push(result._id);
+        return this.save();
+    })
 }
 
 assignmentSchema.methods.putMarks = function(userEmail,marks){
-    if(this.submissions[userEmail])
-        this.submissions[userEmail].securedMarks = marks;
-        // else throw some error.
+    // if(this.submissions[userEmail]){
+    //     this.submissions[userEmail].securedMarks = marks;
+    // }// else throw some error.
+    // return this.save();
 }   
 
 const Assignment = mongoose.model('Assignment', assignmentSchema);

@@ -11,7 +11,7 @@ module.exports = async (req, res, next) => {
     }
 
     const course = await Course.findOne({code : courseCode});
-
+    
     if(!course){
         res.status(400).json({message:"Course not found."});
         return;

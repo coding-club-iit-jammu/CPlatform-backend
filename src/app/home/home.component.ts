@@ -85,16 +85,19 @@ export class HomeComponent implements OnInit {
   async joinCourse(){
     this.showSpinner = true;
     const options = {
-      observe : 'resposne' as 'body',
+      observe : 'response' as 'body',
       headers : new HttpHeaders({
         'Authorization' : 'Bearer ' + sessionStorage.getItem('token')
       })
     }
+    
     await this.http.post(this.storeInfo.serverUrl + '/course/join',this.joinCourseForm.value,options)
     .toPromise().then((data)=>{
       this.matComp.openSnackBar(data['body']['message'],2000);
-      if(data['status'] == 202)
+      if(data['status'] == 202){
+        this.fetchUserData();
         this.resetJoinCourseForm();
+      }
       
     },(error)=>{
       this.matComp.openSnackBar(error,2000);

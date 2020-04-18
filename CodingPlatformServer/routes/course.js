@@ -13,13 +13,13 @@ var storage = multer.diskStorage({
 
 var upload = multer({ storage : storage});
 const isAuth = require('../middleware/is-auth');
-const isEnrol = require('../middleware/is-enrol');
 const isInstructor = require('../middleware/is-instructor');
-const verifyRole = require('../middleware/verify-role');
 const getRole = require('../middleware/get-role');
 const isNotStudent = require('../middleware/is-not-student');
+const isStudent = require('../middleware/is-student');
 
 const courseController = require('../controllers/course');
+const assignmentController = require('../controllers/assignment');
 
 const router = express.Router();
 
@@ -29,12 +29,16 @@ router.post('/addPost', isAuth, getRole, courseController.addPost);
 router.post('/addAssignment', isAuth, upload.single('file'), getRole,
                             isNotStudent, courseController.addAssignment);
 
+router.post('/submitAssignment', isAuth, upload.single('file'), getRole,
+                            isStudent, assignmentController.submitAssignment);
+
 router.get('/getInfo', isAuth, getRole, courseController.getCourseInfo);
 router.get('/getPosts', isAuth, getRole, courseController.getPosts);
 router.get('/getTests', isAuth, getRole, courseController.getTests);
 
 router.get('/getAssignments', isAuth, getRole, courseController.getAssignments);
-router.get('/getAssignmentDoc', isAuth, getRole, courseController.getAssignmentDoc);
+router.get('/getAssignmentDoc', isAuth, getRole, assignmentController.getAssignmentDoc);
+router.get('/getAssignmentSubmission', isAuth, getRole, isStudent, assignmentController.getAssignmentSubmission);
 
 router.get('/getJoiningCodes', isAuth, getRole, isInstructor, courseController.getJoiningCodes);
 

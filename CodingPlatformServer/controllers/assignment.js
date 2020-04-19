@@ -148,8 +148,26 @@ exports.submitAssignment = async (req,res,next) => {
         } else {
             res.status(400).json({message:"Try Again"});
         }
-    }
+    }    
+}
 
-
+exports.shiftDeadline = (req,res,next) => {
+    const assignmentId = req.body.assignmentId;
+    const newDeadline = new Date(req.body.newDeadline).toLocaleString('en-In');
     
+    Assignment.findById(assignmentId).then(assignment => {
+        if(!assignment){
+            res.status(404).json({'message':'Try Again.'});
+            return;
+        }
+
+        assignment.deadline = newDeadline;
+        assignment.save().then((result)=>{
+            if(!result){
+                res.status(500).json({'message':'Try Again.'});
+                return;
+            }
+            res.status(202).json({'message':'Deadline Shifted Successfully.'});
+        })
+    })
 }

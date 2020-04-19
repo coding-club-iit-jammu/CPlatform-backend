@@ -85,6 +85,9 @@
                             <div class="card-footer text-muted border-warning">
                               <p>Deadline: {{assignment.deadline | date:'medium'}}</p>
                               <p *ngIf="course.role=='student' && assignment.submissionTime">Last Submission: {{assignment.submissionTime | date:'medium'}}</p>
+                              <div *ngIf="course.role=='instructor'">
+                                <button class="btn btn-warning" data-toggle="modal" data-target="#shiftDeadlineModal" (click)="setShiftDeadline(assignment._id,assignment.title)">Shift Deadline</button>
+                              </div>
                             </div>
                         </div>
                     </div>
@@ -204,7 +207,41 @@
                     </div>
                 </div>
             </div>
-        </div>        
+        </div>
+        
+        <div class="modal fade" id="shiftDeadlineModal" role="dialog">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Submit Assignment</h4>
+                        <button type="button" class="close" data-dismiss="modal" style="float: right;">&times;</button>
+                    </div>
+                    <form [formGroup]="shiftDeadlineForm">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>Assignment</label>
+                                <input type="text" class="form-control" readonly formControlName="title" value="{{shiftDeadlineForm.get('title').value}}">
+                            </div>
+                            <div class="form-group">
+                                <input type="hidden" class="form-control" formControlName="assignmentId">
+                            </div>
+                            <div class="form-group">
+                                <label>New Deadline</label>
+                                <input type="datetime-local" class="form-control" formControlName="newDeadline">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <div class="text-left">
+                                <button type="button" class="btn btn-danger"  data-dismiss="modal" style="float: left;">Close</button>
+                            </div>
+                            <div class="text-right">
+                                <button type="button" class="btn btn-success" data-dismiss="modal" [disabled]="!shiftDeadlineForm.valid" style="float: right;" (click)="shiftDeadline(shiftDeadlineForm.value)">Add</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
 
         <div class="modal fade" id="createPostModal" role="dialog">
             <div class="modal-dialog modal-dialog-centered modal-lg">

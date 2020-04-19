@@ -43,6 +43,8 @@ export class CoursehomeComponent implements OnInit {
   assignmentForm: FormGroup;
   testForm: FormGroup;
   submitAssignmentForm: FormGroup;
+  shiftDeadlineForm: FormGroup;
+
   file:any;
   
   course : any ={
@@ -72,6 +74,7 @@ export class CoursehomeComponent implements OnInit {
     this.resetPostForm();
     this.resetAssignmentForm();
     this.resetSubmitAssignmentForm();
+    this.resetShiftDeadlineForm();
 
     this.code = this.activatedRoute.snapshot.paramMap.get('courseId');
     
@@ -246,6 +249,15 @@ export class CoursehomeComponent implements OnInit {
       deadline: this.formBuilder.control('',Validators.required),
       requiresSubmission: this.formBuilder.control(true),
       doc: this.formBuilder.control(null)
+    });
+  }
+
+  resetShiftDeadlineForm(){
+    this.shiftDeadlineForm = this.formBuilder.group({
+      newDeadline: this.formBuilder.control('',Validators.required),
+      assignmentId: this.formBuilder.control('',Validators.required),
+      title: this.formBuilder.control('', Validators.required),
+      courseCode: this.formBuilder.control('',Validators.required)
     });
   }
 
@@ -453,7 +465,6 @@ export class CoursehomeComponent implements OnInit {
       }),
       params : new HttpParams().set('courseCode',this.code).set('assignmentId',assignmentId)
     };
-    
     this.http.get(this.storeInfo.serverUrl+'/course/getAssignmentSubmission', options).subscribe( (resData : Blob) => {
       if(resData['status'] == 200){
         let dataType = resData['body'].type;
@@ -469,6 +480,35 @@ export class CoursehomeComponent implements OnInit {
         this.matComp.openSnackBar(resData['body']['message'],2000);  
       }
     },error => {
+      this.matComp.openSnackBar(error,2000);
+    })
+    this.showSpinner = false;
+  }
+
+  setShiftDeadline(assignmentId,title){
+    this.shiftDeadlineForm.controls['title'].setValue(title);
+    this.shiftDeadlineForm.controls['assignmentId'].setValue(assignmentId);   
+    this.shiftDeadlineForm.controls['courseCode'].setValue(this.code); 
+  }
+
+  async shiftDeadline(data){
+    this.showSpinner = true;
+
+    const options = {
+      observe: 'response' as 'body',
+      responseType: 'blob' as 'json',
+      headers: new HttpHeaders({
+        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+      })
+    };
+
+    await this.http.post(this.storeInfo.serverUrl+'/assignment/shiftDeadline',data,options).toPromise().then((response)=>{
+      if(response['status']==202){
+        this.resetShiftDeadlineForm();
+        this.getAssignments();
+      }
+      this.matComp.openSnackBar(response['body']['message'],2000);
+    },(error) =>{
       this.matComp.openSnackBar(error,2000);
     })
     this.showSpinner = false;

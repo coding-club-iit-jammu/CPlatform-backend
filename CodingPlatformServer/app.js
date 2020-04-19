@@ -1,12 +1,14 @@
 const express = require('express');
-const path = require('path');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const fileUpload = require('express-fileupload');
+
+
 const authRoute = require('./routes/auth');
 const courseRoute = require('./routes/course');
 const userRoute = require('./routes/user');
+const assignmentRoute = require('./routes/assignment');
+
 var multer  = require('multer')
 var upload = multer({ dest: 'uploads/' })
 const app = express();
@@ -23,6 +25,7 @@ app.use(bodyParser.json({limit:'20mb'}));
 app.use(authRoute);
 app.use('/course',courseRoute);
 app.use('/user',userRoute);
+app.use('/assignment',assignmentRoute);
 
 app.post('/upload-avatar',upload.single('avatar'), async (req, res) => {
     try {

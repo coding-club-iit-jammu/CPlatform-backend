@@ -1,4 +1,35 @@
-.code-editor {
-    margin-top: 5px;
-    margin-right: 5px;
+div.code-editor { max-height: 70vh; }
+
+div.label-box {
+    border-top-left-radius: .5rem!important;
+    border-top-right-radius: .5rem!important;
 }
+
+.form-control { border-radius: 0 !important; }
+
+.form-control:disabled { background-color: #ffffff !important; }
+
+.output {
+    border-bottom-left-radius: .5rem!important;
+    border-bottom-right-radius: .5rem!important;
+}
+
+.btn-beautify {
+    color: #ffffff;
+    background-color: #e83e8c;
+}
+
+select.languages-select {
+    cursor: pointer;
+}
+
+select.languages-select > option {
+    display: block;
+    background: ghostwhite;
+}
+
+select.languages-select:focus > option:checked { 
+    font-weight: bold;
+}
+
+button.cant-click { cursor: not-allowed; }

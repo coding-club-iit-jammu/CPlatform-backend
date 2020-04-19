@@ -14,6 +14,8 @@ import { StudenthomeComponent } from './studenthome/studenthome.component';
 import { InstructorhomeComponent } from './instructorhome/instructorhome.component';
 import { FirebaseServicesService } from './firebase-services.service';
 import { TimeAPIClientService } from './services/time-apiclient.service';
+import { HttpService } from './services/http/http.service';
+import { ServerHandlerService } from './services/http/server-handler.service';
 import { CoursehomeComponent } from './coursehome/coursehome.component';
 import { FormatdatePipe } from './formatdate.pipe';
 import { HttpClientModule } from '@angular/common/http';
@@ -60,6 +62,8 @@ import { QuillModule } from 'ngx-quill'
   providers: [
     FirebaseServicesService,
     TimeAPIClientService,
+    HttpService,
+    ServerHandlerService,
     MaterialComponentService
   ],
   bootstrap: [AppComponent]

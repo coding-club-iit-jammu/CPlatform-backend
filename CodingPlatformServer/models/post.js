@@ -16,8 +16,11 @@ const postSchema = new Schema({
         required : true
     },
     date:{
-        type:Date,
+        type: Date,
         required:true
+    },
+    file:{
+        type: String
     }
 })
 

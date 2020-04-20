@@ -25,7 +25,7 @@ const router = express.Router();
 
 router.post('/add', isAuth, courseController.addCourse);
 router.post('/join', isAuth, courseController.joinCourse);
-router.post('/addPost', isAuth, getRole, courseController.addPost);
+router.post('/addPost', isAuth, upload.single('file'), getRole, courseController.addPost);
 router.post('/addAssignment', isAuth, upload.single('file'), getRole,
                             isNotStudent, courseController.addAssignment);
 

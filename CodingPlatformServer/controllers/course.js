@@ -174,7 +174,7 @@ exports.getAssignments = (req,res,next) => {
     if(req.role != 'student'){
         Course.findById(courseId)
         .select('assignments')
-        .populate('assignments', '_id title description deadline marks file')
+        .populate('assignments', '_id title description deadline marks file requiresSubmission')
         .then( course => {
             if(!course){
                 res.status(404).json({message:"Course Not Found"});
@@ -263,13 +263,41 @@ exports.addPost = async (req,res,next) => {
     const description = req.body.description;
 
     const name = req.userName;
+    let post;
+    if(!req.file){
+        post = new Post({
+            by: name,
+            date: new Date().toLocaleString('en-In'),
+            title: title,
+            description: description
+        });
+    } else {
+        const fileName = path.basename(req.file.path);
+        let oldPath = req.file.path;
+        let newPath = path.join(__dirname,'..','data',req.body.courseCode,'posts').toString();
+        
+        await mkdirp(newPath);
+        newPath = path.join(newPath,fileName);
 
-    const post = new Post({
-        by: name,
-        date: new Date().toLocaleString('en-In'),
-        title: title,
-        description: description
-    });
+        let moved = true;
+        await fs.renameSync(oldPath, newPath, function (err) {
+            if (err) {
+                moved = false;
+                throw err
+            }
+        })
+
+        if(!moved)
+            newPath = oldPath;
+
+        post = new Post({
+            by: name,
+            date: new Date().toLocaleString('en-In'),
+            title: title,
+            description: description,
+            file: newPath
+        });
+    }
 
     post.save().then((post)=>{
         if(!post){
@@ -280,14 +308,12 @@ exports.addPost = async (req,res,next) => {
 
         Course.findById(courseId).then((course)=>{
             if(!course){
-                Post.findByIdAndDelete(post._id).exec();
                 console.log("Unable to Post it, Course not found");
                 res.status(400).json({message: "Unable to Post it."});
                 return; 
             }
             course.addPost(post._id).then((result)=>{
                 if(!result){
-                    Post.findByIdAndDelete(post._id).exec();
                     console.log("Unable to Post it, problem occured while adding post.");
                     res.status(400).json({message: "Unable to Post it."});
                     return; 
@@ -297,7 +323,6 @@ exports.addPost = async (req,res,next) => {
             })
         })
     })
-    
     
 }
 

@@ -41,6 +41,9 @@
                             <div class="card-body">
                                 <h5 class="card-title">{{post.title}}</h5>
                                 <p class="card-text text-left" [innerHtml]="post.description"></p>
+                                <div *ngIf="post.file">
+                                    <button class="btn btn-outline-primary my-2" (click)="getPostResource(post._id)">Resourse</button>
+                                </div>  
                             </div>
                             <div class="card-footer border-info text-muted">
                               {{post.date | date:'medium'}}
@@ -60,21 +63,19 @@
                             </div>
                             <div class="card-body">
                                 <div>
-                                    <!-- <div class="card-title" ngIf="role != 'student' || (assignment.obtainedMarks == undefined || assignment.obtainedMarks == null )"> -->
+                                    <div class="card-title" *ngIf="role != 'student' || (assignment.obtainedMarks == undefined || assignment.obtainedMarks == null )">
                                         Marks: {{assignment.marks}}
-                                    <!-- </div> -->
-                                    <!-- <div class="card-title" ngIf="role == 'student' && (assignment.obtainedMarks != undefined && assignment.obtainedMarks != null)" class="bg-success"> -->
-                                        <!-- Obtained Marks: {{assignment.obtainedMarks}} / {{assignment.marks}} -->
-                                    <!-- </div> -->
+                                    </div>
+                                    <div class="card-title" *ngIf="role == 'student' && (assignment.obtainedMarks != undefined && assignment.obtainedMarks != null)" class="bg-success">
+                                        Obtained Marks: {{assignment.obtainedMarks}} / {{assignment.marks}}
+                                    </div>
                                 </div>
                                 <p class="card-text text-left my-2" [innerHtml]="assignment.description"></p>
-                                <!-- <a href="#" class="btn btn-warning">Go somewhere</a> -->
                                 <div>
                                     <button class="btn btn-outline-secondary my-2" (click)="getAssignmentDoc(assignment._id)">Resourses</button>
                                 </div>  
                                 <div class="my-auto mx-auto text-center" *ngIf="course.role=='student'">
-                                    <div *ngIf="checkStatus(assignment.deadline)" class="mx-auto text-center">
-                                        <!-- <input type="file" class="form-control" id="uploadAssignmentDoc" (change)="uploadSubmission($event)"> -->
+                                    <div *ngIf="checkStatus(assignment.deadline) && assignment.requiresSubmission" class="mx-auto text-center">
                                         <button class="btn btn-info" data-toggle="modal" data-target="#submitAssignmentModal" (click)="setSubmissionAssignment(assignment._id,assignment.title)">Submit</button>
                                     </div>
                                     <div *ngIf="assignment.submissionTime">
@@ -82,7 +83,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="card-footer text-muted border-warning">
+                            <div *ngIf="assignment.requiresSubmission" class="card-footer text-muted border-warning">
                               <p>Deadline: {{assignment.deadline | date:'medium'}}</p>
                               <p *ngIf="course.role=='student' && assignment.submissionTime">Last Submission: {{assignment.submissionTime | date:'medium'}}</p>
                               <div *ngIf="course.role=='instructor'">
@@ -149,14 +150,6 @@
         </div>
         <div class="bottom bg-dark py-3 text-light text-center">
             <h3>{{course.title}}</h3>
-            <!-- Footer
-            <br>
-            Footer
-            <br>
-            Footer
-            <br>
-            Footer
-            <br> -->
         </div>
 
 
@@ -261,6 +254,10 @@
                                 <quill-editor placeholder="Enter Text" formControlName="description" required>
                                 </quill-editor>
                             </div>
+                            <div class="form-group">
+                                <label>File</label>
+                                <input type="file" class="form-control-file" (change)="uploadPostFile($event)">
+                            </div>
                             <div class="modal-footer">
                                 <div>
                                     <button type="button" class="btn btn-danger" id="postModalClose" data-dismiss="modal" style="float: left;">Close</button>
@@ -335,149 +332,4 @@
             </div>
         </div>
     </div>
-    <!-- <div class="all" >
-        <div class="sidenav">
-            <h2>{{code.substring(8)}}</h2>
-            <h2>{{course.title}}</h2>
-            <h3>{{course.instructor}}</h3>
-            <div *ngIf="instructor">
-            <button class="btn btn-secondary" data-toggle="modal" data-target="#myModal">Add Students</button>
-            <br>
-            <br>
-            </div>
-            <button class="btn btn-warning" (click)="navToHome()">Home</button>
-            <br>
-            <button class="btn btn-danger signout" (click)="signout()">Sign out</button>
-            <br>
-        </div>
-        <div class="main">
-            <br>
-            <div>
-                <h2><b>Assignments</b></h2>
-                <hr>
-                <div class="assignment row">
-                    <div class="box" *ngFor="let assignment of assignments" >
-                        <div class="card" *ngIf="assignment!=undefined && assignment!=null">
-                            <div class="card-body">
-                                <h5 class="card-title"><strong>{{assignment.title}}</strong></h5>
-                                <p class="card-text">{{assignment.description}}</p>
-                                <p class="card-text" *ngIf="assignment.files!=undefined && assignment.files != null && assignment.files!= ''"><a href="{{assignment.files}}" target="_blank">Assignment Document</a></p>
-                                <p class="card-text" *ngIf="assignment.securedmarks==undefined || assignment.securedmarks==null">Total Marks: {{assignment.totalmarks}}</p>
-                                <div *ngIf="instructor==false">
-                                    <p class="card-text" *ngIf="assignment.securedmarks!=undefined && assignment.securedmarks!=null"><em>Secured Marks: {{assignment.securedmarks}}/{{assignment.totalmarks}}</em></p>
-                                    <p class="card-text" *ngIf="assignment.time!=undefined && assignment.time!=null">Last Submission: {{assignment.time | formatdate}}</p>
-                                
-                                    <div id="uploadDiv" *ngIf="checkStatus(assignment.deadline)==true && (assignment.marks==undefined || assignment.marks==null)">
-                                        <div id="inputFile">
-                                            <input type="file" class="form-control-file" id="{{'uploadAssignment'+assignment.number}}" (change)="onFileChange($event)" accept=".zip">
-                                        </div>
-                                        <div>
-                                            <button class="btn btn-dark" (click)="uploadSubmission(assignment.number)" id="uploadBtn">Upload</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <br>
-                                <div *ngIf="instructor || (assignment.time!=undefined && assignment.time!=null)" class="text-center">
-                                    <button class="btn btn-primary" (click)="downloadSubmission(assignment.link,assignment.number)">Download</button>
-                                </div>
-                                <br>
-                                <div class="card-footer">
-                                    <b>Deadline:</b> {{assignment.deadline | formatdate}}
-                                    <br>
-                                    <br>
-                                    <div *ngIf="instructor && checkStatus(assignment.deadline)==false" class="text-center">
-                                        <button class="btn btn-secondary" data-toggle="modal" data-target="#uploadModal" (click)="selectedAssignment=assignment.number">Upload Marks</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="box" *ngIf="instructor">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title"><strong>Add Assignment</strong></h5>
-                                <br>
-                                <div class="text-center">
-                                    <button class="btn btn-danger" data-toggle="modal" data-target="#addAssignment">Add</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>  
-            </div>
-        </div>
-        <div class="modal fade" id="myModal" role="dialog" *ngIf="instructor">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Enroll Students</h4>
-                        <button type="button" class="close" data-dismiss="modal" style="float: right;">&times;</button>
-                    </div>
-                    <div class="modal-body">
-                        <p>Upload CSV file containing Entry numbers and Names of Students.</p>
-                        <input type="file" #csvReader class="form-control-file" id="addStudents" (change)="uploadListener($event)" accept=".csv">
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" style="float: inline-start;" (click)="addStudents()">Upload</button>
-                        <button type="button" id="closeAddStudents" class="btn btn-danger" style="float: right;" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="modal fade" id="uploadModal" role="dialog" *ngIf="instructor">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Upload Marks for Assignment{{selectedAssignment}}</h4>
-                        <button type="button" class="close" data-dismiss="modal" style="float: right;">&times;</button>
-                    </div>
-                    <div class="modal-body">
-                        <p>Upload CSV file containing Entry numbers and Marks of Students.</p>
-                        <input type="file" class="form-control-file" id="uploadMarks" (change)="uploadMarksListener($event)" accept=".csv">
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" style="float: inline-start;" (click)="uploadMarks()">Upload</button>
-                        <button type="button" id="closeUploadMarks" class="btn btn-danger" style="float: right;" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="modal fade" id="addAssignment" role="dialog" *ngIf="instructor">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Create Assignment{{assignmentCounts+1}}</h4>
-                        <button type="button" class="close" data-dismiss="modal" style="float: right;">&times;</button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="modal-body">
-                            <label>Title</label>
-                            <input #assignmentTitle type="text" class="form-control" placeholder="Enter Title Here" required>
-                            <br>
-                            
-                            <label>Description</label>
-                            <textarea #assignmentDesc class="form-control" placeholder="Enter Description Here"></textarea>
-                            <br> 
-
-                            <label>Document</label>
-                            <input type="file" class="form-control-file" id="uploadAssignmentDoc" (change)="uploadAssignmentDocListener($event)">
-                            <br>
-
-                            <label>Deadline</label>
-                            <input #assignmentDeadline type="datetime-local" class="form-control" id="assignmentDeadline" required>
-                            <br>
-
-                            <label>Total Marks</label>
-                            <input #assignmentMarks type="number" class="form-control" id="assignmentMarks" required>
-                            <br>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" style="float: inline-start;" (click)="addAssignment(assignmentTitle.value,assignmentDesc.value,assignmentDeadline.value,assignmentMarks.value)">Upload</button>
-                        <button type="button" id="closeAddAssignment" class="btn btn-danger" style="float: right;" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div> -->
 </div>

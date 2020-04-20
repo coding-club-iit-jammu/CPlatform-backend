@@ -8,6 +8,7 @@ const authRoute = require('./routes/auth');
 const courseRoute = require('./routes/course');
 const userRoute = require('./routes/user');
 const assignmentRoute = require('./routes/assignment');
+const postRoute = require('./routes/post');
 
 var multer  = require('multer')
 var upload = multer({ dest: 'uploads/' })
@@ -26,6 +27,7 @@ app.use(authRoute);
 app.use('/course',courseRoute);
 app.use('/user',userRoute);
 app.use('/assignment',assignmentRoute);
+app.use('/post',postRoute);
 
 app.post('/upload-avatar',upload.single('avatar'), async (req, res) => {
     try {

@@ -131,6 +131,12 @@ export class CoursehomeComponent implements OnInit {
     // await this.timeApi.getTime().then(data=>{
     //   this.time = new Date(data);
     // });
+  // onFileChange(event) {
+  //   if (event.target.files && event.target.files.length) {
+  //     this.fileName = event.target.files[0].name;
+  //     this.file = event.target.files[0];
+  //   }
+  // }
   
     // this.course = await this.infoService.getCourseDetails(this.code);
     // this.assignments = this.infoService.getAssignments(this.code);
@@ -175,14 +181,19 @@ export class CoursehomeComponent implements OnInit {
     const options = {
       observe: 'response' as 'body',
       headers: new HttpHeaders({
-        'Content-Type':  'application/json',
         'Authorization': 'Bearer ' + sessionStorage.getItem('token')
       })
     };
     data['courseCode'] = this.code;
-    document.getElementById('postModalClose').click();
     this.showSpinner = true;
-    await this.http.post(this.storeInfo.serverUrl+'/course/addPost', data, options).toPromise().then( async (resData) => {
+
+    let formData = new FormData();
+    formData.append('title',this.postForm.get('title').value);
+    formData.append('description',this.postForm.get('description').value);
+    formData.append('file',this.postForm.get('file').value);    
+    formData.append('courseCode',this.code);    
+
+    await this.http.post(this.storeInfo.serverUrl+'/course/addPost', formData, options).toPromise().then( async (resData) => {
       if(resData['status'] == 201){
         await this.getPosts();
         this.resetPostForm();
@@ -196,8 +207,9 @@ export class CoursehomeComponent implements OnInit {
 
   resetPostForm(){
     this.postForm = this.formBuilder.group({
-      title: this.formBuilder.control(''),
-      description: this.formBuilder.control('')
+      title: this.formBuilder.control('',Validators.required),
+      description: this.formBuilder.control('',Validators.required),
+      file: this.formBuilder.control(null,Validators.required)
     })
   }
 
@@ -319,7 +331,6 @@ export class CoursehomeComponent implements OnInit {
       } else {
         this.matComp.openSnackBar(resData['body']['message'],2000);
       }
-      console.log(resData);
     },error => {
       this.matComp.openSnackBar(error,2000);
     })
@@ -337,17 +348,9 @@ export class CoursehomeComponent implements OnInit {
       params : new HttpParams().set('courseCode',this.code).set('assignmentId',assignmentId)
     };
     
-    this.http.get(this.storeInfo.serverUrl+'/course/getAssignmentDoc', options).subscribe( (resData : Blob) => {
+    await this.http.get(this.storeInfo.serverUrl+'/course/getAssignmentDoc', options).toPromise().then( (resData : Blob) => {
       if(resData['status'] == 200){
-        let dataType = resData['body'].type;
-        let binaryData = [];
-        console.log(dataType);
-        binaryData.push(resData['body']);
-        let downloadLink = document.createElement('a');
-        downloadLink.href = window.URL.createObjectURL(new Blob(binaryData,{type : dataType}));
-        downloadLink.target = "_blank";
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
+        this.download(resData['body']);
       } else {
         this.matComp.openSnackBar(resData['body']['message'],2000);  
       }
@@ -356,6 +359,29 @@ export class CoursehomeComponent implements OnInit {
     })
     this.showSpinner = false;
   }
+
+  async getPostResource(postId){
+    this.showSpinner = true;
+    const options = {
+      observe: 'response' as 'body',
+      responseType: 'blob' as 'json',
+      headers: new HttpHeaders({
+        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+      }),
+      params : new HttpParams().set('courseCode',this.code).set('postId',postId)
+    };
+    
+    await this.http.get(this.storeInfo.serverUrl+'/post/getResource', options).toPromise().then( (resData : Blob) => {
+      if(resData['status'] == 200){
+        this.download(resData['body']);
+      } else {
+        this.matComp.openSnackBar(resData['body']['message'],2000);  
+      }
+    },error => {
+      this.matComp.openSnackBar(error,2000);
+    })
+    this.showSpinner = false;
+  } 
 
   getTests(){
     console.log("Getting Tests")
@@ -367,6 +393,14 @@ export class CoursehomeComponent implements OnInit {
       doc : file
     });
     this.assignmentForm.get('doc').updateValueAndValidity()
+  }
+
+  uploadPostFile(event) {
+    const file = (event.target as HTMLInputElement).files[0];
+    this.postForm.patchValue({
+      file : file
+    });
+    this.postForm.get('file').updateValueAndValidity()
   }
 
   uploadSubmissionFile(event){
@@ -397,10 +431,14 @@ export class CoursehomeComponent implements OnInit {
     formData.append("file", this.submitAssignmentForm.get('file').value);
     formData.append("courseCode", this.code);
     
-    await this.http.post(this.storeInfo.serverUrl+'/course/submitAssignment', formData, options).toPromise().then((resData)=>{
-      console.log(resData);
+    await this.http.post(this.storeInfo.serverUrl+'/course/submitAssignment', formData, options).toPromise().then(async (resData)=>{
+      if(resData['status'] == 201){
+        this.resetSubmitAssignmentForm();
+        await this.getAssignments();
+      }
+      this.matComp.openSnackBar(resData['body']['message'],2000);
     }, (error) => {
-      console.log(error)
+      this.matComp.openSnackBar(error,2000);
     })
 
     this.showSpinner = false;
@@ -411,17 +449,9 @@ export class CoursehomeComponent implements OnInit {
     this.router.navigateByUrl('/');
   }
 
-  // onFileChange(event) {
-  //   if (event.target.files && event.target.files.length) {
-  //     this.fileName = event.target.files[0].name;
-  //     this.file = event.target.files[0];
-  //   }
-  // }
   checkStatus(date: string){
-  
     let dd = new Date(date);
     return dd.getTime() > new Date().getTime();
-  
   }
 
   
@@ -445,13 +475,15 @@ export class CoursehomeComponent implements OnInit {
   // }
 
   download(data){
-    var downloadLink = document.createElement("a");
-    var blob = new Blob([JSON.stringify(data)], {type: "text/plain;charset=utf-8"});
-    var url = URL.createObjectURL(blob);
-		downloadLink.href = url;
-		downloadLink.download = "Submissions.json";
-		document.body.appendChild(downloadLink);
-		downloadLink.click();
+
+    let dataType = data.type;
+    let binaryData = [];
+    binaryData.push(data);
+    let downloadLink = document.createElement('a');
+    downloadLink.href = window.URL.createObjectURL(new Blob(binaryData,{type : dataType}));
+    downloadLink.target = "_blank";
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
 		document.body.removeChild(downloadLink);
   }
   
@@ -465,17 +497,9 @@ export class CoursehomeComponent implements OnInit {
       }),
       params : new HttpParams().set('courseCode',this.code).set('assignmentId',assignmentId)
     };
-    this.http.get(this.storeInfo.serverUrl+'/course/getAssignmentSubmission', options).subscribe( (resData : Blob) => {
+    await this.http.get(this.storeInfo.serverUrl+'/course/getAssignmentSubmission', options).toPromise().then( (resData : Blob) => {
       if(resData['status'] == 200){
-        let dataType = resData['body'].type;
-        let binaryData = [];
-        console.log(dataType);
-        binaryData.push(resData['body']);
-        let downloadLink = document.createElement('a');
-        downloadLink.href = window.URL.createObjectURL(new Blob(binaryData,{type : dataType}));
-        downloadLink.target = "_blank";
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
+        this.download(resData['body']);
       } else {
         this.matComp.openSnackBar(resData['body']['message'],2000);  
       }

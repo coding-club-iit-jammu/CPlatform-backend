@@ -82,12 +82,18 @@
                                         <button class="btn btn-secondary" (click)="downloadSubmission(assignment._id)">Download Submission</button>
                                     </div>
                                 </div>
+                                <div class="my-auto mx-auto text-center" *ngIf="course.role=='instructor' || course.role=='teachingAssistant'">
+                                    <button class="btn btn-info" (click)="downloadAllSubmissions(assignment._id)">Download Submissions</button>
+                                </div>
                             </div>
                             <div *ngIf="assignment.requiresSubmission" class="card-footer text-muted border-warning">
                               <p>Deadline: {{assignment.deadline | date:'medium'}}</p>
                               <p *ngIf="course.role=='student' && assignment.submissionTime">Last Submission: {{assignment.submissionTime | date:'medium'}}</p>
                               <div *ngIf="course.role=='instructor'">
                                 <button class="btn btn-warning" data-toggle="modal" data-target="#shiftDeadlineModal" (click)="setShiftDeadline(assignment._id,assignment.title)">Shift Deadline</button>
+                              </div>
+                              <div *ngIf="course.role=='instructor'">
+                                <button class="btn btn-success" data-toggle="modal" data-target="#uploadMarksModal" (click)="setUploadMarksForm(assignment._id,assignment.title)">Upload Marks</button>
                               </div>
                             </div>
                         </div>

@@ -11,6 +11,8 @@ const assignmentController = require('../controllers/assignment');
 
 const router = express.Router();
 
+router.get('/getAllSubmissions',isAuth,getRole,isNotStudent,assignmentController.getAllAssignmentSubmissions);
+
 router.post('/shiftDeadline', isAuth, getRole,
                             isInstructor, assignmentController.shiftDeadline);
 

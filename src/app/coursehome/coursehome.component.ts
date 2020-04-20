@@ -509,6 +509,28 @@ export class CoursehomeComponent implements OnInit {
     this.showSpinner = false;
   }
 
+  async downloadAllSubmissions(assignmentId) {
+    this.showSpinner = true;
+    const options = {
+      observe: 'response' as 'body',
+      responseType: 'blob' as 'json',
+      headers: new HttpHeaders({
+        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+      }),
+      params : new HttpParams().set('courseCode',this.code).set('assignmentId',assignmentId)
+    };
+    await this.http.get(this.storeInfo.serverUrl+'/assignment/getAllSubmissions', options).toPromise().then( (resData : Blob) => {
+      if(resData['status'] == 200){
+        this.download(resData['body']);
+      } else {
+        this.matComp.openSnackBar(resData['body']['message'],2000);  
+      }
+    },error => {
+      this.matComp.openSnackBar(error,2000);
+    })
+    this.showSpinner = false;
+  }
+
   setShiftDeadline(assignmentId,title){
     this.shiftDeadlineForm.controls['title'].setValue(title);
     this.shiftDeadlineForm.controls['assignmentId'].setValue(assignmentId);   

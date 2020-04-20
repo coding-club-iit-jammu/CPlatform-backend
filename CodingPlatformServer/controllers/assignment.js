@@ -81,6 +81,55 @@ exports.getAllAssignmentSubmissions = (req,res,next) => {
 
 }
 
+exports.uploadMarks = async (req,res,next) => {
+    try {
+
+        const assignmentId = req.body.assignmentId;
+        
+        const data = fs.readFileSync(req.file.path, 'UTF-8');
+        const lines = data.split('\n');
+        
+        let dictData = {};
+
+        lines.forEach((line) => {
+            const d = line.split(',');
+            let email = d[0];
+            let marks = d[1];
+
+            dictData[email] = marks;
+        });
+
+        const assignment = await Assignment.findById(assignmentId);
+
+        if(!assignment){
+            res.status(500).json({message:'Try Again.'});
+            return;
+        }
+
+        const submissions = assignment.submissions;
+        submissions.forEach(submissionId =>{
+            
+            Submission.findById(submissionId).then(async (submission)=>{
+                if(!dictData[submission.email]){
+                    return;
+                }
+                submission['obtainedMarks'] = dictData[submission.email];
+                return submission.save();
+            })
+        })
+        
+        res.status(200).json({message:'Marks Uploaded.'});
+
+        fs.unlink(req.file.path,()=>{
+            console.log("CSV Deleted.");
+        })
+        
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({message:"Try Again."})
+    }
+}
+
 exports.submitAssignment = async (req,res,next) => {
     const assignmentId = req.body.assignmentId;
     const email = req.userEmail;

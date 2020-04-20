@@ -63,11 +63,11 @@
                             </div>
                             <div class="card-body">
                                 <div>
-                                    <div class="card-title" *ngIf="role != 'student' || (assignment.obtainedMarks == undefined || assignment.obtainedMarks == null )">
+                                    <div class="card-title" *ngIf="role != 'student' || !assignment.obtainedMarks">
                                         Marks: {{assignment.marks}}
                                     </div>
-                                    <div class="card-title" *ngIf="role == 'student' && (assignment.obtainedMarks != undefined && assignment.obtainedMarks != null)" class="bg-success">
-                                        Obtained Marks: {{assignment.obtainedMarks}} / {{assignment.marks}}
+                                    <div class="card-title" *ngIf="assignment.obtainedMarks">
+                                        <i>Obtained Marks: {{assignment.obtainedMarks}} / {{assignment.marks}}</i>
                                     </div>
                                 </div>
                                 <p class="card-text text-left my-2" [innerHtml]="assignment.description"></p>
@@ -116,7 +116,7 @@
                             </div>
                             <div class="card-footer border-danger text-muted">
                               2 days ago
-                            </div>
+                            </div>this.shiftDeadlineForm.controls['courseCode'].setValue(this.code);    
                         </div>
                     </div>
                     <div class="row mx-3 pl-4 fixed-bottom mb-4">
@@ -202,6 +202,35 @@
                         </div>
                         <div class="text-right">
                             <button type="button" class="btn btn-success" [disabled]="!submitAssignmentForm.valid" style="float: right;" (click)="submitAssignment()">Add</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="uploadMarksModal" role="dialog">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Upload Marks</h4>
+                        <button type="button" class="close" data-dismiss="modal" style="float: right;">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Assignment</label>
+                            <input type="text" class="form-control" readonly value="{{uploadMarksForm.get('title').value}}">
+                        </div>
+                        <div class="form-group">
+                            <label>File</label>
+                            <input type="file" class="form-control-file" (change)="uploadMarksFile($event)">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="text-left">
+                            <button type="button" class="btn btn-danger"  data-dismiss="modal" style="float: left;">Close</button>
+                        </div>
+                        <div class="text-right">
+                            <button type="button" class="btn btn-success" [disabled]="!uploadMarksForm.valid" style="float: right;" (click)="uploadMarks()">Add</button>
                         </div>
                     </div>
                 </div>

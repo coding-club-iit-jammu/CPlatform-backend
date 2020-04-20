@@ -44,6 +44,7 @@ export class CoursehomeComponent implements OnInit {
   testForm: FormGroup;
   submitAssignmentForm: FormGroup;
   shiftDeadlineForm: FormGroup;
+  uploadMarksForm: FormGroup;
 
   file:any;
   
@@ -75,6 +76,7 @@ export class CoursehomeComponent implements OnInit {
     this.resetAssignmentForm();
     this.resetSubmitAssignmentForm();
     this.resetShiftDeadlineForm();
+    this.resetUploadMarksForm();
 
     this.code = this.activatedRoute.snapshot.paramMap.get('courseId');
     
@@ -106,42 +108,6 @@ export class CoursehomeComponent implements OnInit {
       alert(error.message)
       this.showSpinner = false;
     })
-    
-
-    
-    // if(this.firebaseService.userid == undefined || this.firebaseService.userid == null){
-    //   await this.firebaseService.getCurrentUser().then(async (user)=>{
-    //       this.firebaseService.setUserID(user["email"].split('@')[0])
-    //     }
-    //   ).catch(()=>{
-    //     this.router.navigateByUrl('');
-    //   })
-    // }
-    // await this.firebaseService.getUserType();
-    // if(this.infoService.selectedCourse == undefined || this.infoService.selectedCourse == null){
-      
-    //   this.router.navigateByUrl('/'+this.infoService.userType)
-    //   return;
-    // }
-    // if (this.infoService.userType === 'instructor')
-    //   this.instructor = true;
-    // // this.userType = this.infoService.userType;
-    // this.code = this.infoService.selectedCourse;
-  
-    // await this.timeApi.getTime().then(data=>{
-    //   this.time = new Date(data);
-    // });
-  // onFileChange(event) {
-  //   if (event.target.files && event.target.files.length) {
-  //     this.fileName = event.target.files[0].name;
-  //     this.file = event.target.files[0];
-  //   }
-  // }
-  
-    // this.course = await this.infoService.getCourseDetails(this.code);
-    // this.assignments = this.infoService.getAssignments(this.code);
-    // if(this.assignments != null && this.assignments != undefined)
-    //   this.assignmentCounts = this.assignments.length;
   }
   
   async setView(tabvalue){
@@ -209,6 +175,14 @@ export class CoursehomeComponent implements OnInit {
     this.postForm = this.formBuilder.group({
       title: this.formBuilder.control('',Validators.required),
       description: this.formBuilder.control('',Validators.required),
+      file: this.formBuilder.control(null,Validators.required)
+    })
+  }
+
+  resetUploadMarksForm(){
+    this.uploadMarksForm = this.formBuilder.group({
+      title: this.formBuilder.control('',Validators.required),
+      assignmentId: this.formBuilder.control('',Validators.required),
       file: this.formBuilder.control(null,Validators.required)
     })
   }
@@ -454,26 +428,6 @@ export class CoursehomeComponent implements OnInit {
     return dd.getTime() > new Date().getTime();
   }
 
-  
-  
-  // async uploadSubmission(assignmentNo:number){
-  
-    // this.showSpinner = true;
-    // var userId = this.firebaseService.getUserID();
-    // var path = this.code + "/Assignment" + assignmentNo + "/" + userId + "/" + this.fileName;  
-    // if(this.file != null){
-    //     var result = await this.firebaseService.uploadFile(path, this.file);
-    //     this.showSpinner = false;
-    //     if(result != null){
-    //       this.assignments[assignmentNo-1].link = result.link
-    //       this.assignments[assignmentNo-1].time = result.time
-    //     }
-    // } else {
-    //   alert("No file found.")
-    //   this.showSpinner = false;
-    // }
-  // }
-
   download(data){
 
     let dataType = data.type;
@@ -576,33 +530,44 @@ export class CoursehomeComponent implements OnInit {
     this.fileToUpload = $event;      
   }
   
-  async uploadMarksListener($event: any){  
-    this.marksUpload = $event;      
+  async uploadMarksFile(event){  
+    const file = (event.target as HTMLInputElement).files[0];
+    this.uploadMarksForm.patchValue({
+      file : file
+    });
+    this.uploadMarksForm.get('file').updateValueAndValidity()       
   }
 
-  uploadMarks(){
+  setUploadMarksForm(assignmentId,title){
+    this.uploadMarksForm.controls['title'].setValue(title);
+    this.uploadMarksForm.controls['assignmentId'].setValue(assignmentId);   
+  }
+
+  async uploadMarks(){
     this.showSpinner = true;
-    let files = this.marksUpload.srcElement.files;
-    if (this.isValidCSVFile(files[0])) {  
-  
-      let input = this.marksUpload.target;  
-      let reader = new FileReader();  
-      reader.readAsText(input.files[0]);  
-  
-      reader.onload = async () => {  
-        let csvData = reader.result;  
-        let csvRecordsArray = (<string>csvData).split(/\r\n|\n/);  
-        await this.getDataRecordsArrayFromCSVFile(csvRecordsArray, 2, 1);  
-      };  
-      reader.onerror = function () {  
-        console.log('error is occured while reading file!');  
-      };  
-  
-    } else {  
-      alert("Please import valid .csv file.");  
-      this.fileReset();  
-      this.showSpinner = false;
-    }
+    const options = {
+      observe: 'response' as 'body',
+      responseType: 'blob' as 'json',
+      headers: new HttpHeaders({
+        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+      })
+    };
+
+    let formData: any = new FormData();
+    formData.append("assignmentId", this.uploadMarksForm.get('assignmentId').value);
+    formData.append("file", this.uploadMarksForm.get('file').value);
+    formData.append("courseCode", this.code);
+    
+    await this.http.post(this.storeInfo.serverUrl+'/assignment/uploadMarks', formData, options).toPromise().then(async (resData)=>{
+      if(resData['status'] == 201){
+        this.resetUploadMarksForm();
+      }
+      this.matComp.openSnackBar(resData['body']['message'],2000);
+    }, (error) => {
+      this.matComp.openSnackBar(error.toString(),2000);
+    })
+
+    this.showSpinner = false;
   }
 
   async addStudents(){

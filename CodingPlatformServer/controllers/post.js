@@ -27,7 +27,7 @@ exports.getResource = (req,res,next) => {
 
         res.download(post.file,(error)=>{
             if(error){
-                console.log(err);
+                console.log(error);
                 res.status(404).json({message:'Try Again.'});
                 return;   
             }

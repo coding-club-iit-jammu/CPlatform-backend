@@ -49,7 +49,7 @@ exports.createUser = async (req,res,next) =>{
             res.json({'added':true,message:"User Added Successfully."})
         } else {
             console.log("Error occured while adding user.");
-            res.json({'added':false,message:"Try Again"})
+            res.json({message:"Try Again"})
         }
         
     }).catch(()=>{

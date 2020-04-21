@@ -44,10 +44,15 @@ export class DetailsComponent implements OnInit {
 
    async onSubmit(data) {
     this.showSpinner = true;
+    // console.log(data);
     if(data.confirmPassword === data.password){
       this.http.post(this.storeInfo.serverUrl + '/createUser',data).subscribe((response)=>{
-        if(!data.added){
+        // console.log(data);
+        // console.log(response);
+        if(!response.hasOwnProperty("added")){
           this.matComp.openSnackBar('Sign Up Failed!',2500);
+        } else {
+          this.matComp.openSnackBar('User Registered Successfuly!', 2500);
         }
         this.showSpinner = false;
         this.router.navigate(['/']);

@@ -15,7 +15,7 @@
                                 <div class="card border-dark">
                                     <div class="card-header text-center border-dark text-dark font-weight-bold">Register</div>
                                     <div class="card-body">
-                                        <form [formGroup] = "form" (ngSubmit)="onSubmit()">
+                                        <form [formGroup] = "form" (ngSubmit)="onSubmit(form.value)">
                                             <div class="form-group row">
                                                 <label for="full_name" class="col-md-4 col-form-label text-md-right">Full Name</label>
                                                 <div class="col-md-6">
@@ -60,7 +60,7 @@
                                             </div>
 
                                             <div class="text-center mt-4">
-                                                <button type="submit" class="btn btn-danger" [disabled]="!form.valid" (click)="onSubmit(form.value)">
+                                                <button type="submit" class="btn btn-danger" [disabled]="!form.valid">
                                                     Sign Up
                                                 </button>
                                             </div>

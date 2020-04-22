@@ -10,8 +10,6 @@ import { environment } from 'src/environments/environment';
 import { AngularFireDatabaseModule } from '@angular/fire/database';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 import { AngularFireStorageModule } from '@angular/fire/storage';
-import { StudenthomeComponent } from './studenthome/studenthome.component';
-import { InstructorhomeComponent } from './instructorhome/instructorhome.component';
 import { FirebaseServicesService } from './firebase-services.service';
 import { TimeAPIClientService } from './services/time-apiclient.service';
 import { HttpService } from './services/http/http.service';
@@ -27,17 +25,17 @@ import { IdeComponent } from './ide/ide.component';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 import {MatSnackBarModule} from '@angular/material/snack-bar';
+import {MatTabsModule} from '@angular/material/tabs';
 
 import { MaterialComponentService } from './services/material-component.service';
 
-import { QuillModule } from 'ngx-quill'
+import { QuillModule } from 'ngx-quill';
+import { QuestionsComponent } from './questions/questions.component'
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
-    StudenthomeComponent,
-    InstructorhomeComponent,
     CoursehomeComponent,
     FormatdatePipe,
     SpinnerComponent,
@@ -45,6 +43,7 @@ import { QuillModule } from 'ngx-quill'
     DetailsComponent,
     HomeComponent,
     IdeComponent,
+    QuestionsComponent,
   ],
   imports: [
     BrowserModule,
@@ -57,6 +56,7 @@ import { QuillModule } from 'ngx-quill'
     HttpClientModule,
     NoopAnimationsModule,
     MatSnackBarModule,
+    MatTabsModule,
     QuillModule.forRoot()
   ],
   providers: [

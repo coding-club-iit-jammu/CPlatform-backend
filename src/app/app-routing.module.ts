@@ -6,6 +6,7 @@ import { CoursehomeComponent } from './coursehome/coursehome.component';
 import { DetailsComponent } from './details/details.component';
 import { QuizComponent } from './quiz/quiz.component'
 import { IdeComponent } from './ide/ide.component';
+import { QuestionsComponent } from './questions/questions.component';
 
 const routes: Routes = [
   {
@@ -31,6 +32,10 @@ const routes: Routes = [
   {
     path: 'ide',
     component: IdeComponent
+  },
+  {
+    path:'course/:courseId/questions',
+    component: QuestionsComponent
   }
 ];
 

@@ -11,9 +11,27 @@
     width: 90%;
   }
 
+  .w-80{
+    width: 80%;
+  }
+
+  .mat-tab{
+    justify-content: center;
+  }
+
+  code{
+    color: white;
+    background-color: black;
+  }
+
   .all{
     display: flex;
     flex-direction: row;
+  }
+
+  .min-H-5{
+    min-height: 5vh;
+    height: auto;
   }
   
   .main {

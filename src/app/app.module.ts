@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
+import { FormsModule }   from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AngularFireModule } from '@angular/fire';
 import { environment } from 'src/environments/environment';
@@ -57,6 +58,7 @@ import { QuestionsComponent } from './questions/questions.component'
     NoopAnimationsModule,
     MatSnackBarModule,
     MatTabsModule,
+    FormsModule,
     QuillModule.forRoot()
   ],
   providers: [

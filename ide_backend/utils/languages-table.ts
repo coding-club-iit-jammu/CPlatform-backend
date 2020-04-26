@@ -16,5 +16,10 @@ export const languagesTable: LanguageTable = [
         'cpp14', [
             { lang: 'cpp14', name: 'C++ 14', version: 'g++ 14 GCC 9.1.0', index: '3'}
         ]
+    ],
+    [
+        'java', [
+            { lang: 'java', name: 'Java', version: 'JDK 11.0.4', index: '3'}
+        ]
     ]
 ];

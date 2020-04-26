@@ -18,6 +18,14 @@ const routes: Routes = [
     component: HomeComponent
   },
   {
+    path:'course/:courseId/questions',
+    component: QuestionsComponent
+  },
+  {
+    path: 'course/:courseId/:view',
+    component: CoursehomeComponent
+  },
+  {
     path: 'course/:courseId',
     component: CoursehomeComponent
   },
@@ -32,10 +40,6 @@ const routes: Routes = [
   {
     path: 'ide',
     component: IdeComponent
-  },
-  {
-    path:'course/:courseId/questions',
-    component: QuestionsComponent
   }
 ];
 

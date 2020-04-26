@@ -1,9 +1,12 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { StoreInfoService } from '../services/store-info.service';
+
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+
+import { StoreInfoService } from '../services/store-info.service';
 import { MaterialComponentService } from '../services/material-component.service';
+
 @Component({
   selector: 'app-coursehome',
   templateUrl: './coursehome.component.html',
@@ -78,6 +81,15 @@ export class CoursehomeComponent implements OnInit {
     this.resetUploadMarksForm();
 
     this.code = this.activatedRoute.snapshot.paramMap.get('courseId');
+    let view = parseInt(this.activatedRoute.snapshot.paramMap.get('view'));
+    if(!Number.isNaN(view)){
+      this.view = view;
+      if(view < 1 || view > 3){
+        this.view = 1;
+      }
+    } else {
+      this.view = 1;
+    }
     
     if(!sessionStorage.getItem('token')){
       this.router.navigateByUrl('/');
@@ -107,6 +119,10 @@ export class CoursehomeComponent implements OnInit {
       alert(error.message)
       this.showSpinner = false;
     })
+  }
+
+  toQuestions(){
+    this.router.navigateByUrl(`/course/${this.code}/questions`);
   }
   
   async setView(tabvalue){

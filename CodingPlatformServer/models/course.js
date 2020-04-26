@@ -31,7 +31,21 @@ const courseSchema = new Schema({
     },
     tests:[{ type: Schema.Types.ObjectId, ref:'Test'}],
     posts:[{ type: Schema.Types.ObjectId, ref:'Post'}],
-    assignments:[{ type: Schema.Types.ObjectId, ref:'Assignment'}]
+    assignments:[{ type: Schema.Types.ObjectId, ref:'Assignment'}],
+    questions:{
+        mcq:[
+            {
+                type: Schema.Types.ObjectId, 
+                ref:'MCQ'
+            }
+        ],
+        trueFalse:[
+            {
+                type: Schema.Types.ObjectId,
+                ref:'TrueFalseQuestion'
+            }
+        ]
+    }
   
   })
 
@@ -63,6 +77,16 @@ courseSchema.methods.addTest = function(testId){
 courseSchema.methods.addAssignment = function(assignmentId){
     this.assignments.push(assignmentId)
     return this.save()
+}
+
+courseSchema.methods.addMCQ = function(mcqId){
+    this.questions.mcq.push(mcqId);
+    return this.save();
+}
+
+courseSchema.methods.addTrueFalse = function(mcqId){
+    this.questions.trueFalse.push(mcqId);
+    return this.save();
 }
 
 const Course = mongoose.model("Course",courseSchema);

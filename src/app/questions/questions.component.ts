@@ -12,19 +12,16 @@ import { StoreInfoService } from '../services/store-info.service';
 export class QuestionsComponent implements OnInit {
 
   view: Number = 0;
-  code: String;
+  code: string;
   showSpinner: Boolean = false; 
   addMCQQuestion: any = {
     question:'',
     options:[]
   }
-  editTrueFalseQuestion: FormGroup;
+  
   mcqQuestion: FormGroup;
   addOptionForm: FormGroup;
-  editMcqQuestion: FormGroup;
-  editMcqOptions: any = {
-    options:[]
-  }
+  
   editOptionIndex: any;
 
   addTrueFalseQuestion: FormGroup;
@@ -33,6 +30,7 @@ export class QuestionsComponent implements OnInit {
 
   mcqQuestions: Array<any> = [];
   trueFalseQuestions: Array<any> = [];
+  codingQuestions: Array<any> = [];
 
   constructor(private formBuilder: FormBuilder, 
               private matComp: MaterialComponentService,
@@ -46,10 +44,10 @@ export class QuestionsComponent implements OnInit {
     this.resetAddOptionForm();
     this.resetTrueFalseQuestion();
     this.resetAddCodingQuestion();
-    this.resetEditTrueFalseQuestion();
     this.code = this.activatedRoute.snapshot.paramMap.get('courseId').toString();
     this.getMCQ();
     this.getTrueFalse();
+    this.getCodingQuestions();
   }
 
   async getMCQ(){
@@ -96,6 +94,29 @@ export class QuestionsComponent implements OnInit {
     })
     this.showSpinner = false;
   }
+
+  async getCodingQuestions(){
+    this.showSpinner = true;
+    const options = {
+      observe: 'response' as 'body',
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json',
+        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+      }),
+      params: new HttpParams().set('courseCode',this.code.toString())
+
+    };
+    await this.http.get(this.storeInfo.serverUrl+'/codingQuestion/getCodingQuestions',options).toPromise().then(response=>{
+      if(response['status'] == 200){
+        this.codingQuestions = response['body']['questions']['codingQuestion'];
+      }
+    },error=>{
+      console.log(error)
+      this.matComp.openSnackBar(error['body']['message'],3000);
+    })
+    this.showSpinner = false;
+  }
+
 
   addOption(){
 
@@ -154,18 +175,6 @@ export class QuestionsComponent implements OnInit {
     this.showSpinner = false;
   }
 
-  saveEdittedMCQQuestion(){
-    if(this.addMCQQuestion.question.trim() === ''){
-      this.matComp.openSnackBar('Question can\'t be empty',3000);
-      return;
-    }
-    this.resetEditMCQQuestion();
-    this.editMcqOptions = {
-      options:[]
-    }
-
-  }
-
   async saveTrueFalseQuestion(){
     if(this.addTrueFalseQuestion.get('question').value.trim() === ''){
       this.matComp.openSnackBar('Question can\'t be empty',3000);
@@ -194,34 +203,49 @@ export class QuestionsComponent implements OnInit {
     })
   }
 
-  saveEdittedTrueFalseQuestion(){
-    if(this.editTrueFalseQuestion.get('question').value.trim() === ''){
-      this.matComp.openSnackBar('Question can\'t be empty',3000);
-      return;
-    }
-    // this.trueFalseQuestions.push(this.addTrueFalseQuestion.value);
-    this.resetEditTrueFalseQuestion();
-    console.log(this.trueFalseQuestions);
-    this.view = 0;
+  setTestCases(event){
+    const file = (event.target as HTMLInputElement).files[0];
+    this.addCodingQuestion.patchValue({
+      testcases : file
+    });
+    this.addCodingQuestion.get('testcases').updateValueAndValidity()
   }
 
-  trueFalseQuestionEdit(i,_id){
-    this.view = 5;
-    this.editTrueFalseQuestion.get('question').patchValue(this.trueFalseQuestions[i].question);
-    this.editTrueFalseQuestion.get('answer').patchValue(this.trueFalseQuestions[i].answer);
-    this.editTrueFalseQuestion.get('_id').patchValue(_id);
+  async saveCodingQuestion(){
+    // this.showSpinner = true;
+    
+    let formData = new FormData();
+    
+    formData.append('title',this.addCodingQuestion.get('title').value);
+    formData.append('description',this.addCodingQuestion.get('question').value);
+    formData.append('sampleInput',this.addCodingQuestion.get('sampleInput').value);
+    formData.append('sampleOutput',this.addCodingQuestion.get('sampleOutput').value);
+    formData.append('file',this.addCodingQuestion.get('testcases').value);
+    formData.append('courseCode',this.code);
+
+    new Response(formData).text().then(console.log)
+
+    const options = {
+      observe: 'response' as 'body',
+      headers: new HttpHeaders({
+        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+      })
+    };
+    
+    await this.http.post(this.storeInfo.serverUrl+'/codingQuestion/add',formData,options).toPromise().then(response=>{
+      if(response['status']==201){
+        this.resetAddCodingQuestion();
+      }
+      this.matComp.openSnackBar(response['body']['message'],3000);
+    },error=>{
+      // this.matComp.openSnackBar(error['body']['message'],3000);
+    })
+    this.showSpinner = false;
   }
 
   resetMCQQuestion(){
     this.mcqQuestion = this.formBuilder.group({
       question:this.formBuilder.control('')
-    })
-  }
-
-  resetEditMCQQuestion(){
-    this.editMcqQuestion = this.formBuilder.group({
-      question:this.formBuilder.control(''),
-      _id: this.formBuilder.control('')
     })
   }
 
@@ -232,20 +256,13 @@ export class QuestionsComponent implements OnInit {
     })
   }
 
-  resetEditTrueFalseQuestion(){
-    this.editTrueFalseQuestion = this.formBuilder.group({
-      question:this.formBuilder.control(''),
-      answer:this.formBuilder.control(''),
-      _id: this.formBuilder.control('')
-    })
-  }
-
   resetAddCodingQuestion(){
     this.addCodingQuestion = this.formBuilder.group({
       title: this.formBuilder.control(''),
       question: this.formBuilder.control(''),
       sampleInput: this.formBuilder.control(''),
-      sampleOutput: this.formBuilder.control('')
+      sampleOutput: this.formBuilder.control(''),
+      testcases: this.formBuilder.control(null)
     })
   }
   resetAddOptionForm(){

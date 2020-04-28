@@ -11,7 +11,7 @@ const assignmentRoute = require('./routes/assignment');
 const postRoute = require('./routes/post');
 const mcqRoute = require('./routes/questions/mcq');
 const truefalseRoute = require('./routes/questions/truefalse');
-
+const codingQuestionRoute = require('./routes/questions/coding-question');
 const app = express();
 
 app.use(cors());
@@ -25,7 +25,8 @@ app.use('/user', userRoute);
 app.use('/assignment', assignmentRoute);
 app.use('/post', postRoute);
 app.use('/mcq', mcqRoute);
-app.use('/truefalse', truefalseRoute)
+app.use('/truefalse', truefalseRoute);
+app.use('/codingQuestion',codingQuestionRoute);
 
 mongoose.connect("mongodb+srv://pratikparmar:dafiQxSJ4qttuhwr@cluster0-ihjbl.mongodb.net/CodingPlatform?retryWrites=true&w=majority",{useNewUrlParser: true,useUnifiedTopology: true},(err)=>{
     if(err){

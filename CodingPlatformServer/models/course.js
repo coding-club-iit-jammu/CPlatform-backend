@@ -44,6 +44,12 @@ const courseSchema = new Schema({
                 type: Schema.Types.ObjectId,
                 ref:'TrueFalseQuestion'
             }
+        ],
+        codingQuestion:[
+            {
+                type: Schema.Types.ObjectId,
+                ref:'CodingQuestion'
+            }
         ]
     }
   
@@ -86,6 +92,11 @@ courseSchema.methods.addMCQ = function(mcqId){
 
 courseSchema.methods.addTrueFalse = function(mcqId){
     this.questions.trueFalse.push(mcqId);
+    return this.save();
+}
+
+courseSchema.methods.addCodingQuestion = function(mcqId){
+    this.questions.codingQuestion.push(mcqId);
     return this.save();
 }
 

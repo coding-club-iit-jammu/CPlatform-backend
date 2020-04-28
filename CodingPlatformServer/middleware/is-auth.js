@@ -20,7 +20,7 @@ module.exports = async (req,res,next) => {
             next();
         })
     } catch(err){
-        res.status(500).json({message:'Not Authenticated'});
+        res.status(401).json({message:'Not Authenticated'});
         return;
     }
 };

@@ -13,7 +13,7 @@ module.exports = async (req, res, next) => {
     const course = await Course.findOne({code : courseCode});
     
     if(!course){
-        res.status(400).json({message:"Course not found."});
+        res.status(404).json({message:"Course not found."});
         return;
     }
 
@@ -43,7 +43,7 @@ module.exports = async (req, res, next) => {
     }
 
     if(!enrolled){
-        res.status(401).json({message:"Unauthorized Access."});
+        res.status(403).json({message:"Unauthorized Access."});
         return;
     }    
 

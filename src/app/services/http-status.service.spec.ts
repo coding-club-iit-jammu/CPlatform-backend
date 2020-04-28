@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 
-import { TimeAPIClientService } from './time-apiclient.service';
+import { HttpStatusService } from './http-status.service';
 
-describe('TimeAPIClientService', () => {
+describe('HttpStatusService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   it('should be created', () => {
-    const service: TimeAPIClientService = TestBed.get(TimeAPIClientService);
+    const service: HttpStatusService = TestBed.get(HttpStatusService);
     expect(service).toBeTruthy();
   });
 });

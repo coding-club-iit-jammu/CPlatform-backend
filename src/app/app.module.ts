@@ -11,12 +11,7 @@ import { environment } from 'src/environments/environment';
 import { AngularFireDatabaseModule } from '@angular/fire/database';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 import { AngularFireStorageModule } from '@angular/fire/storage';
-import { FirebaseServicesService } from './firebase-services.service';
-import { TimeAPIClientService } from './services/time-apiclient.service';
-import { HttpService } from './services/http/http.service';
-import { ServerHandlerService } from './services/http/server-handler.service';
 import { CoursehomeComponent } from './coursehome/coursehome.component';
-import { FormatdatePipe } from './formatdate.pipe';
 import { HttpClientModule } from '@angular/common/http';
 import { SpinnerComponent } from './spinner/spinner.component';
 import { QuizComponent } from './quiz/quiz.component';
@@ -38,7 +33,6 @@ import { QuestionsComponent } from './questions/questions.component'
     AppComponent,
     LoginComponent,
     CoursehomeComponent,
-    FormatdatePipe,
     SpinnerComponent,
     QuizComponent,
     DetailsComponent,
@@ -62,10 +56,6 @@ import { QuestionsComponent } from './questions/questions.component'
     QuillModule.forRoot()
   ],
   providers: [
-    FirebaseServicesService,
-    TimeAPIClientService,
-    HttpService,
-    ServerHandlerService,
     MaterialComponentService
   ],
   bootstrap: [AppComponent]

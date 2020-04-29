@@ -45,13 +45,13 @@
                                         <button class="btn btn-dark btn-sm float-right rounded-circle rounded-sm">
                                             <i class="fa h-100 w-100 fa-edit"></i>
                                         </button>
-                                        <button class="btn btn-dark btn-sm float-right rounded-circle rounded-sm" type="button" data-toggle="collapse" [attr.data-target]="'#collapseMCQ'+i" aria-expanded="true" [attr.aria-controls]="'#collapseMCQ'+i">
+                                        <button class="btn btn-dark btn-sm float-right rounded-circle rounded-sm" type="button" data-toggle="collapse" [attr.data-target]="'#collapseMCQ'+i" aria-expanded="false" [attr.aria-controls]="'#collapseMCQ'+i">
                                             <i class="fa h-100 w-100 fa-chevron-circle-down"></i>
                                         </button>
                                     </div>
                                 </div>
                           
-                                <div id="{{'collapseMCQ'+i}}" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                                <div id="{{'collapseMCQ'+i}}" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
                                     <div class="card-body">
                                         <div class="card my-3 d-flex flex-row text-center" *ngFor="let opt of q.options;" [ngClass]="{'border-success':opt.isCorrect==true, 'border-warning':opt.isCorrect!=true}">
                                             <div class="w-10 py-3">
@@ -88,14 +88,14 @@
                                     <div class="w-90 text-center" [innerHtml]='q.question'></div>
                                     <div class="w-10">
                                         <h2 class="mb-0">
-                                            <button class="btn btn-dark btn-sm float-right rounded-circle rounded-sm" type="button" data-toggle="collapse" [attr.data-target]="'#collapseTrueFalse'+i" aria-expanded="true" [attr.aria-controls]="'#collapseTrueFalse'+i">
+                                            <button class="btn btn-dark btn-sm float-right rounded-circle rounded-sm" type="button" data-toggle="collapse" [attr.data-target]="'#collapseTrueFalse'+i" aria-expanded="false" [attr.aria-controls]="'#collapseTrueFalse'+i">
                                             <i class="fa h-100 w-100 fa-chevron-circle-down"></i>
                                             </button>
                                         </h2>
                                     </div>
                                 </div>
                           
-                                <div id="{{'collapseTrueFalse'+i}}" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                                <div id="{{'collapseTrueFalse'+i}}" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
                                     <div class="card-body d-flex flex-row">
                                         <div class="card my-3 text-center border-success w-80" [ngClass]="{'border-success':q.answer, 'border-warning':!q.answer}">
                                             <div class="py-3">
@@ -135,14 +135,14 @@
                                     <div class="w-90 text-center" [innerHtml]='q.title'></div>
                                     <div class="w-10">
                                         <h2 class="mb-0">
-                                            <button class="btn btn-dark btn-sm float-right rounded-circle rounded-sm" type="button" data-toggle="collapse" [attr.data-target]="'#collapseCoding'+i" aria-expanded="true" [attr.aria-controls]="'#collapseCoding'+i">
+                                            <button class="btn btn-dark btn-sm float-right rounded-circle rounded-sm" type="button" data-toggle="collapse" [attr.data-target]="'#collapseCoding'+i" aria-expanded="false" [attr.aria-controls]="'#collapseCoding'+i">
                                             <i class="fa h-100 w-100 fa-chevron-circle-down"></i>
                                             </button>
                                         </h2>
                                     </div>
                                 </div>
                           
-                                <div id="{{'collapseCoding'+i}}" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                                <div id="{{'collapseCoding'+i}}" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
                                     <div class="card-body d-block">
                                         <div class="my-3 text-center w-100" [innerHtml]="q.description">
                                         </div>
@@ -155,6 +155,12 @@
                                             Sample Output
                                             <div class="card" [innerHtml]="q.sampleOutput">
                                             </div>
+                                        </div>
+                                        <div class="my-3 w-100 text-center">
+                                            <button class="btn btn-primary btn-sm" (click)="downloadTestCases(q._id,q.testcases)">TestCases</button>
+                                        </div>
+                                        <div class="my-3 w-100 text-center">
+                                            <button class="btn btn-warning btn-sm" (click)="setEditCodingQuestion(i)"><i class="fa fa-edit"></i></button>
                                         </div>
                                     </div>
                                 </div>

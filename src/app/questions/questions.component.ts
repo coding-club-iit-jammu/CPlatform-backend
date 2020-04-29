@@ -211,8 +211,51 @@ export class QuestionsComponent implements OnInit {
     this.addCodingQuestion.get('testcases').updateValueAndValidity()
   }
 
+  getFileNameFromHttpResponse(httpResponse) {
+    var contentDispositionHeader = httpResponse.headers('Content-Disposition');
+    var result = contentDispositionHeader.split(';')[1].trim().split('=')[1];
+    return result.replace(/"/g, '');
+  }
+
+  download(data,name){
+
+    let dataType = data.type;
+    let binaryData = [];
+    binaryData.push(data);
+    let downloadLink = document.createElement('a');
+    downloadLink.href = window.URL.createObjectURL(new Blob(binaryData,{type : dataType}));
+    downloadLink.target = "_blank";
+    downloadLink.download = name;
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+		document.body.removeChild(downloadLink);
+  }
+
+  async downloadTestCases(_id,path){
+    this.showSpinner = true;
+    const options = {
+      observe: 'response' as 'body',
+      responseType: 'blob' as 'json',
+      headers: new HttpHeaders({
+        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+      }),
+      params : new HttpParams().set('courseCode',this.code).set('codingQuestionId',_id)
+    };
+    var filename = path.replace(/^.*[\\\/]/, '');
+    await this.http.get(this.storeInfo.serverUrl+'/codingQuestion/getTestCases', options).toPromise().then( (resData : Blob) => {
+      if(resData['status'] == 200){
+        this.download(resData['body'],filename);
+      } else {
+        this.matComp.openSnackBar(resData['body']['message'],2000);  
+      }
+    },error => {
+      this.matComp.openSnackBar(error,2000);
+    })
+    this.showSpinner = false;
+  }
+
   async saveCodingQuestion(){
-    // this.showSpinner = true;
+    this.showSpinner = true;
     
     let formData = new FormData();
     
@@ -220,10 +263,19 @@ export class QuestionsComponent implements OnInit {
     formData.append('description',this.addCodingQuestion.get('question').value);
     formData.append('sampleInput',this.addCodingQuestion.get('sampleInput').value);
     formData.append('sampleOutput',this.addCodingQuestion.get('sampleOutput').value);
-    formData.append('file',this.addCodingQuestion.get('testcases').value);
+    
+    if(this.addCodingQuestion.get('testcases').value)
+      formData.append('file',this.addCodingQuestion.get('testcases').value);
+    
     formData.append('courseCode',this.code);
 
-    new Response(formData).text().then(console.log)
+    let url = '/codingQuestion/';
+    if(this.addCodingQuestion.get('_id').value){
+      url += 'edit';
+      formData.append('_id',this.addCodingQuestion.get('_id').value);
+    } else {
+      url += 'add';
+    }
 
     const options = {
       observe: 'response' as 'body',
@@ -232,13 +284,13 @@ export class QuestionsComponent implements OnInit {
       })
     };
     
-    await this.http.post(this.storeInfo.serverUrl+'/codingQuestion/add',formData,options).toPromise().then(response=>{
+    await this.http.post(this.storeInfo.serverUrl+url,formData,options).toPromise().then(response=>{
       if(response['status']==201){
         this.resetAddCodingQuestion();
       }
       this.matComp.openSnackBar(response['body']['message'],3000);
     },error=>{
-      // this.matComp.openSnackBar(error['body']['message'],3000);
+      this.matComp.openSnackBar(error,3000);
     })
     this.showSpinner = false;
   }
@@ -256,13 +308,25 @@ export class QuestionsComponent implements OnInit {
     })
   }
 
+  setEditCodingQuestion(index){
+    
+    this.resetAddCodingQuestion();
+    this.addCodingQuestion.get('title').patchValue(this.codingQuestions[index].title);
+    this.addCodingQuestion.get('question').patchValue(this.codingQuestions[index].description);
+    this.addCodingQuestion.get('sampleInput').patchValue(this.codingQuestions[index].sampleInput);
+    this.addCodingQuestion.get('sampleOutput').patchValue(this.codingQuestions[index].sampleOutput);
+    this.addCodingQuestion.get('_id').patchValue(this.codingQuestions[index]._id);
+    this.view = 3;
+  }
+
   resetAddCodingQuestion(){
     this.addCodingQuestion = this.formBuilder.group({
       title: this.formBuilder.control(''),
       question: this.formBuilder.control(''),
       sampleInput: this.formBuilder.control(''),
       sampleOutput: this.formBuilder.control(''),
-      testcases: this.formBuilder.control(null)
+      testcases: this.formBuilder.control(null),
+      _id: this.formBuilder.control(null)
     })
   }
   resetAddOptionForm(){

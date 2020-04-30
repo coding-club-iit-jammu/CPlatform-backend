@@ -23,6 +23,8 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatTabsModule} from '@angular/material/tabs';
 
+import { HttpService } from './services/http/http.service';
+import { ServerHandlerService } from './services/http/server-handler.service';
 import { MaterialComponentService } from './services/material-component.service';
 
 import { QuillModule } from 'ngx-quill';
@@ -56,7 +58,9 @@ import { QuestionsComponent } from './questions/questions.component'
     QuillModule.forRoot()
   ],
   providers: [
-    MaterialComponentService
+    MaterialComponentService,
+    HttpService,
+    ServerHandlerService
   ],
   bootstrap: [AppComponent]
 })

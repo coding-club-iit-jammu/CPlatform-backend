@@ -109,12 +109,15 @@ export class IdeComponent implements OnInit {
   private getEditorOptions(): Partial<ace.Ace.EditorOptions> & { enableBasicAutoCompletion?: boolean;} {
     const basicEditorOptions: Partial<ace.Ace.EditorOptions> = {
       highlightActiveLine: true,
-      minLines: 10,
-      maxLines: Infinity,
-      fontSize: 32,
+      minLines: 15,
+      maxLines: 20,
+      fontSize: 20,
+      autoScrollEditorIntoView: true,
+      vScrollBarAlwaysVisible: true
     }
     const extraEditorOptions = {
-      enableBasicAutocompletion: true
+      enableBasicAutocompletion: true,
+      enableLiveAutocompletion: true,
     };
     const mergedOptions = Object.assign(basicEditorOptions, extraEditorOptions);
     return mergedOptions;

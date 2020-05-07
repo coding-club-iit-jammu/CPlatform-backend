@@ -55,7 +55,7 @@ class Solution {
                return root;
            }
         }
-*/`;
+`;
 const INIT_CONTENT = `/*The tree node has data, left child and right child 
 class Node {
     int data;
@@ -74,13 +74,14 @@ int main() {
     Solution myTree;
     Node* root = NULL;
     
-    int t;
+    int t = 1;
     int data;
 
-    std::cin >> t;
+    // std::cin >> t;
 
     while(t-- > 0) {
-        std::cin >> data;
+        // std::cin >> data;
+        data = 5;
         root = myTree.insert(root, data);
     }
   
@@ -149,9 +150,9 @@ export class IdeComponent implements OnInit {
     this.setEditorTheme(this.initOptions.theme || DEFAULT_THEME_MODE);
     this.setContent(this.initOptions.content || INIT_CONTENT);
 
-    this.codeHeader.setShowFoldWidgets(true);
-    this.codeEditor.setShowFoldWidgets(true);
-    this.codeFooter.setShowFoldWidgets(true);
+    // this.codeHeader.setShowFoldWidgets(true);
+    // this.codeEditor.setShowFoldWidgets(true);
+    // this.codeFooter.setShowFoldWidgets(true);
     this.editorBeautify = ace.require('ace/ext/beautify');
 
     this.languagesArray$ = this.pipeSupportedLanguages();
@@ -162,6 +163,24 @@ export class IdeComponent implements OnInit {
     // let rangeId = this.codeEditor.getSession().addMarker(r, "readonly-highlight", "fullLine");
     this.codeHeader.setReadOnly(true);
     this.codeFooter.setReadOnly(true);
+    this.codeEditor.clearSelection();
+
+    this.codeHeader.setHighlightActiveLine(false);
+    this.codeFooter.setHighlightActiveLine(false);
+
+    // set line numbers appropriately
+    let linesInHeader = INIT_HEADER.split(/\r\n|\r|\n/).length;
+    this.codeEditor.setOption("firstLineNumber", linesInHeader + 1);
+    let linesInContent = INIT_CONTENT.split(/\r\n|\r|\n/).length;
+    let initialLinesFooter = linesInHeader + linesInContent + 1;
+    this.codeFooter.setOption("firstLineNumber", initialLinesFooter);
+
+    this.codeEditor.on("change", (delta) => {
+      const content = this.codeEditor.getValue();
+      linesInContent = content.split(/\r\n|\r|\n/).length;
+      console.log(linesInContent);
+      this.codeFooter.setOption("firstLineNumber", linesInHeader + linesInContent + 1);
+    });
   }
 
   private pipeSupportedLanguages() {
@@ -196,14 +215,14 @@ export class IdeComponent implements OnInit {
     const basicEditorOptions: Partial<ace.Ace.EditorOptions> = {
       highlightActiveLine: true,
       minLines: 5,
-      maxLines: 100,
-      fontSize: 20,
+      maxLines: 20,
+      fontSize: 18,
       autoScrollEditorIntoView: true,
       vScrollBarAlwaysVisible: true
     }
     const extraEditorOptions = {
       enableBasicAutocompletion: true,
-      enableLiveAutocompletion: true,
+      // enableLiveAutocompletion: true,
     };
     const mergedOptions = Object.assign(basicEditorOptions, extraEditorOptions);
     return mergedOptions;
@@ -289,6 +308,7 @@ export class IdeComponent implements OnInit {
   public onClearContent() {
     if (this.codeEditor) {
       this.codeEditor.setValue(INIT_CONTENT);
+      this.codeEditor.clearSelection();
     }
   }
 
@@ -303,7 +323,7 @@ export class IdeComponent implements OnInit {
       this.codeHeader.setValue(INIT_HEADER);
     }
     if (this.codeFooter) {
-      this.codeFooter.setValue(INIT_CONTENT);
+      this.codeFooter.setValue(INIT_FOOTER);
     }
   }
 
@@ -311,9 +331,12 @@ export class IdeComponent implements OnInit {
    * @event OnContentChange - a proxy event to Ace 'change' event - adding additional data.
    * @param callback - receive the current content and 'change' event's original parameter.
    */
-  public OnContentChange(callback: (content: string, delta: ace.Ace.Delta) => void) : void {
+  public onContentChange(callback: (content: string, delta: ace.Ace.Delta) => void) : void {
     this.codeEditor.on('change', (delta) => {
       const content = this.codeEditor.getValue();
+      let linesInContent = content.split(/\r\n|\r|\n/).length;
+      console.log(linesInContent);
+      this.codeFooter.setOption("firstLineNumber", linesInContent + 1);
       callback(content, delta);
     });
   }

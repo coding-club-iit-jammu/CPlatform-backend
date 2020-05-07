@@ -1,5 +1,5 @@
-export const DEFAULT_LANGUAGE_MODE = 'python3';
-export const DEFAULT_EDITOR_THEME = 'github';
+export const DEFAULT_LANGUAGE_MODE = 'cpp14';
+export const DEFAULT_EDITOR_THEME = 'solarized_dark';
 export const DEFAULT_CONTENT = '';
 export const DEFAULT_RUN_ERROR_MESSAGE = 
 'Oops, error occurred while trying to run your code!\n';

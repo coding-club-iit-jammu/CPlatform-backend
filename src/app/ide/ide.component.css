@@ -33,3 +33,9 @@ select.languages-select:focus > option:checked {
 }
 
 button.cant-click { cursor: not-allowed; }
+
+.readonly-highlighy {
+    background-color: red;
+    opacity: 0.2;
+    position: absolute;
+}

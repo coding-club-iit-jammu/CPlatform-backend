@@ -21,9 +21,77 @@ import 'ace-builds/webpack-resolver';
 import 'ace-builds/src-noconflict/ext-language_tools';
 import 'ace-builds/src-noconflict/ext-beautify';
 import { LanguageTable } from 'ide_backend/utils/languages-table';
-const INIT_CONTENT = '';
-const DEFAULT_THEME_MODE = 'github';
-const DEFAULT_LANG_MODE = 'python3';
+const INIT_HEADER = `#include <bits/stdc++.h>
+
+using namespace std;
+
+class Node {
+    public:
+        int data;
+        Node *left;
+        Node *right;
+        Node(int d) {
+            data = d;
+            left = NULL;
+            right = NULL;
+        }
+};
+
+class Solution {
+    public:
+  		Node* insert(Node* root, int data) {
+            if(root == NULL) {
+                return new Node(data);
+            } else {
+                Node* cur;
+                if(data <= root->data) {
+                    cur = insert(root->left, data);
+                    root->left = cur;
+                } else {
+                    cur = insert(root->right, data);
+                    root->right = cur;
+               }
+
+               return root;
+           }
+        }
+*/`;
+const INIT_CONTENT = `/*The tree node has data, left child and right child 
+class Node {
+    int data;
+    Node* left;
+    Node* right;
+};
+*/
+  int height(Node* root) {
+    // Write your code here.
+  }
+`;
+const INIT_FOOTER = `}; //End of Solution
+
+int main() {
+  
+    Solution myTree;
+    Node* root = NULL;
+    
+    int t;
+    int data;
+
+    std::cin >> t;
+
+    while(t-- > 0) {
+        std::cin >> data;
+        root = myTree.insert(root, data);
+    }
+  
+    int height = myTree.height(root);
+    
+  	std::cout << height;
+
+    return 0;
+}`
+const DEFAULT_THEME_MODE = 'solarized_dark';
+const DEFAULT_LANG_MODE = 'cpp14';
 
 @Component({
   selector: 'app-ide',
@@ -33,6 +101,8 @@ const DEFAULT_LANG_MODE = 'python3';
 export class IdeComponent implements OnInit {
 
   @ViewChild('codeEditor', {static: true}) private codeEditorElmRef: ElementRef;
+  @ViewChild('codeEditorHeader', {static: true}) private codeEditorHeadElmRef: ElementRef;
+  @ViewChild('codeEditorFooter', {static: true}) private codeEditorFootElmRef: ElementRef;
   // language select element ref
   @ViewChild('languagesSelect', {static: false}) languagesSelect: ElementRef;
   // observable of the run request output
@@ -41,6 +111,8 @@ export class IdeComponent implements OnInit {
   public activatedTheme: string;
 
   private codeEditor: ace.Ace.Editor;
+  private codeHeader: ace.Ace.Editor;
+  private codeFooter: ace.Ace.Editor;
   private editorBeautify;
   // @Input() content: string;
   @Input() initOptions: {
@@ -64,18 +136,32 @@ export class IdeComponent implements OnInit {
 
   async ngOnInit() {
     ace.require('ace/ext/language_tools');
-    const element = this.codeEditorElmRef.nativeElement;
+    const editorMain = this.codeEditorElmRef.nativeElement;
+    const header = this.codeEditorHeadElmRef.nativeElement;
+    const footer = this.codeEditorFootElmRef.nativeElement;
     const editorOptions = this.getEditorOptions();
 
-    this.codeEditor = ace.edit(element, editorOptions);
+    this.codeEditor = ace.edit(editorMain, editorOptions);
+    this.codeHeader = ace.edit(header, editorOptions);
+    this.codeFooter = ace.edit(footer, editorOptions);
+
     this.setLanguageMode(this.initOptions.languageMode || DEFAULT_LANG_MODE);
     this.setEditorTheme(this.initOptions.theme || DEFAULT_THEME_MODE);
     this.setContent(this.initOptions.content || INIT_CONTENT);
+
+    this.codeHeader.setShowFoldWidgets(true);
     this.codeEditor.setShowFoldWidgets(true);
+    this.codeFooter.setShowFoldWidgets(true);
     this.editorBeautify = ace.require('ace/ext/beautify');
 
     this.languagesArray$ = this.pipeSupportedLanguages();
     this.activatedTheme = this.initEditorOptions.theme;
+
+    // let Range = ace.require("ace/range").Range;
+    // let r = new Range(0, 0, 5, 5);
+    // let rangeId = this.codeEditor.getSession().addMarker(r, "readonly-highlight", "fullLine");
+    this.codeHeader.setReadOnly(true);
+    this.codeFooter.setReadOnly(true);
   }
 
   private pipeSupportedLanguages() {
@@ -109,8 +195,8 @@ export class IdeComponent implements OnInit {
   private getEditorOptions(): Partial<ace.Ace.EditorOptions> & { enableBasicAutoCompletion?: boolean;} {
     const basicEditorOptions: Partial<ace.Ace.EditorOptions> = {
       highlightActiveLine: true,
-      minLines: 15,
-      maxLines: 20,
+      minLines: 5,
+      maxLines: 100,
       fontSize: 20,
       autoScrollEditorIntoView: true,
       vScrollBarAlwaysVisible: true
@@ -135,6 +221,12 @@ export class IdeComponent implements OnInit {
         this.codeEditor.getSession().setMode(languageModulePath, () => {
           this.currentConfig.langMode = langMode;
         });
+        this.codeHeader.getSession().setMode(languageModulePath, () => {
+          this.currentConfig.langMode = langMode;
+        });
+        this.codeFooter.getSession().setMode(languageModulePath, () => {
+          this.currentConfig.langMode = langMode;
+        });
       }
     } catch (error) {
       console.log(error);
@@ -150,6 +242,12 @@ export class IdeComponent implements OnInit {
       if (themeModuleMap.has(theme)) {
         const themePath = themeModuleMap.get(theme);
         this.codeEditor.setTheme(themePath, () => {
+          this.currentConfig.editorTheme = theme;
+        });
+        this.codeHeader.setTheme(themePath, () => {
+          this.currentConfig.editorTheme = theme;
+        });
+        this.codeFooter.setTheme(themePath, () => {
           this.currentConfig.editorTheme = theme;
         });
       }
@@ -178,7 +276,7 @@ export class IdeComponent implements OnInit {
    */
   public getContent() {
     if (this.codeEditor) {
-      const code = this.codeEditor.getValue();
+      const code = this.codeHeader.getValue() + this.codeEditor.getValue() + this.codeFooter.getValue();
       // console.log(code);
       return code;
     }
@@ -200,6 +298,12 @@ export class IdeComponent implements OnInit {
   public setContent(content: string) : void {
     if (this.codeEditor) {
       this.codeEditor.setValue(content);
+    }
+    if (this.codeHeader) {
+      this.codeHeader.setValue(INIT_HEADER);
+    }
+    if (this.codeFooter) {
+      this.codeFooter.setValue(INIT_CONTENT);
     }
   }
 

@@ -22,9 +22,10 @@ var upload = multer({ storage : storage});
 const codingController = require('../../controllers/questions/coding-question');
 
 router.get('/getCodingQuestions', isAuth, getRole, isNotStudent, codingController.getCodingQuestions);
-router.get('/getTestCases', isAuth, getRole, isNotStudent, codingController.getTestCases);
+router.get('/getItem', isAuth, getRole, isNotStudent, codingController.getItem);
 
-router.post('/add', isAuth, upload.single('file'), getRole, isNotStudent, codingController.addCodingQuestion);
-router.post('/edit', isAuth, upload.single('file'), getRole, isNotStudent, codingController.editCodingQuestion);
+var cpUpload = upload.fields([{ name: 'testcases', maxCount: 1 }, { name: 'header', maxCount: 1 }, { name: 'footer', maxCount: 1 }])
+router.post('/add', isAuth, cpUpload, getRole, isNotStudent, codingController.addCodingQuestion);
+router.post('/edit', isAuth, cpUpload, getRole, isNotStudent, codingController.editCodingQuestion);
 
 module.exports = router;

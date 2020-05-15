@@ -28,7 +28,8 @@ import { ServerHandlerService } from './services/http/server-handler.service';
 import { MaterialComponentService } from './services/material-component.service';
 
 import { QuillModule } from 'ngx-quill';
-import { QuestionsComponent } from './questions/questions.component'
+import { QuestionsComponent } from './questions/questions.component';
+import { PracticeComponent } from './practice/practice.component'
 
 @NgModule({
   declarations: [
@@ -41,6 +42,7 @@ import { QuestionsComponent } from './questions/questions.component'
     HomeComponent,
     IdeComponent,
     QuestionsComponent,
+    PracticeComponent,
   ],
   imports: [
     BrowserModule,

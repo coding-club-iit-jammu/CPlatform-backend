@@ -211,6 +211,22 @@ export class QuestionsComponent implements OnInit {
     this.addCodingQuestion.get('testcases').updateValueAndValidity()
   }
 
+  setHeaderCode(event){
+    const file = (event.target as HTMLInputElement).files[0];
+    this.addCodingQuestion.patchValue({
+      header: file
+    });
+    this.addCodingQuestion.get('header').updateValueAndValidity()
+  }
+
+  setFooterCode(event){
+    const file = (event.target as HTMLInputElement).files[0];
+    this.addCodingQuestion.patchValue({
+      footer : file
+    });
+    this.addCodingQuestion.get('footer').updateValueAndValidity()
+  }
+
   getFileNameFromHttpResponse(httpResponse) {
     var contentDispositionHeader = httpResponse.headers('Content-Disposition');
     var result = contentDispositionHeader.split(';')[1].trim().split('=')[1];
@@ -231,7 +247,7 @@ export class QuestionsComponent implements OnInit {
 		document.body.removeChild(downloadLink);
   }
 
-  async downloadTestCases(_id,path){
+  async downloadItem(_id,path,item){
     this.showSpinner = true;
     const options = {
       observe: 'response' as 'body',
@@ -239,10 +255,10 @@ export class QuestionsComponent implements OnInit {
       headers: new HttpHeaders({
         'Authorization': 'Bearer ' + sessionStorage.getItem('token')
       }),
-      params : new HttpParams().set('courseCode',this.code).set('codingQuestionId',_id)
+      params : new HttpParams().set('courseCode',this.code).set('codingQuestionId',_id).set('item',item)
     };
     var filename = path.replace(/^.*[\\\/]/, '');
-    await this.http.get(this.storeInfo.serverUrl+'/codingQuestion/getTestCases', options).toPromise().then( (resData : Blob) => {
+    await this.http.get(this.storeInfo.serverUrl+'/codingQuestion/getItem', options).toPromise().then( (resData : Blob) => {
       if(resData['status'] == 200){
         this.download(resData['body'],filename);
       } else {
@@ -265,7 +281,11 @@ export class QuestionsComponent implements OnInit {
     formData.append('sampleOutput',this.addCodingQuestion.get('sampleOutput').value);
     
     if(this.addCodingQuestion.get('testcases').value)
-      formData.append('file',this.addCodingQuestion.get('testcases').value);
+      formData.append('testcases',this.addCodingQuestion.get('testcases').value);
+    if(this.addCodingQuestion.get('header').value)
+      formData.append('header',this.addCodingQuestion.get('header').value);
+    if(this.addCodingQuestion.get('testcases').value)
+      formData.append('footer',this.addCodingQuestion.get('footer').value);
     
     formData.append('courseCode',this.code);
 
@@ -326,6 +346,8 @@ export class QuestionsComponent implements OnInit {
       sampleInput: this.formBuilder.control(''),
       sampleOutput: this.formBuilder.control(''),
       testcases: this.formBuilder.control(null),
+      header: this.formBuilder.control(null),
+      footer: this.formBuilder.control(null),
       _id: this.formBuilder.control(null)
     })
   }

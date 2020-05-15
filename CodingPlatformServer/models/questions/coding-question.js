@@ -21,6 +21,14 @@ const codingSchema = new Schema({
     testcases:{
         type: String,
         required: true
+    },
+    header:{
+        type: String,
+        required: false
+    },
+    footer:{
+        type: String,
+        required: false
     }
 });
 

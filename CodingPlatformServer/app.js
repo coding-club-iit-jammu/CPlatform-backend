@@ -16,7 +16,6 @@ const app = express();
 
 app.use(cors());
 
-
 app.use(bodyParser.urlencoded({extended:true,limit:'20mb'}));
 app.use(bodyParser.json({limit:'20mb'}));
 app.use(authRoute);

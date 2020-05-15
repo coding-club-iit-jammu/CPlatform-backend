@@ -7,6 +7,7 @@ import { DetailsComponent } from './details/details.component';
 import { QuizComponent } from './quiz/quiz.component'
 import { IdeComponent } from './ide/ide.component';
 import { QuestionsComponent } from './questions/questions.component';
+import { PracticeComponent } from './practice/practice.component';
 
 const routes: Routes = [
   {
@@ -20,6 +21,10 @@ const routes: Routes = [
   {
     path:'course/:courseId/questions',
     component: QuestionsComponent
+  },
+  {
+    path:'course/:courseId/practice',
+    component: PracticeComponent
   },
   {
     path: 'course/:courseId/:view',

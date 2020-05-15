@@ -26,6 +26,9 @@
                         <li class="nav-item active">
                             <a class="nav-link" routerLink="/questions">Questions</a>
                         </li>
+                        <li class="nav-item active">
+                            <a class="nav-link" routerLink="/practice">Practice</a>
+                        </li>
                     </ul>
                     <a class="btn btn-warning mr-2 my-sm-0" (click)="moveBack()">Home</a>
                     &nbsp;&nbsp;<br>
@@ -156,10 +159,18 @@
                                             <div class="card" [innerHtml]="q.sampleOutput">
                                             </div>
                                         </div>
-                                        <div class="my-3 w-100 text-center">
-                                            <button class="btn btn-primary btn-sm" (click)="downloadTestCases(q._id,q.testcases)">TestCases</button>
+                                        <div class="d-flex flex-row my-3">
+                                            <div class="w-100 text-center">
+                                                <button class="btn btn-primary btn-sm" (click)="downloadItem(q._id,q.testcases,'testcases')">TestCases</button>
+                                            </div>
+                                            <div class="w-100 text-center" *ngIf="q.header">
+                                                <button class="btn btn-primary btn-sm" (click)="downloadItem(q._id,q.header,'header')">Header</button>
+                                            </div>
+                                            <div class="w-100 text-center" *ngIf="q.footer">
+                                                <button class="btn btn-primary btn-sm" (click)="downloadItem(q._id,q.footer,'footer')">Footer</button>
+                                            </div>
                                         </div>
-                                        <div class="my-3 w-100 text-center">
+                                        <div class="w-100 text-center">
                                             <button class="btn btn-warning btn-sm" (click)="setEditCodingQuestion(i)"><i class="fa fa-edit"></i></button>
                                         </div>
                                     </div>
@@ -268,6 +279,14 @@
                                 <div class="form-group">
                                     <label>Test Cases</label>
                                     <input type="file" class="form-control-file my-2" (change)="setTestCases($event)">
+                                </div>
+                                <div class="form-group">
+                                    <label>Header Code</label>
+                                    <input type="file" class="form-control-file my-2" (change)="setHeaderCode($event)">
+                                </div>
+                                <div class="form-group">
+                                    <label>Footer Code</label>
+                                    <input type="file" class="form-control-file my-2" (change)="setFooterCode($event)">
                                 </div>
                                 <div class="text-right bottom">
                                     <button class="btn btn-success my-3" (click)="saveCodingQuestion()">Save</button>

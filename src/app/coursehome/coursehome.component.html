@@ -301,9 +301,9 @@
                             </div>
                             <div>
                                 <label class="my-2" for="audience">Audience</label>
-                                <select>
-                                    <option></option>
-                                </select>
+                                <mat-select formControlName="audience" multiple>
+                                    <mat-option *ngFor="let topping of course.groups" [value]="topping">{{topping}}</mat-option>
+                                </mat-select>
                             </div>
                             <div class="modal-footer">
                                 <div>

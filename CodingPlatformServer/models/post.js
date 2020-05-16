@@ -21,7 +21,16 @@ const postSchema = new Schema({
     },
     file:{
         type: String
+    },
+    audience:{
+        type:String,
+        required:true
     }
 })
+
+postSchema.methods.addAudience = (aud)=>{
+    this.audience.push(aud);
+    return this.save();
+}
 
 module.exports = mongoose.model("Post",postSchema);

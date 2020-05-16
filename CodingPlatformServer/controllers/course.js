@@ -16,6 +16,14 @@ exports.addCourse = (req,res,next) => {
     const teachingAssistantCode = req.body.teachingAssistantCode;
     const studentCode = req.body.studentCode;
     
+    let groupIds = [];
+    for(let x of studentCode){
+        groupIds.push({
+            groupId:x.groupId,
+            students:[]
+        });
+    }
+
     const course = new Course({
         title : title,
         code : code,
@@ -23,7 +31,10 @@ exports.addCourse = (req,res,next) => {
             instructor: instructorCode,
             teachingAssistant: teachingAssistantCode,
             groups: studentCode 
-        }
+        },
+        groups: groupIds,
+        instructors:[],
+        teachingAssistants:[]
     });
     
     course.save().then((result)=>{
@@ -51,7 +62,6 @@ exports.joinCourse = (req,res,next) => {
             })
             return;
         }
-        console.log(course);
         if(joiningCode == course.joiningCode.instructor){
             course.addInstructor(req.userId).then((result)=>{
                 if(!result){
@@ -91,7 +101,7 @@ exports.joinCourse = (req,res,next) => {
             }).catch((err)=>{
                 res.status(500).json({"message":"Internal Server Error, Try Again"}); 
             })
-        } else if(joiningCode == course.joiningCode.student) {
+        } else {
             for(let g of course.joiningCode.groups){
                 if(g.code == joiningCode){
                     course.addStudent(req.userId, g.groupId).then((result)=>{
@@ -111,7 +121,7 @@ exports.joinCourse = (req,res,next) => {
                     }).catch((err)=>{
                         res.status(500).json({"message":"Internal Server Error, Try Again"}); 
                     })
-                    return;
+                    return;     
                 }
             }
             res.status(400).json({"message":"Wrong Code"}); 
@@ -126,10 +136,9 @@ exports.getCourseInfo = (req,res,next) => {
     const courseId = req.courseId;
 
     Course.findById(courseId)
-    .select('_id title instructors teachingAssistants posts')
+    .select('_id title instructors teachingAssistants groups')
     .populate('instructors','name email')
     .populate('teachingAssistants','name email')
-    .populate('posts')
     .then( course => {
         if(!course){
             res.status(404).json({message:"Course Not Found"});
@@ -137,6 +146,12 @@ exports.getCourseInfo = (req,res,next) => {
         }
         let data = course.toObject();
         data['role'] = req.role;
+        let grp = ["Instructors","TAs"];
+        for(let g of data['groups']){
+            grp.push(g.groupId);
+        }
+        data['groups'] = grp;
+
         res.status(200).json(data);
     })
 }
@@ -144,7 +159,7 @@ exports.getCourseInfo = (req,res,next) => {
 exports.getPosts = (req,res,next) => {
     
     const courseId = req.courseId;
-
+    // const groupId = req.groupId;
     Course.findById(courseId)
     .select('posts')
     .populate('posts')
@@ -153,7 +168,14 @@ exports.getPosts = (req,res,next) => {
             res.status(404).json({message:"Course Not Found"});
             return;
         }
-        res.status(200).json(course);
+        let data = course.posts;
+        let outData = [];
+        for(let x of data){
+            if((x.audience).includes(req.groupId) || (x.audience).includes(req.userEmail)){
+                outData.push(x);
+            }
+        }
+        res.status(200).json(outData);
     })
 }
 
@@ -268,6 +290,7 @@ exports.addPost = async (req,res,next) => {
     const courseId = req.courseId;
     const title = req.body.title;
     const description = req.body.description;
+    const audience = req.body.audience +","+ req.userEmail;
 
     const name = req.userName;
     let post;
@@ -276,7 +299,8 @@ exports.addPost = async (req,res,next) => {
             by: name,
             date: new Date().toLocaleString('en-In'),
             title: title,
-            description: description
+            description: description,
+            audience: audience
         });
     } else {
         const fileName = path.basename(req.file.path);
@@ -302,7 +326,8 @@ exports.addPost = async (req,res,next) => {
             date: new Date().toLocaleString('en-In'),
             title: title,
             description: description,
-            file: newPath
+            file: newPath,
+            audience: audience
         });
     }
 

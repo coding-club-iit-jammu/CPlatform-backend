@@ -22,16 +22,17 @@ module.exports = async (req, res, next) => {
     if(enrol){
         req.courseId = course._id;
         req.role = 'instructor';
+        req.groupId = "Instructors";
         enrolled = true;
         next();
     }
 
-    for(let g in course.groups){
+    for(let g of course.groups){
         enrol = g.students.includes(userId);
         if(enrol){
             req.courseId = course._id;
             req.role = 'student';
-            req.group = g.groupId;
+            req.groupId = g.groupId;
             enrolled = true;
             next();
         }
@@ -42,6 +43,7 @@ module.exports = async (req, res, next) => {
     if(enrol){
         req.courseId = course._id;
         req.role = 'teachingAssistant';
+        req.groupId = "TAs";
         enrolled = true;
         next();
     }

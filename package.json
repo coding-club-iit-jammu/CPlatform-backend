@@ -32,8 +32,8 @@
     "mongoose": "^5.9.7",
     "ngx-quill": "^8.1.3",
     "ngx-spinner": "^8.1.0",
-    "rx": "github:Reactive-Extensions/RxJS",
     "quill": "^1.3.7",
+    "rx": "github:Reactive-Extensions/RxJS",
     "rxjs": "~6.4.0",
     "tslib": "^1.10.0",
     "zone.js": "~0.9.1"

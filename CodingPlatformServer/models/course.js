@@ -85,6 +85,17 @@ courseSchema.methods.addStudent = function(userId,groupId){
     return this.save()
 }
 
+courseSchema.methods.addGroups = function(groupIds){
+    groupIds.sort();
+    for(let x of groupIds){
+        this.groups.push({
+            groupId: groupId,
+            students:[]
+        });
+    }
+    return this.save()
+}
+
 courseSchema.methods.addPost = function(postId){
     this.posts.push(postId);
     return this.save()

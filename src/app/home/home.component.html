@@ -27,7 +27,7 @@
                     <div *ngFor="let item of userData.courses.teaching" class="col-sm-4">
                       <div class="card border-dark" *ngIf="item.code">
                         <div class="card-body text-center">
-                          <h5 class="card-title">{{item.code.substring(8) | titlecase}</h5>
+                          <h5 class="card-title">{{item.code.substring(8) | titlecase}}</h5>
                           <p class="card-text">{{item.title}}</p>
                           <button class="btn btn-dark btn-block" (click)="openCourse(item.code,'instructor')">Open</button>
                         </div>

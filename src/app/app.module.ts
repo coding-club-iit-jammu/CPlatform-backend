@@ -19,7 +19,7 @@ import { DetailsComponent } from './details/details.component';
 import { HomeComponent } from './home/home.component';
 import { IdeComponent } from './ide/ide.component';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-
+import {MatSelectModule} from '@angular/material/select';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatTabsModule} from '@angular/material/tabs';
 
@@ -57,6 +57,7 @@ import { CreateTestComponent } from './create-test/create-test.component'
     HttpClientModule,
     NoopAnimationsModule,
     MatSnackBarModule,
+    MatSelectModule,
     MatTabsModule,
     FormsModule,
     QuillModule.forRoot()

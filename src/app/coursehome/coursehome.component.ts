@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 
 import { StoreInfoService } from '../services/store-info.service';
 import { MaterialComponentService } from '../services/material-component.service';
@@ -107,7 +107,6 @@ export class CoursehomeComponent implements OnInit {
     await this.http.get(this.storeInfo.serverUrl+'/course/getInfo', options).toPromise().then(data=>{
       if(data['status'] == 200){
         this.course = data['body'];
-        this.course.posts = this.course.posts.reverse();
         if(this.course.role == 'instructor'){
           this.getJoiningCodes();
         }
@@ -173,6 +172,7 @@ export class CoursehomeComponent implements OnInit {
     formData.append('description',this.postForm.get('description').value);
     formData.append('file',this.postForm.get('file').value);    
     formData.append('courseCode',this.code);    
+    formData.append('audience',this.postForm.get('audience').value);    
 
     await this.http.post(this.storeInfo.serverUrl+'/course/addPost', formData, options).toPromise().then( async (resData) => {
       if(resData['status'] == 201){
@@ -190,7 +190,8 @@ export class CoursehomeComponent implements OnInit {
     this.postForm = this.formBuilder.group({
       title: this.formBuilder.control('',Validators.required),
       description: this.formBuilder.control('',Validators.required),
-      file: this.formBuilder.control(null,Validators.required)
+      file:this.formBuilder.control(null),
+      audience: this.formBuilder.control([])
     })
   }
 
@@ -293,7 +294,7 @@ export class CoursehomeComponent implements OnInit {
     
     await this.http.get(this.storeInfo.serverUrl+'/course/getPosts', options).toPromise().then( resData => {
       if(resData['status'] == 200){
-        this.course.posts = resData['body']['posts'].reverse();
+        this.course.posts = resData['body'].reverse();
       } else {
         this.matComp.openSnackBar(resData['body']['message'],3000);
       }

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, FormArray } from '@angular/forms';
 import { Router } from '@angular/router';
 import { StoreInfoService } from '../services/store-info.service';
 import { MaterialComponentService } from '../services/material-component.service';
@@ -17,6 +17,7 @@ export class HomeComponent implements OnInit {
   showSpinner: Boolean = false;
 
   addCourseForm: FormGroup;
+  studentAccessCode: FormArray = new FormArray([]);
   joinCourseForm: FormGroup;
 
   userData: any = {
@@ -38,28 +39,14 @@ export class HomeComponent implements OnInit {
               }
 
   ngOnInit() {
-
-    this.joinCourseForm = this.formBuilder.group({
-      code : this.formBuilder.control(''),
-      joiningCode: this.formBuilder.control('')
-    });
-
-    this.addCourseForm = this.formBuilder.group({
-      code : this.formBuilder.control(''),
-      title : this.formBuilder.control(''),
-      instructorCode : this.formBuilder.control(''),
-      teachingAssistantCode: this.formBuilder.control(''),
-      studentCode: this.formBuilder.control('')
-    });
-
+    this.resetJoinCourseForm();
+    this.resetAddCourseForm();
+  
     if(!sessionStorage.getItem('token')){
       this.router.navigateByUrl('/');
     }
 
-    this.fetchUserData().then(()=>{
-      // console.log("Fetch Complete.");
-    });
-
+    this.fetchUserData();
   }
 
   async addCourse(){
@@ -77,7 +64,7 @@ export class HomeComponent implements OnInit {
         this.resetAddCourseForm();
       
     },(error)=>{
-      this.matComp.openSnackBar('Try Again',3000);
+      this.matComp.openSnackBar(error['message'],3000);
     })
     this.showSpinner = false;
   }
@@ -129,14 +116,30 @@ export class HomeComponent implements OnInit {
     this.showSpinner = false;
   }
 
+  
   resetAddCourseForm(){
     this.addCourseForm = this.formBuilder.group({
       code : this.formBuilder.control(''),
       title : this.formBuilder.control(''),
       instructorCode : this.formBuilder.control(''),
       teachingAssistantCode: this.formBuilder.control(''),
-      studentCode: this.formBuilder.control('')
+      studentCode: new FormArray([])
     });
+  }
+  
+  addGroupCode(){
+    let arraay = this.addCourseForm.get('studentCode') as FormArray; 
+    let l = arraay.length;
+    let fg = this.formBuilder.group({
+      groupId: this.formBuilder.control("G"+(l+1)),
+      code: this.formBuilder.control('')
+    })
+    arraay.push(fg);
+  }
+
+  resetStudentAccessCode(){
+    let arraay = this.addCourseForm.get('studentCode') as FormArray; 
+    arraay.clear();
   }
 
   resetJoinCourseForm(){

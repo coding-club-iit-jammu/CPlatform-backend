@@ -59,12 +59,19 @@ const userSchema = new Schema({
                     },
                   code:
                     { 
-                      type: String
+                      type: String,
+                      required: true
                     },
                   title:
-                  { 
-                    type: String
-                  }
+                    { 
+                      type: String,
+                      required: true
+                    },
+                  groupId:
+                    {
+                      type: String,
+                      required: true
+                    }
                 }]
   }
 });
@@ -87,11 +94,12 @@ userSchema.methods.addTACourse = function(courseId,code,title){
   return this.save();
 }
 
-userSchema.methods.addStudyingCourse = function(courseId,code,title){
+userSchema.methods.addStudyingCourse = function(courseId,code,title,groupId){
   this.courses.studying.push({
     courseId : courseId,
     code: code,
-    title:title
+    title:title,
+    groupId: groupId
   });
   return this.save();
 }

@@ -26,14 +26,18 @@ module.exports = async (req, res, next) => {
         next();
     }
 
-    enrol = course.students.includes(userId);
-    if(enrol){
-        req.courseId = course._id;
-        req.role = 'student';
-        enrolled = true;
-        next();
-    }
+    for(let g in course.groups){
+        enrol = g.students.includes(userId);
+        if(enrol){
+            req.courseId = course._id;
+            req.role = 'student';
+            req.group = g.groupId;
+            enrolled = true;
+            next();
+        }
 
+    }
+    
     enrol = course.teachingAssistants.includes(userId);
     if(enrol){
         req.courseId = course._id;

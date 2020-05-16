@@ -121,8 +121,8 @@ export class CoursehomeComponent implements OnInit {
     })
   }
 
-  toQuestions(){
-    this.router.navigateByUrl(`/course/${this.code}/questions`);
+  changePage(p){
+    this.router.navigateByUrl(`/course/${this.code}/${p}`);
   }
   
   async setView(tabvalue){

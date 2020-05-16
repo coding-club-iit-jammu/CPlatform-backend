@@ -29,7 +29,8 @@ import { MaterialComponentService } from './services/material-component.service'
 
 import { QuillModule } from 'ngx-quill';
 import { QuestionsComponent } from './questions/questions.component';
-import { PracticeComponent } from './practice/practice.component'
+import { PracticeComponent } from './practice/practice.component';
+import { CreateTestComponent } from './create-test/create-test.component'
 
 @NgModule({
   declarations: [
@@ -43,6 +44,7 @@ import { PracticeComponent } from './practice/practice.component'
     IdeComponent,
     QuestionsComponent,
     PracticeComponent,
+    CreateTestComponent,
   ],
   imports: [
     BrowserModule,

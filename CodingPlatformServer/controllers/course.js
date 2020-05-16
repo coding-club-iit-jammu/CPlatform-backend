@@ -22,7 +22,7 @@ exports.addCourse = (req,res,next) => {
         joiningCode: {
             instructor: instructorCode,
             teachingAssistant: teachingAssistantCode,
-            student: studentCode 
+            groups: studentCode 
         }
     });
     
@@ -34,6 +34,9 @@ exports.addCourse = (req,res,next) => {
         }
     }).catch((err)=>{
         console.log(err);
+        res.status(500).json({
+            "message":err
+        })
     });
 }
 
@@ -89,24 +92,28 @@ exports.joinCourse = (req,res,next) => {
                 res.status(500).json({"message":"Internal Server Error, Try Again"}); 
             })
         } else if(joiningCode == course.joiningCode.student) {
-            course.addStudent(req.userId).then((result)=>{
-                if(!result){
-                    res.status(500).json({"message":"Joining Failed, Try Again"}); 
-                } else {
-                    User.findById(req.userId).then( user =>{
-                        user.addStudyingCourse(course._id,course.code,course.title).then( updated =>{
-                            if(!updated){
-                                res.status(500).json({"message":"Joining Failed, Try Again"}); 
-                            } else {
-                                res.status(202).json({"message":"Joined as Student"});   
-                            }
-                        })
-                    })  
+            for(let g of course.joiningCode.groups){
+                if(g.code == joiningCode){
+                    course.addStudent(req.userId, g.groupId).then((result)=>{
+                        if(!result){
+                            res.status(500).json({"message":"Joining Failed, Try Again"}); 
+                        } else {
+                            User.findById(req.userId).then( user =>{
+                                user.addStudyingCourse(course._id,course.code,course.title,g.groupId).then( updated =>{
+                                    if(!updated){
+                                        res.status(500).json({"message":"Joining Failed, Try Again"}); 
+                                    } else {
+                                        res.status(202).json({"message":"Joined as Student"});   
+                                    }
+                                })
+                            })  
+                        }
+                    }).catch((err)=>{
+                        res.status(500).json({"message":"Internal Server Error, Try Again"}); 
+                    })
+                    return;
                 }
-            }).catch((err)=>{
-                res.status(500).json({"message":"Internal Server Error, Try Again"}); 
-            })
-        } else {
+            }
             res.status(400).json({"message":"Wrong Code"}); 
         }
     }).catch((err)=>{

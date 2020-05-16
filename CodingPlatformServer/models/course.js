@@ -14,7 +14,16 @@ const courseSchema = new Schema({
     },
     instructors:[{ type: Schema.Types.ObjectId, ref:'User'}],
     teachingAssistants:[{ type: Schema.Types.ObjectId, ref:'User'}],
-    students:[{ type: Schema.Types.ObjectId, ref:'User'}],
+    groups:[{
+        groupId:{
+            type: String,
+            required:true
+        },
+        students:[{ 
+            type: Schema.Types.ObjectId,
+            ref:'User'
+        }]
+    }],
     joiningCode: {
         instructor: {
             type: String,
@@ -24,10 +33,16 @@ const courseSchema = new Schema({
             type: String,
             required: true
         },
-        student: {
-            type: String,
-            required: true
-        }
+        groups: [{
+            groupId:{
+                type: String,
+                required: true
+            },
+            code:{
+                type: String,
+                required: true
+            }
+        }]
     },
     tests:[{ type: Schema.Types.ObjectId, ref:'Test'}],
     posts:[{ type: Schema.Types.ObjectId, ref:'Post'}],
@@ -65,8 +80,8 @@ courseSchema.methods.addTA = function(userId){
     return this.save()
 }
 
-courseSchema.methods.addStudent = function(userId){
-    this.students.push(userId);
+courseSchema.methods.addStudent = function(userId,groupId){
+    this.groups[parseInt(groupId.substring(1))-1].students.push(userId);
     return this.save()
 }
 

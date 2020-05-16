@@ -96,13 +96,22 @@
                     <br>
                     <input type="text" class="form-control" formControlName="teachingAssistantCode" placeholder="Enter Access Code for Teaching Assistants" required>
                     <br>
-                    <input type="text" class="form-control" formControlName="studentCode" placeholder="Enter Access Code for Students" required>
+                    <div class="text-center my-3">
+                      <button class="btn btn-primary text-center" (click)="addGroupCode()">Add Group</button>
+                      <ng-container formArrayName = "studentCode">
+                        <div class="my-2" *ngFor="let control of addCourseForm.get('studentCode').controls; index as i">
+                          <ng-container [formGroup]="control">
+                            <input type="text" class="form-control" formControlName="code" placeholder="Enter Access Code for Group {{control.value.groupId}}" required>
+                          </ng-container>
+                        </div>
+                      </ng-container>
+                    </div>
                     <div class="modal-footer footerModal">
                       <div class="text-left">
                         <button type="button" class="btn btn-danger" style="float: left;" data-dismiss="modal">Close</button>
                       </div>
                       <div class="text-right">
-                        <button type="submit" class="btn btn-primary" style="float: right;" (click)="addCourse()">Add</button>
+                        <button type="submit" class="btn btn-primary" style="float: right;" [disabled]="!addCourseForm.valid" (click)="addCourse()">Add</button>
                       </div>
                     </div>
                   </form>

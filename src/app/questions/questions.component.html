@@ -26,7 +26,7 @@
                         <li class="nav-item active">
                             <a class="nav-link" routerLink="/questions">Questions</a>
                         </li>
-                        <li class="nav-item active">
+                        <li class="nav-item">
                             <a class="nav-link" routerLink="/practice">Practice</a>
                         </li>
                     </ul>
@@ -43,10 +43,10 @@
                         <div class="accordion w-75 mx-auto my-4" id="accordionExample" *ngIf="mcqQuestions.length > 0">
                             <div class="card border-dark" *ngFor="let q of mcqQuestions; let i=index;">
                                 <div class="card-header border-dark d-flex" id="headingOne">
-                                    <div class="w-90 text-center" [innerHtml]='q.question'></div>
-                                    <div class="w-10">
-                                        <button class="btn btn-dark btn-sm float-right rounded-circle rounded-sm">
-                                            <i class="fa h-100 w-100 fa-edit"></i>
+                                    <div class="w-75 text-center" [innerHtml]='q.question'></div>
+                                    <div class="w-25">
+                                        <button class="btn btn-danger btn-sm float-right rounded-circle rounded-sm" (click)="deleteQuestion('mcq')">
+                                            <i class="fa h-100 w-100 fa-trash"></i>
                                         </button>
                                         <button class="btn btn-dark btn-sm float-right rounded-circle rounded-sm" type="button" data-toggle="collapse" [attr.data-target]="'#collapseMCQ'+i" aria-expanded="false" [attr.aria-controls]="'#collapseMCQ'+i">
                                             <i class="fa h-100 w-100 fa-chevron-circle-down"></i>
@@ -72,29 +72,19 @@
                                 <h3>No Question Found.</h3>
                             </div>
                         </div>
-                        <div *ngIf="mcqQuestions.length==0">
-                            <nav aria-label="Page navigation example">
-                                <ul class="pagination mx-auto justify-content-center">
-                                    <li class="page-item"><a class="page-link">Previous</a></li>
-                                    <li class="page-item"><a class="page-link">1</a></li>
-                                    <li class="page-item"><a class="page-link">2</a></li>
-                                    <li class="page-item"><a class="page-link">3</a></li>
-                                    <li class="page-item"><a class="page-link">Next</a></li>
-                                </ul>
-                            </nav>
-                        </div>
                     </mat-tab>
                     <mat-tab label="True/False">
                         <div class="accordion w-75 mx-auto my-4" id="accordionExample" *ngIf="trueFalseQuestions.length>0">
                             <div class="card border-dark" *ngFor="let q of trueFalseQuestions; let i=index;">
                                 <div class="card-header border-dark d-flex" id="headingOne">
-                                    <div class="w-90 text-center" [innerHtml]='q.question'></div>
-                                    <div class="w-10">
-                                        <h2 class="mb-0">
-                                            <button class="btn btn-dark btn-sm float-right rounded-circle rounded-sm" type="button" data-toggle="collapse" [attr.data-target]="'#collapseTrueFalse'+i" aria-expanded="false" [attr.aria-controls]="'#collapseTrueFalse'+i">
-                                            <i class="fa h-100 w-100 fa-chevron-circle-down"></i>
-                                            </button>
-                                        </h2>
+                                    <div class="w-75 text-center" [innerHtml]='q.question'></div>
+                                    <div class="w-25">
+                                        <button class="btn btn-danger btn-sm float-right rounded-circle rounded-sm" (click)="deleteQuestion('trueFalse')">
+                                            <i class="fa h-100 w-100 fa-trash"></i>
+                                        </button>
+                                        <button class="btn btn-dark btn-sm float-right rounded-circle rounded-sm" type="button" data-toggle="collapse" [attr.data-target]="'#collapseTrueFalse'+i" aria-expanded="false" [attr.aria-controls]="'#collapseTrueFalse'+i">
+                                        <i class="fa h-100 w-100 fa-chevron-circle-down"></i>
+                                        </button>
                                     </div>
                                 </div>
                           
@@ -119,29 +109,22 @@
                                 <h3>No Question Found.</h3>
                             </div>
                         </div>
-                        <div *ngIf="trueFalseQuestions.length>0">
-                            <nav aria-label="Page navigation example">
-                                <ul class="pagination mx-auto justify-content-center">
-                                    <li class="page-item"><a class="page-link">Previous</a></li>
-                                    <li class="page-item"><a class="page-link">1</a></li>
-                                    <li class="page-item"><a class="page-link">2</a></li>
-                                    <li class="page-item"><a class="page-link">3</a></li>
-                                    <li class="page-item"><a class="page-link">Next</a></li>
-                                </ul>
-                            </nav>
-                        </div>
                     </mat-tab>
                     <mat-tab label="Coding Questions">
                         <div class="accordion w-75 mx-auto my-4" id="accordionExample">
                             <div class="card border-dark" *ngFor="let q of codingQuestions; let i=index;">
                                 <div class="card-header border-dark d-flex" id="headingOne">
-                                    <div class="w-90 text-center" [innerHtml]='q.title'></div>
-                                    <div class="w-10">
-                                        <h2 class="mb-0">
-                                            <button class="btn btn-dark btn-sm float-right rounded-circle rounded-sm" type="button" data-toggle="collapse" [attr.data-target]="'#collapseCoding'+i" aria-expanded="false" [attr.aria-controls]="'#collapseCoding'+i">
-                                            <i class="fa h-100 w-100 fa-chevron-circle-down"></i>
-                                            </button>
-                                        </h2>
+                                    <div class="w-75 text-center" [innerHtml]='q.title'></div>
+                                    <div class="w-25">
+                                        <button class="btn btn-warning btn-sm float-right rounded-circle rounded-sm" (click)="setEditCodingQuestion(i)">
+                                            <i class="fa h-100 w-100 fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-danger btn-sm float-right rounded-circle rounded-sm " (click)="deleteQuestion('coding')">
+                                            <i class="fa h-100 w-100 fa-trash"></i>
+                                        </button>
+                                        <button class="btn btn-dark btn-sm float-right rounded-circle rounded-sm" type="button" data-toggle="collapse" [attr.data-target]="'#collapseCoding'+i" aria-expanded="false" [attr.aria-controls]="'#collapseCoding'+i">
+                                        <i class="fa h-100 w-100 fa-chevron-circle-down"></i>
+                                        </button>
                                     </div>
                                 </div>
                           
@@ -161,13 +144,13 @@
                                         </div>
                                         <div class="d-flex flex-row my-3">
                                             <div class="w-100 text-center">
-                                                <button class="btn btn-primary btn-sm" (click)="downloadItem(q._id,q.testcases,'testcases')">TestCases</button>
+                                                <button class="btn btn-primary btn-sm" (click)="downloadItem(q._id,q.testcases,'testcases')"><i class="fa fa-download"></i>TestCases</button>
                                             </div>
                                             <div class="w-100 text-center" *ngIf="q.header">
-                                                <button class="btn btn-primary btn-sm" (click)="downloadItem(q._id,q.header,'header')">Header</button>
+                                                <button class="btn btn-primary btn-sm" (click)="downloadItem(q._id,q.header,'header')"><i class="fa fa-download"></i>Header</button>
                                             </div>
                                             <div class="w-100 text-center" *ngIf="q.footer">
-                                                <button class="btn btn-primary btn-sm" (click)="downloadItem(q._id,q.footer,'footer')">Footer</button>
+                                                <button class="btn btn-primary btn-sm" (click)="downloadItem(q._id,q.footer,'footer')"><i class="fa fa-download"></i>Footer</button>
                                             </div>
                                         </div>
                                         <div class="w-100 text-center">
@@ -176,17 +159,6 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div>
-                            <nav aria-label="Page navigation example">
-                                <ul class="pagination mx-auto justify-content-center">
-                                    <li class="page-item"><a class="page-link">Previous</a></li>
-                                    <li class="page-item"><a class="page-link">1</a></li>
-                                    <li class="page-item"><a class="page-link">2</a></li>
-                                    <li class="page-item"><a class="page-link">3</a></li>
-                                    <li class="page-item"><a class="page-link">Next</a></li>
-                                </ul>
-                            </nav>
                         </div>
                     </mat-tab>
                 </mat-tab-group>
@@ -278,7 +250,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label>Test Cases</label>
-                                    <input type="file" class="form-control-file my-2" (change)="setTestCases($event)">
+                                    <input type="file" class="form-control-file my-2" (change)="setTestCases($event)" accept="zip">
                                 </div>
                                 <div class="form-group">
                                     <label>Header Code</label>

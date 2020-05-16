@@ -7,7 +7,7 @@
     <div [class.blurred]="!showSpinner">
         <div class="navBarCss">
             <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
-                <span class="navbar-brand mb-0 h1">{{code.substring(8)}}</span>
+                <span class="navbar-brand mb-0 h1">{{code.substring(8) | uppercase}}</span>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
                 </button>
@@ -138,7 +138,7 @@
                                 Instructors
                             </div>
                             <div class="card-body" *ngFor="let instructor of course.instructors">
-                                <p>{{instructor.name}}</p>
+                                <p>{{instructor.name | titlecase}}</p>
                             </div>
                         </div>
                     </div>
@@ -150,7 +150,7 @@
                                 Teaching Assistants
                             </div>
                             <div class="card-body" *ngFor="let instructor of course.teachingAssistants">
-                                <p>{{instructor.name}}</p>
+                                <p>{{instructor.name | titlecase}}</p>
                             </div>
                         </div>
                     </div>

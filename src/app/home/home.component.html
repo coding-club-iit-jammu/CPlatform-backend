@@ -6,9 +6,9 @@
     </div>
     <div class="all" [class.blurred]="showSpinner">
         <div class="sidenav">
-            <h2>{{userData.name}}</h2>
-            <h5>{{userData.email}}</h5>
-            <h5>Department: {{userData.branch}}</h5>
+            <h2>{{userData.name | titlecase}}</h2>
+            <h5>{{userData.email | lowercase}}</h5>
+            <h5>Department: {{userData.branch | titlecase}}</h5>
             <button class="btn btn-block btn-warning gap" data-toggle="modal" data-target="#createCourseModal">Create Course</button>
             <br>
             <button class="btn btn-block btn-success gap" data-toggle="modal" data-target="#joinCourseModal">Join Course</button>
@@ -27,7 +27,7 @@
                     <div *ngFor="let item of userData.courses.teaching" class="col-sm-4">
                       <div class="card border-dark" *ngIf="item.code">
                         <div class="card-body text-center">
-                          <h5 class="card-title">{{item.code.substring(8)}}</h5>
+                          <h5 class="card-title">{{item.code.substring(8) | titlecase}</h5>
                           <p class="card-text">{{item.title}}</p>
                           <button class="btn btn-dark btn-block" (click)="openCourse(item.code,'instructor')">Open</button>
                         </div>
@@ -45,7 +45,7 @@
                   <div *ngFor="let item of userData.courses.studying" class="col-sm-4">
                     <div class="card border-dark">
                       <div class="card-body">
-                        <h5 class="card-title">{{item.code.substring(8)}}</h5>
+                        <h5 class="card-title">{{item.code.substring(8) | titlecase}}</h5>
                         <p class="card-text">{{item.title}}</p>
                         <button class="btn btn-dark" (click)="openCourse(item.code,'student')">Open</button>
                       </div>
@@ -63,7 +63,7 @@
                   <div *ngFor="let item of userData.courses.teachingAssistant" class="col-sm-4">
                     <div class="card border-dark">
                       <div class="card-body">
-                        <h5 class="card-title">{{item.code.substring(8)}}</h5>
+                        <h5 class="card-title">{{item.code.substring(8) | titlecase}}</h5>
                         <p class="card-text">{{item.title}}</p>
                         <button class="btn btn-dark" (click)="openCourse(item.code,'teachingAssistant')">Open</button>
                       </div>
@@ -86,10 +86,10 @@
                   <div class="modal-body">
                   <form [formGroup]="addCourseForm">
                     <label for="code" >Course Code</label>
-                    <input type="text" class="form-control" name="code" formControlName="code" placeholder="Enter Course Title Here"  required>
+                    <input type="text" class="form-control" name="code" formControlName="code" placeholder="Enter Course Code Here"  required>
                     <br>
                     <label for="title">Course Title</label>
-                    <input type="text" class="form-control" name="title" formControlName="title" placeholder="Enter Course Code Here" required>
+                    <input type="text" class="form-control" name="title" formControlName="title" placeholder="Enter Course Title Here" required>
                     <br>
                     <label>Access Code</label>
                     <input type="text" class="form-control" formControlName="instructorCode" placeholder="Enter Access Code for Instructor" required>
@@ -111,7 +111,7 @@
                         <button type="button" class="btn btn-danger" style="float: left;" data-dismiss="modal">Close</button>
                       </div>
                       <div class="text-right">
-                        <button type="submit" class="btn btn-primary" style="float: right;" [disabled]="!addCourseForm.valid" (click)="addCourse()">Add</button>
+                        <button type="submit" class="btn btn-primary" style="float: right;" [disabled]="!addCourseForm.valid" (click)="addCourse()" data-dismiss="modal">Add</button>
                       </div>
                     </div>
                   </form>
@@ -135,7 +135,7 @@
                     <label for="joiningCode">Access Code</label>
                     <input type="text" class="form-control" name="joiningCode" placeholder="Enter Access Code Here" formControlName="joiningCode" required>
                     <div class="modal-footer">
-                      <button type="submit" class="btn btn-primary" style="float: inline-start;" (click)="joinCourse()">Join</button>
+                      <button type="submit" class="btn btn-primary" style="float: inline-start;" (click)="joinCourse()" data-dismiss="modal">Join</button>
                       <button type="button" class="btn btn-danger" style="float: right;" data-dismiss="modal">Close</button>
                     </div>
                   </form>

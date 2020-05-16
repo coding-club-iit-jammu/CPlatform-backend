@@ -43,19 +43,19 @@ export class LoginComponent implements OnInit {
   async login(){
     this.showSpinner1 = true;
     this.http.post(this.storeInfo.serverUrl + '/login',this.form.value).pipe().subscribe((data)=>{
+      this.showSpinner1 = false;
       if(!data["userId"]){
         this.material.openSnackBar(data['message'],2000);
-        this.router.navigateByUrl('/');
+        // this.router.navigateByUrl('/');
         return;
       }
       sessionStorage.setItem('token',data['token']);
       sessionStorage.setItem('userId',data['userId']);
       sessionStorage.setItem('email',data['email']);
-      this.showSpinner1 = false;
       this.router.navigateByUrl('/home');
     },error =>{
       this.showSpinner1 = false;
-      this.material.openSnackBar('Network Problem',3000);
+      this.material.openSnackBar(error['message'],3000);
     })
   }
 

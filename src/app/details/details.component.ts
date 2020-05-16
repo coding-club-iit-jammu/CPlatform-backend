@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { StoreInfoService } from '../services/store-info.service';
 import { MaterialComponentService } from '../services/material-component.service';
 
@@ -44,18 +44,21 @@ export class DetailsComponent implements OnInit {
 
    async onSubmit(data) {
     this.showSpinner = true;
-    // console.log(data);
     if(data.confirmPassword === data.password){
-      this.http.post(this.storeInfo.serverUrl + '/createUser',data).subscribe((response)=>{
-        // console.log(data);
-        // console.log(response);
-        if(!response.hasOwnProperty("added")){
-          this.matComp.openSnackBar('Sign Up Failed!',2500);
-        } else {
+      const options = {
+        observe : 'response' as 'body',
+        headers: new HttpHeaders({
+          'Content-Type':  'application/json'
+        })
+      };
+      this.http.post(this.storeInfo.serverUrl + '/createUser',data, options).subscribe((response)=>{
+        if(response['status']==201){
           this.matComp.openSnackBar('User Registered Successfuly!', 2500);
+        } else if(response['status']==200){
+          this.matComp.openSnackBar('User Already Registered.',2500);
         }
-        this.showSpinner = false;
         this.router.navigate(['/']);
+        this.showSpinner = false;
       },error=>{
         this.matComp.openSnackBar('Network Problem!',2500);
         this.showSpinner = false

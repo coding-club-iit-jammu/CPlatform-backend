@@ -21,11 +21,11 @@ exports.login = (req,res,next) =>{
                     
                 } else {
                     console.log(err);
-                    res.status(400).json({message:"Login Unsuccessful, Email or Password is wrong."})
+                    res.status(200).json({message:"Login Unsuccessful, Email or Password is wrong."})
                 }
             })
         } else {
-            res.status(400).json({message:"Login Unsuccessful, Email or Password is wrong."})
+            res.status(200).json({message:"Login Unsuccessful, Email or Password is wrong."})
         }
     });
     
@@ -42,6 +42,11 @@ exports.createUser = async (req,res,next) =>{
         password: password,
         branch: branch
     });
+    let check = await User.findOne({email:email});
+    if(check){
+        res.status(200).json({message:'User already registered.'});
+        return;
+    }
     user.save().then((result)=>{
         if(result){
             res.status(201).json({'added':true,message:"User Added Successfully."})

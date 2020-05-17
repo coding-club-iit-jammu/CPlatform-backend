@@ -24,7 +24,7 @@ const mcqSchema = new Schema({
         option: opt,
         isCorrect: isCorrect
     });
-
+    console.log("Adding option",opt);
     return mcqOption.save();
 }
 
@@ -34,11 +34,14 @@ mcqSchema.methods.addOptions = async function(options){
         let i = 0;
         let len = options.length;
         this.options = [];
+        console.log("Adding options",options);
         options.forEach(async option => {
             const {_id} = await addOption(option)
             if(_id){
+                console.log("Option Added",_id);
                 this.options.push(_id);
             }
+            i++;
             if (i === len -1){ 
                 resolve();
             }

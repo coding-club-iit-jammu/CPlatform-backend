@@ -56,6 +56,7 @@ export class CoursehomeComponent implements OnInit {
     teachingAssistants:[],
     posts:[],
     assignments:[],
+    tests:[],
     _id:'',
     role:''
   };
@@ -76,6 +77,7 @@ export class CoursehomeComponent implements OnInit {
 
     this.resetPostForm();
     this.resetAssignmentForm();
+    this.resetTestForm();
     this.resetSubmitAssignmentForm();
     this.resetShiftDeadlineForm();
     this.resetUploadMarksForm();
@@ -83,12 +85,12 @@ export class CoursehomeComponent implements OnInit {
     this.code = this.activatedRoute.snapshot.paramMap.get('courseId');
     let view = parseInt(this.activatedRoute.snapshot.paramMap.get('view'));
     if(!Number.isNaN(view)){
-      this.view = view;
+      this.setView(view);
       if(view < 1 || view > 3){
-        this.view = 1;
+        this.setView(1);
       }
     } else {
-      this.view = 1;
+      this.setView(1);
     }
     
     if(!sessionStorage.getItem('token')){
@@ -118,6 +120,8 @@ export class CoursehomeComponent implements OnInit {
       alert(error.message)
       this.showSpinner = false;
     })
+
+    await this.getPosts();
   }
 
   changePage(p){
@@ -128,8 +132,10 @@ export class CoursehomeComponent implements OnInit {
     this.view = tabvalue;
     if(tabvalue == 1){
       await this.getPosts();
-    } else {
+    } else if(tabvalue == 2) {
       await this.getAssignments();
+    } else if(tabvalue == 3){
+      await this.getTests();
     }
   }
   
@@ -263,22 +269,32 @@ export class CoursehomeComponent implements OnInit {
     });
   }
 
-  createTest(data: Object){
+  async createTest(data: Object){
+    this.showSpinner = true;
     const options = {
       headers: new HttpHeaders({
         'Content-Type':  'application/json',
         'Authorization': 'Bearer ' + sessionStorage.getItem('token')
       })
     };
-    
-    this.http.post(this.storeInfo.serverUrl+'/course/addTest', data, options).subscribe( resData => {
-      console.log(resData);
+    data['courseCode'] = this.code;
+    await this.http.post(this.storeInfo.serverUrl+'/test/create', data, options).subscribe( response => {
+      if(response['status']==201){
+        this.matComp.openSnackBar(response['body']['message'],2000);
+      } else {
+        this.matComp.openSnackBar(response['body']['message'],2000);
+      }
     },error => {
+      this.matComp.openSnackBar(error,2000);
     })
+    this.showSpinner = false;
   }
 
   resetTestForm(){
-
+    this.testForm = this.formBuilder.group({
+      title: this.formBuilder.control(''),
+      instructions: this.formBuilder.control('')
+    });
   }
 
   async getPosts(){
@@ -373,8 +389,27 @@ export class CoursehomeComponent implements OnInit {
     this.showSpinner = false;
   } 
 
-  getTests(){
-    console.log("Getting Tests")
+  async getTests(){
+    this.showSpinner = true;
+    const options = {
+      observe: 'response' as 'body',
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json',
+        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+      }),
+      params : new HttpParams().set('courseCode',this.code)
+    };
+    
+    await this.http.get(this.storeInfo.serverUrl+'/test/getTitles', options).toPromise().then( resData => {
+      if(resData['status'] == 200){
+        this.course.tests = resData['body']['tests'];
+      } else {
+        this.matComp.openSnackBar(resData['body']['message'],2000);
+      }
+    },error => {
+      this.matComp.openSnackBar(error,2000);
+    })
+    this.showSpinner = false;  
   }
 
   uploadFile(event) {
@@ -586,66 +621,6 @@ export class CoursehomeComponent implements OnInit {
     this.showSpinner = false;
   }
 
-  async addStudents(){
-
-    // document.getElementById("myModal").style.display = "hide";
-    // this.showSpinner = true;
-    // let files = this.fileToUpload.srcElement.files;
-    // if (this.isValidCSVFile(files[0])) {  
-  
-    //   let input = this.fileToUpload.target;  
-    //   let reader = new FileReader();  
-    //   reader.readAsText(input.files[0]);  
-  
-    //   reader.onload = async () => {  
-    //     let csvData = reader.result;  
-    //     let csvRecordsArray = (<string>csvData).split(/\r\n|\n/);  
-    //     await this.getDataRecordsArrayFromCSVFile(csvRecordsArray, 2, 0);  
-    //   };  
-    //   reader.onerror = function () {  
-    //     console.log('error is occured while reading file!');  
-    //   };  
-  
-    // } else {  
-    //   alert("Please import valid .csv file.");  
-    //   this.fileReset();  
-    //   this.showSpinner = false;
-    // }
-  }
-  
-  async getDataRecordsArrayFromCSVFile(csvRecordsArray: any, headerLength: any,flag:number) {  
-    // let csvArr = {};  
-  
-    // for (let i = 0; i < csvRecordsArray.length; i++) {  
-    //   let curruntRecord = (<string>csvRecordsArray[i]).split(',');  
-    //   if (curruntRecord.length == headerLength) {  
-    //     var entryNo = curruntRecord[0].trim()
-    //     var name = curruntRecord[1].trim();
-    //     csvArr[entryNo] = name;  
-    //   }  
-    // } 
-    // if(flag==0){ 
-    // await this.firebaseService.addStudentsInCourse(this.code,csvArr).then(()=>{
-    //   alert("Students Enrolled.")
-    // }).catch(()=>{
-    //   alert("Operation Unsuccessful")
-    // })
-    
-    // } else {
-    //   await this.firebaseService.uploadMarksForAssignment(this.code,this.selectedAssignment,csvArr).then(()=>{
-    //     alert("Marks Uploaded.")
-    //   }).catch(()=>{
-    //     alert("Operation Unsuccessful")
-    //   })
-    // }
-    // this.showSpinner = false;
-    // return csvArr;  
-  }  
-  
-  isValidCSVFile(file: any) {  
-    return file.name.endsWith(".csv");  
-  }  
-  
   fileReset() {  
     this.records = [];  
   }
@@ -654,28 +629,12 @@ export class CoursehomeComponent implements OnInit {
     this.assignmentDoc = $event.target.files[0];
   }
 
-  async addAssignment(assignmentTitle,assignmentDesc,assignmentDeadline,assignmentMarks){
-    
-    this.showSpinner = true;
-    // var temp = {
-    //   title: assignmentTitle,
-    //   description: assignmentDesc,
-    //   deadline: new Date(assignmentDeadline).toString(),
-    //   number: this.assignmentCounts+1,
-    //   totalmarks: assignmentMarks,
-    //   files: ""
-    // }
-    // var result = await this.firebaseService.addAssignment(this.code,temp,this.assignmentDoc); 
-    // if(result != null){
-    //   this.assignmentCounts += 1
-    //   this.assignments.push(result)
-    // }
-    this.showSpinner = false;
-  }
-
   navToHome(){
     this.router.navigateByUrl('/home')
   }
 
+  openTest(testId,id){
+    this.router.navigateByUrl(`/course/${this.code}/tests/${testId}/settings`);  
+  }
 
 }

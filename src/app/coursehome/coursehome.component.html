@@ -111,18 +111,17 @@
     
                 <div class="view3" *ngIf="view==3">
                     <div class="row mx-3 pl-4">
-                        <div class="card text-center mt-3 mx-2 border-danger width45">
+                        <div class="card text-center mt-3 mx-2 border-danger width45" *ngFor="let test of course.tests">
                             <div class="card-header border-danger">
-                              Featured
+                              {{test.testId}}
                             </div>
                             <div class="card-body">
-                              <h5 class="card-title">Special title treatment</h5>
-                              <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                              <a href="#" class="btn btn-danger">Go somewhere</a>
+                              <h5 class="card-title">{{test.title}}</h5>
+                              <p class="card-text" [innerHtml]="test.description"></p>
                             </div>
                             <div class="card-footer border-danger text-muted">
-                              2 days ago
-                            </div>this.shiftDeadlineForm.controls['courseCode'].setValue(this.code);    
+                              <button class="btn btn-outline-primary" (click)="openTest(test.testId,test._id)">Open</button>
+                            </div>
                         </div>
                     </div>
                     <div class="row mx-3 pl-4 fixed-bottom mb-4">
@@ -369,12 +368,22 @@
                         <h4 class="modal-title">Create Test</h4>
                         <button type="button" class="close" data-dismiss="modal" style="float: right;">&times;</button>
                     </div>
-                    <div class="modal-body text-center">
-                        
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-success" [disabled]="true" style="float: right;" data-dismiss="modal">Create</button>
-                    </div>
+                    <form [formGroup]='testForm'>
+                        <div class="modal-body text-center">
+                            <div class="form-group">
+                                <label>Title</label>
+                                <input formControlName="title" type="text" class="form-control" placeholder="Enter Title Here" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Instructions</label>
+                                <quill-editor placeholder="Enter Text" formControlName="instructions" required>
+                                </quill-editor>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-success" [disabled]="!testForm.valid" style="float: right;" data-dismiss="modal" (click)="createTest(testForm.value)">Create</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

@@ -71,7 +71,11 @@ const userSchema = new Schema({
                     {
                       type: String,
                       required: true
-                    }
+                    },
+                  practice:{
+                    type:Schema.Types.ObjectId,
+                    ref:"UserPracticeRecord"
+                  }
                 }]
   }
 });

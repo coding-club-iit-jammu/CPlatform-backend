@@ -24,10 +24,10 @@
                             <a class="nav-link" (click) = "setView(3)"> Tests</a>
                         </li>
                         <li class="nav-item active">
-                            <a class="nav-link" routerLink="/questions">Questions</a>
+                            <a class="nav-link" (click)="goToQuestions()">Questions</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" routerLink="/practice">Practice</a>
+                            <a class="nav-link" (click)="goToPractice()">Practice</a>
                         </li>
                     </ul>
                     <a class="btn btn-warning mr-2 my-sm-0" (click)="moveBack()">Home</a>
@@ -42,15 +42,26 @@
                     <mat-tab label="MCQ">
                         <div class="accordion w-75 mx-auto my-4" id="accordionExample" *ngIf="mcqQuestions.length > 0">
                             <div class="card border-dark" *ngFor="let q of mcqQuestions; let i=index;">
-                                <div class="card-header border-dark d-flex" id="headingOne">
-                                    <div class="w-75 text-center" [innerHtml]='q.question'></div>
-                                    <div class="w-25">
-                                        <button class="btn btn-danger btn-sm float-right rounded-circle rounded-sm" (click)="deleteQuestion('mcq')">
-                                            <i class="fa h-100 w-100 fa-trash"></i>
+                                <div class="card-header border-dark d-flex flex-column" id="headingOne" data-toggle="collapse" [attr.data-target]="'#collapseMCQ'+i" aria-expanded="false" [attr.aria-controls]="'#collapseMCQ'+i">
+                                    <div class="d-flex flex-row">
+                                        <div class="w-75 text-center" [innerHtml]='q.question'></div>
+                                        <div class="w-25">
+                                            <button class="btn btn-danger btn-sm float-right rounded-circle rounded-sm" (click)="deleteQuestion('mcq')">
+                                                <i class="fa h-100 w-100 fa-trash"></i>
+                                            </button>
+                                            <!-- <button class="btn btn-dark btn-sm float-right rounded-circle rounded-sm" type="button">
+                                                <i class="fa h-100 w-100 fa-chevron-circle-down"></i>
+                                            </button> -->
+                                        </div>
+                                    </div>
+                                    <div class="dropdown text-center">
+                                        <button class="btn btn-success btn-sm dropdown-toggle my-3" type="button" id="dropdownMenuMCQ" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            Add to
                                         </button>
-                                        <button class="btn btn-dark btn-sm float-right rounded-circle rounded-sm" type="button" data-toggle="collapse" [attr.data-target]="'#collapseMCQ'+i" aria-expanded="false" [attr.aria-controls]="'#collapseMCQ'+i">
-                                            <i class="fa h-100 w-100 fa-chevron-circle-down"></i>
-                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuMCQ">
+                                            <button class="dropdown-item" type="button" (click)="addToPractice(q._id,'mcq')">Practice</button>
+                                            <button class="dropdown-item" type="button" *ngFor="let test of tests" (click)="addToTest(q._id,test._id,'mcq')">{{test.title}}</button>
+                                        </div>
                                     </div>
                                 </div>
                           
@@ -76,19 +87,29 @@
                     <mat-tab label="True/False">
                         <div class="accordion w-75 mx-auto my-4" id="accordionExample" *ngIf="trueFalseQuestions.length>0">
                             <div class="card border-dark" *ngFor="let q of trueFalseQuestions; let i=index;">
-                                <div class="card-header border-dark d-flex" id="headingOne">
-                                    <div class="w-75 text-center" [innerHtml]='q.question'></div>
-                                    <div class="w-25">
-                                        <button class="btn btn-danger btn-sm float-right rounded-circle rounded-sm" (click)="deleteQuestion('trueFalse')">
-                                            <i class="fa h-100 w-100 fa-trash"></i>
+                                <div class="card-header border-dark d-flex flex-column" id="headingOne" data-toggle="collapse" [attr.data-target]="'#collapseTrueFalse'+i" aria-expanded="false" [attr.aria-controls]="'#collapseTrueFalse'+i">
+                                    <div class="d-flex flex-row">
+                                        <div class="w-75 text-center" [innerHtml]='q.question'></div>
+                                        <div class="w-25">
+                                            <button class="btn btn-danger btn-sm float-right rounded-circle rounded-sm" (click)="deleteQuestion('trueFalse')">
+                                                <i class="fa h-100 w-100 fa-trash"></i>
+                                            </button>
+                                            <!-- <button class="btn btn-dark btn-sm float-right rounded-circle rounded-sm" type="button" >
+                                            <i class="fa h-100 w-100 fa-chevron-circle-down"></i>
+                                            </button> -->
+                                        </div>
+                                    </div>
+                                    <div class="dropdown text-center">
+                                        <button class="btn btn-success btn-sm dropdown-toggle my-3" type="button" id="dropdownMenuTrueFalse" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            Add to
                                         </button>
-                                        <button class="btn btn-dark btn-sm float-right rounded-circle rounded-sm" type="button" data-toggle="collapse" [attr.data-target]="'#collapseTrueFalse'+i" aria-expanded="false" [attr.aria-controls]="'#collapseTrueFalse'+i">
-                                        <i class="fa h-100 w-100 fa-chevron-circle-down"></i>
-                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuTrueFalse">
+                                            <button class="dropdown-item" type="button" (click)="addToPractice(q._id,'trueFalse')">Practice</button>
+                                            <button class="dropdown-item" type="button" *ngFor="let test of tests" (click)="addToTest(q._id,test._id,'trueFalse')">{{test.title}}</button>
+                                        </div>
                                     </div>
                                 </div>
-                          
-                                <div id="{{'collapseTrueFalse'+i}}" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                                <div id="{{'collapseTrueFalse'+i}}" class="collapse w-100" aria-labelledby="headingOne" data-parent="#accordionExample">
                                     <div class="card-body d-flex flex-row">
                                         <div class="card my-3 text-center border-success w-80" [ngClass]="{'border-success':q.answer, 'border-warning':!q.answer}">
                                             <div class="py-3">
@@ -113,18 +134,29 @@
                     <mat-tab label="Coding Questions">
                         <div class="accordion w-75 mx-auto my-4" id="accordionExample">
                             <div class="card border-dark" *ngFor="let q of codingQuestions; let i=index;">
-                                <div class="card-header border-dark d-flex" id="headingOne">
-                                    <div class="w-75 text-center" [innerHtml]='q.title'></div>
-                                    <div class="w-25">
-                                        <button class="btn btn-warning btn-sm float-right rounded-circle rounded-sm" (click)="setEditCodingQuestion(i)">
-                                            <i class="fa h-100 w-100 fa-edit"></i>
+                                <div class="card-header border-dark d-flex flex-column" id="headingOne" data-toggle="collapse" [attr.data-target]="'#collapseCoding'+i" aria-expanded="false" [attr.aria-controls]="'#collapseCoding'+i">
+                                    <div class="d-flex flex-row">
+                                        <div class="w-75 text-center" [innerHtml]='q.title'></div>
+                                        <div class="w-25">
+                                            <button class="btn btn-warning btn-sm float-right rounded-circle rounded-sm" (click)="setEditCodingQuestion(i)">
+                                                <i class="fa h-100 w-100 fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-danger btn-sm float-right rounded-circle rounded-sm " (click)="deleteQuestion('coding')">
+                                                <i class="fa h-100 w-100 fa-trash"></i>
+                                            </button>
+                                            <!-- <button class="btn btn-dark btn-sm float-right rounded-circle rounded-sm" type="button" >
+                                            <i class="fa h-100 w-100 fa-chevron-circle-down"></i>
+                                            </button> -->
+                                        </div>
+                                    </div>
+                                    <div class="dropdown text-center">
+                                        <button class="btn btn-success btn-sm dropdown-toggle my-3" type="button" id="dropdownMenuCoding" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            Add to
                                         </button>
-                                        <button class="btn btn-danger btn-sm float-right rounded-circle rounded-sm " (click)="deleteQuestion('coding')">
-                                            <i class="fa h-100 w-100 fa-trash"></i>
-                                        </button>
-                                        <button class="btn btn-dark btn-sm float-right rounded-circle rounded-sm" type="button" data-toggle="collapse" [attr.data-target]="'#collapseCoding'+i" aria-expanded="false" [attr.aria-controls]="'#collapseCoding'+i">
-                                        <i class="fa h-100 w-100 fa-chevron-circle-down"></i>
-                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuCoding">
+                                            <button class="dropdown-item" type="button" (click)="addToPractice(q._id,'codingQuestion')">Practice</button>
+                                            <button class="dropdown-item" type="button" *ngFor="let test of tests" (click)="addToTest(q._id,test._id,'codingQuestion')">{{test.title}}</button>
+                                        </div>
                                     </div>
                                 </div>
                           
@@ -158,6 +190,11 @@
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                        <div class="card my-3 w-75 text-center text-wrap mx-auto" *ngIf="codingQuestions.length==0">
+                            <div class="card-body">
+                                <h3>No Question Found.</h3>
                             </div>
                         </div>
                     </mat-tab>

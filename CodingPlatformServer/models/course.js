@@ -66,7 +66,31 @@ const courseSchema = new Schema({
                 ref:'CodingQuestion'
             }
         ]
-    }
+    },
+    practiceQuestions:{
+        mcq:[
+            {
+                type: Schema.Types.ObjectId, 
+                ref:'MCQ'
+            }
+        ],
+        trueFalse:[
+            {
+                type: Schema.Types.ObjectId,
+                ref:'TrueFalseQuestion'
+            }
+        ],
+        codingQuestion:[
+            {
+                type: Schema.Types.ObjectId,
+                ref:'CodingQuestion'
+            }
+        ]
+    },
+    practiceRecord:[{
+        type: Schema.Types.ObjectId,
+        ref:'UserPracticeRecord'
+    }]
   
   })
 
@@ -109,6 +133,11 @@ courseSchema.methods.addTest = function(testId){
 courseSchema.methods.addAssignment = function(assignmentId){
     this.assignments.push(assignmentId)
     return this.save()
+}
+
+courseSchema.methods.addQuestionToPractice = function(questionId,questionType){
+    this.practiceQuestions[questionType].push(questionId);
+    return this.save();
 }
 
 courseSchema.methods.addMCQ = function(mcqId){

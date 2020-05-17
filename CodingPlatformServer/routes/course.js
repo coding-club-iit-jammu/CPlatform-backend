@@ -20,11 +20,12 @@ const isStudent = require('../middleware/is-student');
 
 const courseController = require('../controllers/course');
 const assignmentController = require('../controllers/assignment');
-
+const practiceController = require('../controllers/practice');
 const router = express.Router();
 
 router.post('/add', isAuth, courseController.addCourse);
 router.post('/join', isAuth, courseController.joinCourse);
+router.post('/addToPractice', isAuth,getRole,isNotStudent,practiceController.addPracticeQuestion);
 router.post('/addPost', isAuth, upload.single('file'), getRole, courseController.addPost);
 router.post('/addAssignment', isAuth, upload.single('file'), getRole,
                             isNotStudent, courseController.addAssignment);

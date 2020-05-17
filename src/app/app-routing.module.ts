@@ -8,6 +8,7 @@ import { QuizComponent } from './quiz/quiz.component'
 import { IdeComponent } from './ide/ide.component';
 import { QuestionsComponent } from './questions/questions.component';
 import { PracticeComponent } from './practice/practice.component';
+import { CreateTestComponent } from './create-test/create-test.component';
 
 const routes: Routes = [
   {
@@ -25,6 +26,10 @@ const routes: Routes = [
   {
     path:'course/:courseId/practice',
     component: PracticeComponent
+  },
+  {
+    path:'course/:courseId/tests/:testId/settings',
+    component: CreateTestComponent
   },
   {
     path: 'course/:courseId/:view',

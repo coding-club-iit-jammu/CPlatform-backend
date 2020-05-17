@@ -34,7 +34,12 @@ exports.addCourse = (req,res,next) => {
         },
         groups: groupIds,
         instructors:[],
-        teachingAssistants:[]
+        teachingAssistants:[],
+        practiceQuestions:{
+            mcq:[],
+            trueFalse:[],
+            codingQuestion:[]
+        }
     });
     
     course.save().then((result)=>{

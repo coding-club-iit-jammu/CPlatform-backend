@@ -32,6 +32,8 @@ export class QuestionsComponent implements OnInit {
   trueFalseQuestions: Array<any> = [];
   codingQuestions: Array<any> = [];
 
+  tests = [];
+
   constructor(private formBuilder: FormBuilder, 
               private matComp: MaterialComponentService,
               private activatedRoute: ActivatedRoute,
@@ -45,9 +47,84 @@ export class QuestionsComponent implements OnInit {
     this.resetTrueFalseQuestion();
     this.resetAddCodingQuestion();
     this.code = this.activatedRoute.snapshot.paramMap.get('courseId').toString();
+    this.getTestTitles();
     this.getMCQ();
     this.getTrueFalse();
     this.getCodingQuestions();
+  }
+
+  async addToPractice(questionId,questionType){
+    this.showSpinner = true;
+    const options = {
+      observe: 'response' as 'body',
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json',
+        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+      })
+    };
+
+    let data = { questionId : questionId,questionType:questionType};
+    data['courseCode'] = this.code;
+
+    await this.http.post(this.storeInfo.serverUrl+'/course/addToPractice', data, options).toPromise().then(response=>{
+      console.log(response);
+      if(response['status']==200){
+      }
+      this.matComp.openSnackBar(response['body']['message'],3000);
+    },error=>{
+      this.matComp.openSnackBar(error,3000);
+    }) 
+
+    this.showSpinner = false;
+  }
+
+  async addToTest(questionId,testId,questionType){
+    this.showSpinner = true;
+    const options = {
+      observe: 'response' as 'body',
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json',
+        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+      })
+    };
+
+    let data = { questionId : questionId,questionType:questionType,testId:testId};
+    data['courseCode'] = this.code;
+
+    await this.http.post(this.storeInfo.serverUrl+'/test/addQuestion', data, options).toPromise().then(response=>{
+      console.log(response);
+      if(response['status']==200){
+      }
+      this.matComp.openSnackBar(response['body']['message'],3000);
+    },error=>{
+      this.matComp.openSnackBar(error,3000);
+    }) 
+
+    this.showSpinner = false;
+  }
+
+  async getTestTitles(){
+    this.showSpinner = true;
+    const options = {
+      observe: 'response' as 'body',
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json',
+        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+      }),
+      params: new HttpParams().set('courseCode',this.code.toString())
+
+    };
+    this.addMCQQuestion['courseCode'] = this.code;
+    await this.http.get(this.storeInfo.serverUrl+'/test/getTitles',options).toPromise().then(response=>{
+      if(response['status'] == 200){
+        this.tests = response['body']['tests'];
+        console.log("Tests:",this.tests);
+      }
+    },error=>{
+      console.log(error)
+      this.matComp.openSnackBar(error['body']['message'],3000);
+    })
+    this.showSpinner = false;
   }
 
   async getMCQ(){
@@ -364,6 +441,14 @@ export class QuestionsComponent implements OnInit {
 
   setView(view){
     this.router.navigateByUrl(`/course/${this.code}/${view}`);
+  }
+
+  goToPractice(){
+    this.router.navigateByUrl(`/course/${this.code}/practice`);
+  }
+
+  goToQuestions(){
+    this.router.navigateByUrl(`/course/${this.code}/questions`);
   }
 
 }

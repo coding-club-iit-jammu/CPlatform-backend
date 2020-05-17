@@ -12,6 +12,7 @@ exports.addMCQ = async (req,res,next) => {
         question: question
     });
 
+    console.log("Creating MCQ Question");
     const mcq = await mcq_question.save();
     if(!mcq){
         res.status(500).json({message:'Couldn\'t save MCQ'});

@@ -1,1 +1,173 @@
-<p>practice works!</p>
+<div class="wrapper">
+    <div class="overlay" *ngIf="showSpinner">   
+        <div class="spinner-wrapper">
+            <app-spinner></app-spinner>
+        </div>
+    </div>
+    <div [class.blurred]="!showSpinner">
+        <div class="navBarCss">
+            <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+                <span class="navbar-brand mb-0 h1">{{code.substring(8)}}</span>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" (click) = "setView(1)"> Stream</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" (click) = "setView(2)"> Assignments</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" (click) = "setView(3)"> Tests</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" (click)="goToQuestions()">Questions</a>
+                        </li>
+                        <li class="nav-item active">
+                            <a class="nav-link" (click)="goToPractice()">Practice</a>
+                        </li>
+                    </ul>
+                    <a class="btn btn-warning mr-2 my-sm-0" (click)="moveBack()">Home</a>
+                    &nbsp;&nbsp;<br>
+                    <button class="btn btn-danger my-2 my-sm-0" type="button" (click)="signOut()">Sign Out</button>
+                </div>
+            </nav>
+        </div>
+        <div class="completeView">
+            <div class = "mainClass" >
+                <mat-tab-group class="mx-auto text-dark justify-content-between">
+                    <mat-tab label="MCQ">
+                        <div class="w-75 mx-auto my-4" *ngIf="mcqQuestions.length > 0">
+                            <div class="card border-dark" *ngFor="let q of mcqQuestions; let i=index;">
+                                <div class="card-header border-dark d-flex" id="headingOne">
+                                    <div class="w-75 text-center" [innerHtml]='q.question'></div>
+                                    <div class="w-25">
+                                        <button class="btn btn-dark btn-sm float-right rounded-circle rounded-sm" type="button" data-toggle="collapse" [attr.data-target]="'#collapseMCQ'+i" aria-expanded="false" [attr.aria-controls]="'#collapseMCQ'+i">
+                                            <i class="fa h-100 w-100 fa-chevron-circle-down"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card my-3 w-75 text-center text-wrap mx-auto" *ngIf="mcqQuestions.length==0">
+                            <div class="card-body">
+                                <h3>No Question Found.</h3>
+                            </div>
+                        </div>
+                    </mat-tab>
+                    <mat-tab label="True/False">
+                        <div class="w-75 mx-auto my-4" *ngIf="trueFalseQuestions.length>0">
+                            <div class="card border-dark" *ngFor="let q of trueFalseQuestions; let i=index;">
+                                <div class="card-header border-dark d-flex" id="headingOne">
+                                    <div class="w-75 text-center" [innerHtml]='q.question'></div>
+                                    <div class="w-25">
+                                        <button class="btn btn-dark btn-sm float-right rounded-circle rounded-sm" type="button" data-toggle="collapse" [attr.data-target]="'#collapseTrueFalse'+i" aria-expanded="false" [attr.aria-controls]="'#collapseTrueFalse'+i">
+                                        <i class="fa h-100 w-100 fa-chevron-circle-down"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card my-3 w-75 text-center text-wrap mx-auto" *ngIf="trueFalseQuestions.length==0">
+                            <div class="card-body">
+                                <h3>No Question Found.</h3>
+                            </div>
+                        </div>
+                    </mat-tab>
+                    <mat-tab label="Coding Questions">
+                        <div class="w-75 mx-auto my-4">
+                            <div class="card border-dark" *ngFor="let q of codingQuestions; let i=index;">
+                                <div class="card-header border-dark d-flex" id="headingOne">
+                                    <div class="w-75 text-center" [innerHtml]='q.title'></div>
+                                    <div class="w-25">
+                                        <button class="btn btn-dark btn-sm float-right rounded-circle rounded-sm" type="button" data-toggle="collapse" [attr.data-target]="'#collapseCoding'+i" aria-expanded="false" [attr.aria-controls]="'#collapseCoding'+i">
+                                        <i class="fa h-100 w-100 fa-chevron-circle-down"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card my-3 w-75 text-center text-wrap mx-auto" *ngIf="codingQuestions.length==0">
+                            <div class="card-body">
+                                <h3>No Question Found.</h3>
+                            </div>
+                        </div>
+                    </mat-tab>
+                </mat-tab-group>
+            </div>
+            <div class="sideInfo bg-transparent px-3">
+                <div>
+                    <div>
+                        <div *ngIf="view==1">
+                            <div>
+                                <label>Question</label>
+                                <div [innerHtml]="mcqQuestion.question">
+                                </div>
+                            </div>
+                            <div class="text-center my-3">
+                                <div class="card my-3 d-flex flex-row flex-wrap text-center min-H-5" *ngFor="let option of mcqQuestion.options; let i = index">
+                                    <div class="w-10 min-H-5 py-3 btn btn-light" (click)="selectMCQOption(option.code)">
+                                        {{option.code}}
+                                    </div>
+                                    <div class="min-H-5 w-75 py-3 mx-auto text-left" [innerHtml]='option.option'>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-right bottom">
+                                <button class="btn btn-success my-3" (click)="submitMCQ()">Submit</button>
+                            </div>
+                        </div>
+                        <div *ngIf="view==2">
+                                <div>
+                                    <label>Question</label>
+                                    <div [innerHtml]="truefalseQuestion.question">
+                                    </div>
+                                </div>
+                                <div class="my-3 text-center w-50 mx-auto">
+                                    <label for="answer">Select Answer</label>
+                                    <select [(ngModel)]="truefalseQuestion.selectedAnswer" class="form-control text-center">
+                                        <option value="true" selected>True</option>
+                                        <option value="false">False</option>
+                                    </select>
+                                </div>
+                                <div class="text-right bottom">
+                                    <button class="btn btn-success my-3" (click)="submitTrueFalseQuestion()">Submit</button>
+                                </div>
+                        </div>
+                        <div *ngIf="view==3">
+                                <div>
+                                    <h3>
+                                        {{codingQuestion.title}}
+                                    </h3>
+                                </div>
+                                <div class="form-group">
+                                    <div [innerHtml]="codingQuestion.question" required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Sample Input</label>
+                                    <div class="form-control" [innerHtml]="codingQuestion.sampleInput" >
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Sample Output</label>
+                                    <div class="form-control" [innerHtml]="codingQuestion.sampleOutput" >
+                                    </div>
+                                </div>
+                                <div class="bottom">
+                                    <button class="btn btn-warning my-3" (click)="compileCodingQuestion()">Compile and Test</button>
+                                    <button class="btn btn-success my-3" (click)="submitCodingQuestion()">Save</button>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="bottom bg-dark py-3 text-light text-center">
+            <h3>course.title</h3>
+        </div>
+    </div>
+</div>

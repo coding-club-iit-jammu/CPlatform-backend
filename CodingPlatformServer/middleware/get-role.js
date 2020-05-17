@@ -4,7 +4,7 @@ module.exports = async (req, res, next) => {
     
     const userId = req.userId;
     let courseCode;
-    if(req.method == 'GET'){
+    if(["GET","DELETE"].includes(req.method)){
         courseCode = req.query.courseCode;
     } else if(req.method == 'POST'){
         courseCode = req.body.courseCode;

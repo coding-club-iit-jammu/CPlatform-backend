@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-
+mongoose.set('useFindAndModify', false);
 const MCQOption = require('./mcq-option');
 
 const mcqSchema = new Schema({
@@ -9,8 +9,19 @@ const mcqSchema = new Schema({
         required: true
     },
     options:[{
-        type: Schema.Types.ObjectId,
-        ref: 'MCQOption'
+        code:{
+            type: String,
+            required: true
+        },
+        option:{
+            type: String,
+            required: true
+        },
+        isCorrect:{
+            type: Boolean,
+            required: true,
+            default: false
+        }
     }]
 });
 

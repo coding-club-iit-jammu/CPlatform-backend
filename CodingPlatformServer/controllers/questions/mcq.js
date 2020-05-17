@@ -9,20 +9,14 @@ exports.addMCQ = async (req,res,next) => {
     const courseId = req.courseId;
 
     const mcq_question = new MCQ({
-        question: question
+        question: question,
+        options:options
     });
 
-    console.log("Creating MCQ Question");
     const mcq = await mcq_question.save();
     if(!mcq){
         res.status(500).json({message:'Couldn\'t save MCQ'});
         console.log('Couldn\'t save MCQ')
-        return;
-    }
-    let mcqResult = await mcq.addOptions(options);
-    console.log(mcqResult);
-    if(!mcqResult){
-        console.log('Couldn\'t add Options');
         return;
     }
     Course.findById(courseId).then((course)=>{
@@ -44,10 +38,7 @@ exports.getMCQ = (req,res,next)=>{
     const courseId = req.courseId;
     
     Course.findById(courseId).select('questions').populate({
-        path: 'questions.mcq',
-        populate:{
-            path:'options'
-        }
+        path: 'questions.mcq'
     }).then((course)=>{
         if(!course){
             res.status(500).json({message:"Unable to get True False Questions."})
@@ -61,4 +52,15 @@ exports.editMCQ = (req,res,next) => {
     const id = req.body.mcqId;
     const question = req.body.question;
     const options = req.body.options;
+}
+
+exports.deleteMCQ = async (req,res,next) => {
+    const mcqId = req.query.questionId;
+    MCQ.findByIdAndRemove(mcqId).then((data)=>{
+        if(data){
+            res.status(204).json({message:"Deleted."});
+            return;
+        }
+        res.status(500).json({message:"Try Again"});
+    })
 }

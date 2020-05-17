@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
 
-
+mongoose.set('useFindAndModify', false);
 const authRoute = require('./routes/auth');
 const courseRoute = require('./routes/course');
 const userRoute = require('./routes/user');
@@ -29,7 +29,13 @@ app.use('/truefalse', truefalseRoute);
 app.use('/codingQuestion',codingQuestionRoute);
 app.use('/test',testRoute);
 
-mongoose.connect("mongodb+srv://pratikparmar:dafiQxSJ4qttuhwr@cluster0-ihjbl.mongodb.net/CodingPlatform?retryWrites=true&w=majority",{useNewUrlParser: true,useUnifiedTopology: true},(err)=>{
+mongoose.connect("mongodb+srv://pratikparmar:dafiQxSJ4qttuhwr@cluster0-ihjbl.mongodb.net/CodingPlatform?retryWrites=true&w=majority",
+        {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            useFindAndModify: false,
+            useCreateIndex: true
+         },(err)=>{
     if(err){
         console.log(err);
         return;

@@ -435,6 +435,26 @@ export class QuestionsComponent implements OnInit {
     })
   }
 
+  async deleteQuestion(id,questionType){
+    this.showSpinner = true;
+    const options = {
+      observe: 'response' as 'body',
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json',
+        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+      }),
+      params: new HttpParams().set("questionId",id).set('courseCode',this.code)
+    };
+    await this.http.delete(this.storeInfo.serverUrl+`/${questionType}/delete`,options).toPromise().then(response=>{
+      console.log(response);
+      // this.matComp.openSnackBar(response['body']['message'],3000);
+    },error=>{
+      this.matComp.openSnackBar(error,3000);
+    })
+    
+    this.showSpinner = false;
+  }
+
   moveBack(){
     this.router.navigateByUrl('/home');
   }

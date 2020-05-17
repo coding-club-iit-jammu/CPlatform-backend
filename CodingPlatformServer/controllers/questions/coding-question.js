@@ -186,3 +186,30 @@ exports.getItem = async (req, res, next) => {
         }
     })
 }
+
+exports.deleteCoding = async (req,res,next)=>{
+    const codingId = req.query.questionId;
+    CodingQuestion.findByIdAndRemove(codingId).then((data)=>{
+        console.log(data);
+        if(data){
+            if(data['testcases']){
+                fs.unlink(data['testcases'],err=>{
+                    ;
+                })
+            }
+            if(data['header']){
+                fs.unlink(data['testcases'],err=>{
+                    ;
+                })
+            }
+            if(data['footer']){
+                fs.unlink(data['testcases'],err=>{
+                    ;
+                })
+            }
+            res.status(204).json({message:"Deleted."});
+            return;
+        }
+        res.status(500).json({message:"Try Again"});
+    });
+}

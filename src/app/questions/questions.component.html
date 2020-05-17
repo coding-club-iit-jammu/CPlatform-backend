@@ -46,7 +46,7 @@
                                     <div class="d-flex flex-row">
                                         <div class="w-75 text-center" [innerHtml]='q.question'></div>
                                         <div class="w-25">
-                                            <button class="btn btn-danger btn-sm float-right rounded-circle rounded-sm" (click)="deleteQuestion('mcq')">
+                                            <button class="btn btn-danger btn-sm float-right rounded-circle rounded-sm" (click)="deleteQuestion(q._id,'mcq')">
                                                 <i class="fa h-100 w-100 fa-trash"></i>
                                             </button>
                                             <!-- <button class="btn btn-dark btn-sm float-right rounded-circle rounded-sm" type="button">
@@ -91,7 +91,7 @@
                                     <div class="d-flex flex-row">
                                         <div class="w-75 text-center" [innerHtml]='q.question'></div>
                                         <div class="w-25">
-                                            <button class="btn btn-danger btn-sm float-right rounded-circle rounded-sm" (click)="deleteQuestion('trueFalse')">
+                                            <button class="btn btn-danger btn-sm float-right rounded-circle rounded-sm" (click)="deleteQuestion(q._id,'truefalse')">
                                                 <i class="fa h-100 w-100 fa-trash"></i>
                                             </button>
                                             <!-- <button class="btn btn-dark btn-sm float-right rounded-circle rounded-sm" type="button" >
@@ -141,7 +141,7 @@
                                             <button class="btn btn-warning btn-sm float-right rounded-circle rounded-sm" (click)="setEditCodingQuestion(i)">
                                                 <i class="fa h-100 w-100 fa-edit"></i>
                                             </button>
-                                            <button class="btn btn-danger btn-sm float-right rounded-circle rounded-sm " (click)="deleteQuestion('coding')">
+                                            <button class="btn btn-danger btn-sm float-right rounded-circle rounded-sm " (click)="deleteQuestion(q._id,'codingQuestion')">
                                                 <i class="fa h-100 w-100 fa-trash"></i>
                                             </button>
                                             <!-- <button class="btn btn-dark btn-sm float-right rounded-circle rounded-sm" type="button" >
@@ -150,7 +150,7 @@
                                         </div>
                                     </div>
                                     <div class="dropdown text-center">
-                                        <button class="btn btn-success btn-sm dropdown-toggle my-3" type="button" id="dropdownMenuCoding" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <button class="btn btn-success   btn-sm dropdown-toggle my-3" type="button" id="dropdownMenuCoding" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             Add to
                                         </button>
                                         <div class="dropdown-menu" aria-labelledby="dropdownMenuCoding">

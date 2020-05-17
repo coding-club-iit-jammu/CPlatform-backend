@@ -28,4 +28,6 @@ var cpUpload = upload.fields([{ name: 'testcases', maxCount: 1 }, { name: 'heade
 router.post('/add', isAuth, cpUpload, getRole, isNotStudent, codingController.addCodingQuestion);
 router.post('/edit', isAuth, cpUpload, getRole, isNotStudent, codingController.editCodingQuestion);
 
+router.delete('/delete',isAuth,getRole,isNotStudent,codingController.deleteCoding);
+
 module.exports = router;

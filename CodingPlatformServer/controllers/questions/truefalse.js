@@ -46,6 +46,16 @@ exports.getTrueFalse = async (req, res, next) => {
         res.status(500).json({message:"Unable to get True False Questions."})
         return;
     }
-    console.log(course);
     res.status(200).json(course);
+}
+
+exports.deleteTrueFalse = async (req,res,next)=>{
+    const trueFalseId = req.query.questionId;
+    TrueFalseQuestion.findByIdAndRemove(trueFalseId).then((data)=>{
+        if(data){
+            res.status(204).json({message:"Deleted."});
+            return;
+        }
+        res.status(500).json({message:"Try Again"});
+    });
 }

@@ -9,5 +9,5 @@ const trueFalseController = require('../../controllers/questions/truefalse');
 
 router.get('/getTrueFalse', isAuth, getRole, isNotStudent, trueFalseController.getTrueFalse);
 router.post('/add', isAuth, getRole, isNotStudent, trueFalseController.addTrueFalse);
-
+router.delete('/delete', isAuth,getRole,isNotStudent,trueFalseController.deleteTrueFalse);
 module.exports = router;

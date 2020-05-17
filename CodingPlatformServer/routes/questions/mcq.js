@@ -11,4 +11,6 @@ router.get('/getMCQ', isAuth, getRole, isNotStudent, mcqController.getMCQ);
 
 router.post('/add', isAuth, getRole, isNotStudent, mcqController.addMCQ);
 
+router.delete('/delete', isAuth,getRole,isNotStudent,mcqController.deleteMCQ);
+
 module.exports = router;

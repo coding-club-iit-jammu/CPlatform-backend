@@ -23,7 +23,7 @@
     "@angular/platform-browser-dynamic": "~8.2.14",
     "@angular/router": "~8.2.14",
     "@mrodrig/json-2-csv-cli": "^3.6.1",
-    "ace-builds": "^1.4.9",
+    "ace-builds": "^1.4.11",
     "bootstrap": "^4.4.1",
     "file-saver": "^2.0.2",
     "firebase": "^7.7.0",

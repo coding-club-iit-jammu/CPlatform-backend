@@ -20,77 +20,18 @@ import 'ace-builds/webpack-resolver';
 
 import 'ace-builds/src-noconflict/ext-language_tools';
 import 'ace-builds/src-noconflict/ext-beautify';
-import { LanguageTable } from 'ide_backend/utils/languages-table';
-const INIT_HEADER = `#include <bits/stdc++.h>
-
+import { LanguageTable } from './consts/language-table';
+const INIT_HEADER = ''
+const INIT_CONTENT = `
+#include <iostream>
 using namespace std;
 
-class Node {
-    public:
-        int data;
-        Node *left;
-        Node *right;
-        Node(int d) {
-            data = d;
-            left = NULL;
-            right = NULL;
-        }
-};
-
-class Solution {
-    public:
-  		Node* insert(Node* root, int data) {
-            if(root == NULL) {
-                return new Node(data);
-            } else {
-                Node* cur;
-                if(data <= root->data) {
-                    cur = insert(root->left, data);
-                    root->left = cur;
-                } else {
-                    cur = insert(root->right, data);
-                    root->right = cur;
-               }
-
-               return root;
-           }
-        }
-`;
-const INIT_CONTENT = `/*The tree node has data, left child and right child 
-class Node {
-    int data;
-    Node* left;
-    Node* right;
-};
-*/
-  int height(Node* root) {
-    // Write your code here.
-  }
-`;
-const INIT_FOOTER = `}; //End of Solution
-
-int main() {
-  
-    Solution myTree;
-    Node* root = NULL;
+int main () {
     
-    int t = 1;
-    int data;
-
-    // std::cin >> t;
-
-    while(t-- > 0) {
-        // std::cin >> data;
-        data = 5;
-        root = myTree.insert(root, data);
-    }
-  
-    int height = myTree.height(root);
     
-  	std::cout << height;
-
     return 0;
 }`
+const INIT_FOOTER = ''
 const DEFAULT_THEME_MODE = 'solarized_dark';
 const DEFAULT_LANG_MODE = 'cpp14';
 
@@ -106,8 +47,12 @@ export class IdeComponent implements OnInit {
   @ViewChild('codeEditorFooter', {static: true}) private codeEditorFootElmRef: ElementRef;
   // language select element ref
   @ViewChild('languagesSelect', {static: false}) languagesSelect: ElementRef;
+  // input
+  @ViewChild('sampleInput', {static: true}) myInput: ElementRef;
   // observable of the run request output
   public output$: Observable<string>;
+  // observable of the sample input
+  public input$: Observable<string>;
   // current editor theme name
   public activatedTheme: string;
 
@@ -178,9 +123,10 @@ export class IdeComponent implements OnInit {
     this.codeEditor.on("change", (delta) => {
       const content = this.codeEditor.getValue();
       linesInContent = content.split(/\r\n|\r|\n/).length;
-      console.log(linesInContent);
+      // console.log(linesInContent);
       this.codeFooter.setOption("firstLineNumber", linesInHeader + linesInContent + 1);
     });
+
   }
 
   private pipeSupportedLanguages() {
@@ -310,6 +256,9 @@ export class IdeComponent implements OnInit {
       this.codeEditor.setValue(INIT_CONTENT);
       this.codeEditor.clearSelection();
     }
+    // test input value
+    let input = this.myInput.nativeElement.value;
+    console.log(input);
   }
 
   /**
@@ -335,7 +284,7 @@ export class IdeComponent implements OnInit {
     this.codeEditor.on('change', (delta) => {
       const content = this.codeEditor.getValue();
       let linesInContent = content.split(/\r\n|\r|\n/).length;
-      console.log(linesInContent);
+      // console.log(linesInContent);
       this.codeFooter.setOption("firstLineNumber", linesInContent + 1);
       callback(content, delta);
     });
@@ -355,22 +304,23 @@ export class IdeComponent implements OnInit {
   }
 
   public onRunCode() {
-    console.log('onRunCode()');
+    // console.log('onRunCode()');
     const code = this.getContent();
-    console.log(code);
-    console.log(this.languagesSelect);
+    // console.log(code);
+    const input = this.myInput.nativeElement.value;
+    // console.log(this.languagesSelect);
     if (this.languagesSelect && code.length > 0) {
-      console.log("here");
+      // console.log("here");
       const languagesSelectElement = this.languagesSelect.nativeElement as HTMLSelectElement;
       const index = languagesSelectElement.selectedIndex;
       const language = this.languagesArray[index];
       this.output$ = this.handler.postCodeToRun(code, {
         id: language.lang, version: language.version
-      }).pipe(
+      }, input).pipe(
         // returning the output content
         map((response: RunResult) => {
           console.log(response);
-          return response.output;
+          return response.token;
         }),
         catchError((err) => {
           console.log(err);
@@ -382,8 +332,5 @@ export class IdeComponent implements OnInit {
 }
 
 interface RunResult {
-  output: string;
-  statusCode: number;
-  memory: string;
-  cpuTime: string;
+  token: string;
 }

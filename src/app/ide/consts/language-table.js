@@ -1,12 +1,4 @@
-export interface Language {
-    lang: string;
-    name: string;
-    version: string;
-    id: number;
-}
-export type LanguageTable = Iterable<[string, Language[]]>;
-export type LanguageMap = Map<string, Language[]>;
-export const languagesTable: LanguageTable = [
+exports.languagesTable = [
     [
         'python3', [
             { lang: 'python3', name: 'Python 3', version: '3.8.1', id: 71 }

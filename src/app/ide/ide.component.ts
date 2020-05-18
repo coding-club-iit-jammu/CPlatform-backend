@@ -106,8 +106,12 @@ export class IdeComponent implements OnInit {
   @ViewChild('codeEditorFooter', {static: true}) private codeEditorFootElmRef: ElementRef;
   // language select element ref
   @ViewChild('languagesSelect', {static: false}) languagesSelect: ElementRef;
+  // input
+  @ViewChild('sampleInput', {static: true}) myInput: ElementRef;
   // observable of the run request output
   public output$: Observable<string>;
+  // observable of the sample input
+  public input$: Observable<string>;
   // current editor theme name
   public activatedTheme: string;
 
@@ -178,9 +182,10 @@ export class IdeComponent implements OnInit {
     this.codeEditor.on("change", (delta) => {
       const content = this.codeEditor.getValue();
       linesInContent = content.split(/\r\n|\r|\n/).length;
-      console.log(linesInContent);
+      // console.log(linesInContent);
       this.codeFooter.setOption("firstLineNumber", linesInHeader + linesInContent + 1);
     });
+
   }
 
   private pipeSupportedLanguages() {
@@ -310,6 +315,9 @@ export class IdeComponent implements OnInit {
       this.codeEditor.setValue(INIT_CONTENT);
       this.codeEditor.clearSelection();
     }
+    // test input value
+    let input = this.myInput.nativeElement.value;
+    console.log(input);
   }
 
   /**
@@ -335,7 +343,7 @@ export class IdeComponent implements OnInit {
     this.codeEditor.on('change', (delta) => {
       const content = this.codeEditor.getValue();
       let linesInContent = content.split(/\r\n|\r|\n/).length;
-      console.log(linesInContent);
+      // console.log(linesInContent);
       this.codeFooter.setOption("firstLineNumber", linesInContent + 1);
       callback(content, delta);
     });
@@ -355,12 +363,13 @@ export class IdeComponent implements OnInit {
   }
 
   public onRunCode() {
-    console.log('onRunCode()');
+    // console.log('onRunCode()');
     const code = this.getContent();
-    console.log(code);
-    console.log(this.languagesSelect);
+    // console.log(code);
+    const input = this.myInput.nativeElement.value;
+    // console.log(this.languagesSelect);
     if (this.languagesSelect && code.length > 0) {
-      console.log("here");
+      // console.log("here");
       const languagesSelectElement = this.languagesSelect.nativeElement as HTMLSelectElement;
       const index = languagesSelectElement.selectedIndex;
       const language = this.languagesArray[index];
@@ -369,7 +378,7 @@ export class IdeComponent implements OnInit {
       }).pipe(
         // returning the output content
         map((response: RunResult) => {
-          console.log(response);
+          // console.log(response);
           return response.output;
         }),
         catchError((err) => {

@@ -91,13 +91,24 @@
         </div>
     </div>
 
+    <!-- input box -->
+    <div class="row mt-4">
+        <div class="col">
+            <div class="label-box border">
+                <span class="mx-4 font-weight-light">Sample Input</span>
+            </div>
+            <textarea class="form-control input" rows="5" 
+            aria-label="input-textarea" #sampleInput></textarea>
+        </div>
+    </div>
+
    <!-- output box -->
     <div class="row mt-4">
         <div class="col">
             <div class="label-box border">
                 <span class="mx-4 font-weight-light">Output</span>
             </div>
-            <textarea class="form-control output" rows="6" 
+            <textarea class="form-control output" rows="5" 
             disabled="true" aria-label="output-textarea" 
             [value]="(output$ | async) || ''">
         </textarea>

@@ -13,6 +13,7 @@ const mcqRoute = require('./routes/questions/mcq');
 const truefalseRoute = require('./routes/questions/truefalse');
 const codingQuestionRoute = require('./routes/questions/coding-question');
 const testRoute = require('./routes/test');
+const practiceRoute = require('./routes/practice');
 const app = express();
 
 app.use(cors());
@@ -28,6 +29,7 @@ app.use('/mcq', mcqRoute);
 app.use('/truefalse', truefalseRoute);
 app.use('/codingQuestion',codingQuestionRoute);
 app.use('/test',testRoute);
+app.use('/practice',practiceRoute);
 
 mongoose.connect("mongodb+srv://pratikparmar:dafiQxSJ4qttuhwr@cluster0-ihjbl.mongodb.net/CodingPlatform?retryWrites=true&w=majority",
         {

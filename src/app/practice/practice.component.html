@@ -42,11 +42,11 @@
                     <mat-tab label="MCQ">
                         <div class="w-75 mx-auto my-4" *ngIf="mcqQuestions.length > 0">
                             <div class="card border-dark" *ngFor="let q of mcqQuestions; let i=index;">
-                                <div class="card-header border-dark d-flex" id="headingOne">
-                                    <div class="w-75 text-center" [innerHtml]='q.question'></div>
-                                    <div class="w-25">
-                                        <button class="btn btn-dark btn-sm float-right rounded-circle rounded-sm" type="button" data-toggle="collapse" [attr.data-target]="'#collapseMCQ'+i" aria-expanded="false" [attr.aria-controls]="'#collapseMCQ'+i">
-                                            <i class="fa h-100 w-100 fa-chevron-circle-down"></i>
+                                <div class="card-header" id="headingOne">
+                                    <div class="w-100 text-center" [innerHtml]='q.question'></div>
+                                    <div class="text-center" >
+                                        <button class="btn btn-outline-primary">
+                                            Solve
                                         </button>
                                     </div>
                                 </div>
@@ -61,11 +61,11 @@
                     <mat-tab label="True/False">
                         <div class="w-75 mx-auto my-4" *ngIf="trueFalseQuestions.length>0">
                             <div class="card border-dark" *ngFor="let q of trueFalseQuestions; let i=index;">
-                                <div class="card-header border-dark d-flex" id="headingOne">
-                                    <div class="w-75 text-center" [innerHtml]='q.question'></div>
-                                    <div class="w-25">
-                                        <button class="btn btn-dark btn-sm float-right rounded-circle rounded-sm" type="button" data-toggle="collapse" [attr.data-target]="'#collapseTrueFalse'+i" aria-expanded="false" [attr.aria-controls]="'#collapseTrueFalse'+i">
-                                        <i class="fa h-100 w-100 fa-chevron-circle-down"></i>
+                                <div class="card-header" id="headingOne">
+                                    <div class="w-100 text-center" [innerHtml]='q.question'></div>
+                                    <div class="text-center" >
+                                        <button class="btn btn-outline-primary">
+                                            Solve
                                         </button>
                                     </div>
                                 </div>
@@ -80,11 +80,11 @@
                     <mat-tab label="Coding Questions">
                         <div class="w-75 mx-auto my-4">
                             <div class="card border-dark" *ngFor="let q of codingQuestions; let i=index;">
-                                <div class="card-header border-dark d-flex" id="headingOne">
-                                    <div class="w-75 text-center" [innerHtml]='q.title'></div>
-                                    <div class="w-25">
-                                        <button class="btn btn-dark btn-sm float-right rounded-circle rounded-sm" type="button" data-toggle="collapse" [attr.data-target]="'#collapseCoding'+i" aria-expanded="false" [attr.aria-controls]="'#collapseCoding'+i">
-                                        <i class="fa h-100 w-100 fa-chevron-circle-down"></i>
+                                <div class="card-header" id="headingOne">
+                                    <div class="w-100 text-center" [innerHtml]='q.title'></div>
+                                    <div class="text-center" >
+                                        <button class="btn btn-outline-primary">
+                                            Solve
                                         </button>
                                     </div>
                                 </div>

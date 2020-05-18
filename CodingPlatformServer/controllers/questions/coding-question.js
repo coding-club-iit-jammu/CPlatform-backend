@@ -37,24 +37,6 @@ exports.addCodingQuestion = async (req,res,next)=>{
 
     console.log(req.files);
 
-    // const fileName = path.basename(req.file.path);
-    // let oldPath = req.file.path;
-    // let newPath = path.join(__dirname,'..','..','data',req.body.courseCode,'questions','testcases').toString();
-        
-    // await mkdirp(newPath);
-    // newPath = path.join(newPath,fileName);
-
-    // let moved = true;
-    // await fs.renameSync(oldPath, newPath, function (err) {
-    //     if (err) {
-    //         moved = false;
-    //         throw err
-    //     }
-    // })
-
-    // if(!moved)
-    //     newPath = oldPath;
-
     const testcasesPath = await shiftFile(req.body.courseCode,req.files['testcases'][0].path,"testcases");
     const codingQuestion = new CodingQuestion({
         title: title,

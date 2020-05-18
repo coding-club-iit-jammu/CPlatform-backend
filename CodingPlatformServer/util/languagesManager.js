@@ -7,7 +7,7 @@ const LanguagesManager = /** @class */ (function () {
             var langEntrys = this.languagesMap.get(lang);
             var entry = langEntrys.find(function (lang) { return lang.version == version; });
             if (entry) {
-                return entry.index;
+                return entry.id;
             }
         }
     };

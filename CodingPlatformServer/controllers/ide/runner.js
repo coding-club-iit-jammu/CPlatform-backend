@@ -19,7 +19,7 @@ function validatePostRun (reqBody) {
 
 exports.postCode = async (req, res, next) => {
     console.log({ msg: 'POST: \'/run\'' });
-    let body = _.pick(req.body, ['lang', 'version', 'program']);
+    let body = _.pick(req.body, ['lang', 'version', 'program', 'input']);
     // console.log(body);
     if (!validatePostRun(body)) {
         console.log('Invalid body parameters!');
@@ -27,19 +27,16 @@ exports.postCode = async (req, res, next) => {
         return;
     }
     try {
-        let index = LanguagesManager.LanguagesManager.
+        let id = LanguagesManager.LanguagesManager.
                                     getLanguageVersionIndex(body.lang, body.version);
-        RequestHandler.RequestHandler.postRunRequest(body.lang, index, body.program)
+        RequestHandler.RequestHandler.postRunRequest(id, body.program, body.input)
             .on('error', function(error) {
                 console.log({ msg: 'postRunRequest on error', params: error });
                 return res.status(400).send(error);
         })
-            .on('jdoodle-error', function (error) {
-                console.log({ msg: 'postRunRequest on jdoodle-error', params: error });
-                return res.status(400).send(error);
-        })
-            .on('jdoodle-success', function (result) {
-            console.log({ msg: 'postRunRequest on jdoodle-success', params: result });
+            .on('success', function (result) {
+            console.log({ msg: 'postRunRequest on success', params: result });
+            // TODO: Fetch token and get submission response
             return res.status(200).send({ runResult: result });
         });
     }

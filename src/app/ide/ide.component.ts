@@ -21,76 +21,17 @@ import 'ace-builds/webpack-resolver';
 import 'ace-builds/src-noconflict/ext-language_tools';
 import 'ace-builds/src-noconflict/ext-beautify';
 import { LanguageTable } from './consts/language-table';
-const INIT_HEADER = `#include <bits/stdc++.h>
-
+const INIT_HEADER = ''
+const INIT_CONTENT = `
+#include <iostream>
 using namespace std;
 
-class Node {
-    public:
-        int data;
-        Node *left;
-        Node *right;
-        Node(int d) {
-            data = d;
-            left = NULL;
-            right = NULL;
-        }
-};
-
-class Solution {
-    public:
-  		Node* insert(Node* root, int data) {
-            if(root == NULL) {
-                return new Node(data);
-            } else {
-                Node* cur;
-                if(data <= root->data) {
-                    cur = insert(root->left, data);
-                    root->left = cur;
-                } else {
-                    cur = insert(root->right, data);
-                    root->right = cur;
-               }
-
-               return root;
-           }
-        }
-`;
-const INIT_CONTENT = `/*The tree node has data, left child and right child 
-class Node {
-    int data;
-    Node* left;
-    Node* right;
-};
-*/
-  int height(Node* root) {
-    // Write your code here.
-  }
-`;
-const INIT_FOOTER = `}; //End of Solution
-
-int main() {
-  
-    Solution myTree;
-    Node* root = NULL;
+int main () {
     
-    int t = 1;
-    int data;
-
-    // std::cin >> t;
-
-    while(t-- > 0) {
-        // std::cin >> data;
-        data = 5;
-        root = myTree.insert(root, data);
-    }
-  
-    int height = myTree.height(root);
     
-  	std::cout << height;
-
     return 0;
 }`
+const INIT_FOOTER = ''
 const DEFAULT_THEME_MODE = 'solarized_dark';
 const DEFAULT_LANG_MODE = 'cpp14';
 
@@ -375,11 +316,11 @@ export class IdeComponent implements OnInit {
       const language = this.languagesArray[index];
       this.output$ = this.handler.postCodeToRun(code, {
         id: language.lang, version: language.version
-      }).pipe(
+      }, input).pipe(
         // returning the output content
         map((response: RunResult) => {
-          // console.log(response);
-          return response.output;
+          console.log(response);
+          return response.token;
         }),
         catchError((err) => {
           console.log(err);
@@ -391,8 +332,5 @@ export class IdeComponent implements OnInit {
 }
 
 interface RunResult {
-  output: string;
-  statusCode: number;
-  memory: string;
-  cpuTime: string;
+  token: string;
 }

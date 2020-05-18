@@ -471,4 +471,8 @@ export class QuestionsComponent implements OnInit {
     this.router.navigateByUrl(`/course/${this.code}/questions`);
   }
 
+  signOut(){
+    this.storeInfo.signOut();
+    this.router.navigateByUrl('/');
+  }
 }

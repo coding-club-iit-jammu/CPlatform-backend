@@ -41,11 +41,11 @@
                 <mat-tab-group class="mx-auto text-dark justify-content-between">
                     <mat-tab label="MCQ">
                         <div class="w-75 mx-auto my-4" *ngIf="mcqQuestions.length > 0">
-                            <div class="card border-dark" *ngFor="let q of mcqQuestions; let i=index;">
+                            <div class="card border-secondary" *ngFor="let q of mcqQuestions; let i=index;" [ngClass]="{'border-success':q.isSolved}">
                                 <div class="card-header" id="headingOne">
                                     <div class="w-100 text-center" [innerHtml]='q.question'></div>
                                     <div class="text-center" >
-                                        <button class="btn btn-outline-primary">
+                                        <button class="btn btn-outline-primary" (click)="solveQuestion(i,'mcq')">
                                             Solve
                                         </button>
                                     </div>
@@ -60,11 +60,11 @@
                     </mat-tab>
                     <mat-tab label="True/False">
                         <div class="w-75 mx-auto my-4" *ngIf="trueFalseQuestions.length>0">
-                            <div class="card border-dark" *ngFor="let q of trueFalseQuestions; let i=index;">
+                            <div class="card border-secondary" *ngFor="let q of trueFalseQuestions; let i=index;" [ngClass]="{'border-success':q.isSolved}">
                                 <div class="card-header" id="headingOne">
                                     <div class="w-100 text-center" [innerHtml]='q.question'></div>
                                     <div class="text-center" >
-                                        <button class="btn btn-outline-primary">
+                                        <button class="btn btn-outline-primary" (click)="solveQuestion(i,'trueFalse')">
                                             Solve
                                         </button>
                                     </div>
@@ -79,11 +79,11 @@
                     </mat-tab>
                     <mat-tab label="Coding Questions">
                         <div class="w-75 mx-auto my-4">
-                            <div class="card border-dark" *ngFor="let q of codingQuestions; let i=index;">
+                            <div class="card border-secondary" *ngFor="let q of codingQuestions; let i=index;">
                                 <div class="card-header" id="headingOne">
                                     <div class="w-100 text-center" [innerHtml]='q.title'></div>
                                     <div class="text-center" >
-                                        <button class="btn btn-outline-primary">
+                                        <button class="btn btn-outline-primary" (click)="solveQuestion(i,'codingQuestion')">
                                             Solve
                                         </button>
                                     </div>
@@ -104,12 +104,12 @@
                         <div *ngIf="view==1">
                             <div>
                                 <label>Question</label>
-                                <div [innerHtml]="mcqQuestion.question">
+                                <div [innerHtml]="mcqQuestions[selectedMCQ].question">
                                 </div>
                             </div>
                             <div class="text-center my-3">
-                                <div class="card my-3 d-flex flex-row flex-wrap text-center min-H-5" *ngFor="let option of mcqQuestion.options; let i = index">
-                                    <div class="w-10 min-H-5 py-3 btn btn-light" (click)="selectMCQOption(option.code)">
+                                <div class="card my-3 d-flex flex-row flex-wrap text-center min-H-5" *ngFor="let option of mcqQuestions[selectedMCQ].options; let i = index">
+                                    <div class="w-10 min-H-5 py-3 btn btn-light" (click)="mcqQuestions[selectedMCQ]['response'] = option.code" [ngClass]="{'btn-success': mcqQuestions[selectedMCQ]['response'] == option.code}">
                                         {{option.code}}
                                     </div>
                                     <div class="min-H-5 w-75 py-3 mx-auto text-left" [innerHtml]='option.option'>

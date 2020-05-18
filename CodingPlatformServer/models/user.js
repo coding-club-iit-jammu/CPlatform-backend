@@ -34,6 +34,16 @@ const userSchema = new Schema({
                   title:
                   { 
                     type: String
+                  },
+                  practice:
+                  {
+                    record:{
+                    type:Schema.Types.ObjectId,
+                    ref:"UserPracticeRecord"
+                    },
+                    solvedQuestions:[{
+                      type:Schema.Types.ObjectId
+                    }]
                   }
                 }],
       teachingAssistant: [{
@@ -49,6 +59,16 @@ const userSchema = new Schema({
                             title:
                             { 
                               type: String
+                            },
+                            practice:
+                            {
+                              record:{
+                              type:Schema.Types.ObjectId,
+                              ref:"UserPracticeRecord"
+                              },
+                              solvedQuestions:[{
+                                type:Schema.Types.ObjectId
+                              }]
                             }
                           }],
       studying: [{
@@ -72,9 +92,15 @@ const userSchema = new Schema({
                       type: String,
                       required: true
                     },
-                  practice:{
+                  practice:
+                  {
+                    record:{
                     type:Schema.Types.ObjectId,
                     ref:"UserPracticeRecord"
+                    },
+                    solvedQuestions:[{
+                      type:Schema.Types.ObjectId
+                    }]
                   }
                 }]
   }

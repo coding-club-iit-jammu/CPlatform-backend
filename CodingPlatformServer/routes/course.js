@@ -17,6 +17,7 @@ const isInstructor = require('../middleware/is-instructor');
 const getRole = require('../middleware/get-role');
 const isNotStudent = require('../middleware/is-not-student');
 const isStudent = require('../middleware/is-student');
+const isAlreadyEnrolled = require('../middleware/is-already-enrolled');
 
 const courseController = require('../controllers/course');
 const assignmentController = require('../controllers/assignment');
@@ -24,7 +25,7 @@ const practiceController = require('../controllers/practice');
 const router = express.Router();
 
 router.post('/add', isAuth, courseController.addCourse);
-router.post('/join', isAuth, courseController.joinCourse);
+router.post('/join', isAuth, isAlreadyEnrolled, courseController.joinCourse);
 router.post('/addToPractice', isAuth,getRole,isNotStudent,practiceController.addPracticeQuestion);
 router.post('/addPost', isAuth, upload.single('file'), getRole, courseController.addPost);
 router.post('/addAssignment', isAuth, upload.single('file'), getRole,

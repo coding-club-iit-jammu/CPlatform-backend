@@ -23,6 +23,10 @@ export class PracticeComponent implements OnInit {
   trueFalseQuestions=[];
   codingQuestions=[];
 
+  selectedMCQ:Number;
+  selectedTrueFalse:Number;
+  selectedCodingQuestion:Number;
+
   mcqQuestion = {
     _id:"",
     question:"A",
@@ -71,9 +75,25 @@ export class PracticeComponent implements OnInit {
       }
     },error=>{
       console.log(error)
-      this.matComp.openSnackBar(error['body']['message'],3000);
+      this.matComp.openSnackBar(error,3000);
     })
     this.showSpinner = false;
+  }
+
+  solveQuestion(question,questionType){
+    if(questionType=='mcq'){
+      this.selectedMCQ = question;
+      this.view = 1;
+    } else if(questionType == 'trueFalse'){
+      this.selectedTrueFalse = question;
+      this.view = 2;
+    } else if(questionType == 'codingQuestion'){
+      this.selectedCodingQuestion = question;
+      this.view = 3;
+    } else {
+      this.view = 0;
+      this.matComp.openSnackBar("Something is wrong, please try again.",2000);
+    }
   }
 
   async getTrueFalse(){
@@ -88,13 +108,12 @@ export class PracticeComponent implements OnInit {
 
     };
     await this.http.get(this.storeInfo.serverUrl+'/practice/getTrueFalse',options).toPromise().then(response=>{
-      console.log(response);
       if(response['status'] == 200){
         this.trueFalseQuestions = response['body'];
       }
     },error=>{
       console.log(error)
-      this.matComp.openSnackBar(error['body']['message'],3000);
+      this.matComp.openSnackBar(error,3000);
     })
     this.showSpinner = false;
   }
@@ -111,13 +130,12 @@ export class PracticeComponent implements OnInit {
 
     };
     await this.http.get(this.storeInfo.serverUrl+'/practice/getCodingQuestion',options).toPromise().then(response=>{
-      console.log(response);
       if(response['status'] == 200){
         this.trueFalseQuestions = response['body'];
       }
     },error=>{
       console.log(error)
-      this.matComp.openSnackBar(error['body']['message'],3000);
+      this.matComp.openSnackBar(error,3000);
     })
     this.showSpinner = false;
   }
@@ -131,5 +149,14 @@ export class PracticeComponent implements OnInit {
   }
   goToQuestions(){
     this.router.navigateByUrl(`/course/${this.code}/questions`);
+  }
+
+  signOut(){
+    this.storeInfo.signOut();
+    this.router.navigateByUrl('/');
+  }
+
+  moveBack(){
+    this.router.navigateByUrl('/home');
   }
 }

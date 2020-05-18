@@ -20,7 +20,7 @@ import 'ace-builds/webpack-resolver';
 
 import 'ace-builds/src-noconflict/ext-language_tools';
 import 'ace-builds/src-noconflict/ext-beautify';
-import { LanguageTable } from 'ide_backend/utils/languages-table';
+import { LanguageTable } from './consts/language-table';
 const INIT_HEADER = `#include <bits/stdc++.h>
 
 using namespace std;

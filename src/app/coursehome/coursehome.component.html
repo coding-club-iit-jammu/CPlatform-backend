@@ -304,12 +304,12 @@
                                     <mat-option *ngFor="let topping of course.groups" [value]="topping">{{topping}}</mat-option>
                                 </mat-select>
                             </div>
-                            <div class="modal-footer">
+                            <div class="modal-footer d-flex justify-content-around">
                                 <div>
-                                    <button type="button" class="btn btn-danger" id="postModalClose" data-dismiss="modal" style="float: left;">Close</button>
+                                    <button type="button" class="btn btn-danger" id="postModalClose" data-dismiss="modal">Close</button>
                                 </div>
                                 <div>
-                                    <button type="button" class="btn btn-success" [disabled]="!postForm.valid" style="float: right;" (click)="createPost(postForm.value)">Add</button>
+                                    <button type="button" class="btn btn-success" [disabled]="!postForm.valid" data-dismiss="modal" (click)="createPost(postForm.value)">Add</button>
                                 </div>
                             </div>
                         </form>

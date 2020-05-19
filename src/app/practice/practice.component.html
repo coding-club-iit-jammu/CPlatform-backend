@@ -41,11 +41,11 @@
                 <mat-tab-group class="mx-auto text-dark justify-content-between">
                     <mat-tab label="MCQ">
                         <div class="w-75 mx-auto my-4" *ngIf="mcqQuestions.length > 0">
-                            <div class="card border-secondary" *ngFor="let q of mcqQuestions; let i=index;" [ngClass]="{'border-success':q.isSolved}">
+                            <div class="card border-secondary my-2" *ngFor="let q of mcqQuestions; let i=index;" [ngClass]="{'border-success':q.isSolved}">
                                 <div class="card-header" id="headingOne">
                                     <div class="w-100 text-center" [innerHtml]='q.question'></div>
                                     <div class="text-center" >
-                                        <button class="btn btn-outline-primary" (click)="solveQuestion(i,'mcq')">
+                                        <button class="btn btn-outline-primary" (click)="solveQuestion(i,'mcq')" data-toggle="modal" data-target="#mcqModal">
                                             Solve
                                         </button>
                                     </div>
@@ -64,7 +64,7 @@
                                 <div class="card-header" id="headingOne">
                                     <div class="w-100 text-center" [innerHtml]='q.question'></div>
                                     <div class="text-center" >
-                                        <button class="btn btn-outline-primary" (click)="solveQuestion(i,'trueFalse')">
+                                        <button class="btn btn-outline-primary" (click)="solveQuestion(i,'trueFalse')" data-toggle="modal" data-target="#trueFalseModal">
                                             Solve
                                         </button>
                                     </div>
@@ -100,67 +100,17 @@
             </div>
             <div class="sideInfo bg-transparent px-3">
                 <div>
-                    <div>
-                        <div *ngIf="view==1">
-                            <div>
-                                <label>Question</label>
-                                <div [innerHtml]="mcqQuestions[selectedMCQ].question">
-                                </div>
+                    <div class="my-3 py-3">
+                        <div class="card text-center">
+                            <div class="card-header bg-dark text-light">
+                                LeaderBoard
                             </div>
-                            <div class="text-center my-3">
-                                <div class="card my-3 d-flex flex-row flex-wrap text-center min-H-5" *ngFor="let option of mcqQuestions[selectedMCQ].options; let i = index">
-                                    <div class="w-10 min-H-5 py-3 btn btn-light" (click)="mcqQuestions[selectedMCQ]['response'] = option.code" [ngClass]="{'btn-success': mcqQuestions[selectedMCQ]['response'] == option.code}">
-                                        {{option.code}}
-                                    </div>
-                                    <div class="min-H-5 w-75 py-3 mx-auto text-left" [innerHtml]='option.option'>
-                                    </div>
-                                </div>
+                            <div class="card-body">
+                                Top 10 will be shown here
                             </div>
-                            <div class="text-right bottom">
-                                <button class="btn btn-success my-3" (click)="submitMCQ()">Submit</button>
+                            <div class="card-footer text-light bg-secondary">
+                                Rank Name Score
                             </div>
-                        </div>
-                        <div *ngIf="view==2">
-                                <div>
-                                    <label>Question</label>
-                                    <div [innerHtml]="truefalseQuestion.question">
-                                    </div>
-                                </div>
-                                <div class="my-3 text-center w-50 mx-auto">
-                                    <label for="answer">Select Answer</label>
-                                    <select [(ngModel)]="truefalseQuestion.selectedAnswer" class="form-control text-center">
-                                        <option value="true" selected>True</option>
-                                        <option value="false">False</option>
-                                    </select>
-                                </div>
-                                <div class="text-right bottom">
-                                    <button class="btn btn-success my-3" (click)="submitTrueFalseQuestion()">Submit</button>
-                                </div>
-                        </div>
-                        <div *ngIf="view==3">
-                                <div>
-                                    <h3>
-                                        {{codingQuestion.title}}
-                                    </h3>
-                                </div>
-                                <div class="form-group">
-                                    <div [innerHtml]="codingQuestion.question" required>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label>Sample Input</label>
-                                    <div class="form-control" [innerHtml]="codingQuestion.sampleInput" >
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label>Sample Output</label>
-                                    <div class="form-control" [innerHtml]="codingQuestion.sampleOutput" >
-                                    </div>
-                                </div>
-                                <div class="bottom">
-                                    <button class="btn btn-warning my-3" (click)="compileCodingQuestion()">Compile and Test</button>
-                                    <button class="btn btn-success my-3" (click)="submitCodingQuestion()">Save</button>
-                                </div>
                         </div>
                     </div>
                 </div>
@@ -168,6 +118,86 @@
         </div>
         <div class="bottom bg-dark py-3 text-light text-center">
             <h3>course.title</h3>
+        </div>
+        <div class="modal fade" id="mcqModal" role="dialog" *ngIf="view==1 && selectedMCQ!=null">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header text-center bg-light px-auto w-100 h-100">
+                        <div class="text-center" [innerHtml]="this.mcqQuestions[selectedMCQ].question"></div>
+                        <button type="button" class="close" data-dismiss="modal" style="float: right;">&times;</button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <div class="text-center my-3">
+                            <div class="card my-3 d-flex flex-row flex-wrap text-center min-H-5" *ngFor="let option of mcqQuestions[selectedMCQ].options; let i = index">
+                                <div class="w-10 min-H-5 py-3 bg-light" [ngClass]="{'bg-success': option['response'].toString()=='true'}">
+                                    <mat-checkbox class="py-auto" [(ngModel)]="option.response"></mat-checkbox>
+                                </div>
+                                <div class="min-H-5 w-75 py-3 mx-auto text-left" [innerHtml]='option.option'>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-around bg-light">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                        <button class="btn btn-success my-3" (click)="submitMCQ(selectedMCQ)" data-dismiss="modal">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="trueFalseModal" role="dialog" *ngIf="view==2 && selectedTrueFalse!=null">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header text-center bg-light">
+                        <div class="text-center" [innerHtml]="trueFalseQuestions[selectedTrueFalse].question"></div>
+                        <button type="button" class="close" data-dismiss="modal" style="float: right;">&times;</button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <div class="text-center my-3">
+                            <mat-radio-group aria-label="Select Answer" [(ngModel)]="trueFalseQuestions[selectedTrueFalse]['response']">
+                                <div class="card my-3 d-flex flex-row flex-wrap text-center min-H-5">
+                                    <div class="w-10 min-H-5 py-3 bg-light" [ngClass]="{'bg-success': trueFalseQuestions[selectedTrueFalse]['response'].toString() ==  'true'}">
+                                        <mat-radio-button value="true"></mat-radio-button>
+                                    </div>
+                                    <div class="min-H-5 w-75 py-3 mx-auto text-left">
+                                        True
+                                    </div>
+                                </div>
+                                <div class="card my-3 d-flex flex-row flex-wrap text-center min-H-5">
+                                    <div class="w-10 min-H-5 py-3 bg-light" [ngClass]="{'bg-success': trueFalseQuestions[selectedTrueFalse]['response'].toString() ==  'true'}">
+                                        <mat-radio-button value="false"></mat-radio-button>
+                                    </div>
+                                    <div class="min-H-5 w-75 py-3 mx-auto text-left">
+                                        False
+                                    </div>
+                                </div>
+                            </mat-radio-group>
+                        </div>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-around bg-light">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                        <button class="btn btn-success my-3" (click)="submitTrueFalse(selectedTrueFalse)" data-dismiss="modal">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="codingQuestionModal" role="dialog" *ngIf="view==3 && selectedCodingQuestion!=null">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header text-center bg-light">
+                        <div class="text-center" [innerHtml]="this.codingQuestions[selectedCodingQuestion].title"></div>
+                        <button type="button" class="close" data-dismiss="modal" style="float: right;">&times;</button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <div class="text-center my-3">
+                            Show Data for Coding Question here.
+                        </div>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-around bg-light">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                        <button class="btn btn-success my-3" (click)="submitCodingQuestion()" data-dismiss="modal">Submit</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

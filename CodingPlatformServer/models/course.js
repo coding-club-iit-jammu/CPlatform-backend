@@ -155,6 +155,11 @@ courseSchema.methods.addCodingQuestion = function(mcqId){
     return this.save();
 }
 
+courseSchema.methods.addPracticeRecord = function(recordId){
+    this.practiceRecord.push(recordId);
+    return this.save();
+}
+
 const Course = mongoose.model("Course",courseSchema);
   
 

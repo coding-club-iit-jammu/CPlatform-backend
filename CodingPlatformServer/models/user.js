@@ -106,30 +106,42 @@ const userSchema = new Schema({
   }
 });
 
-userSchema.methods.addTeachingCourse = function(courseId,code,title){
+userSchema.methods.addTeachingCourse = function(courseId,code,title,practiceRecordId){
   this.courses.teaching.push({
     courseId : courseId,
     code: code,
-    title:title
+    title:title,
+    practice:{
+      record:practiceRecordId,
+      solvedQuestions:[]
+    }
   });
   return this.save();
 }
 
-userSchema.methods.addTACourse = function(courseId,code,title){
+userSchema.methods.addTACourse = function(courseId,code,title,practiceRecordId){
   this.courses.teachingAssistant.push({
     courseId : courseId,
     code: code,
-    title:title
+    title:title,
+    practice:{
+      record:practiceRecordId,
+      solvedQuestions:[]
+    }
   });
   return this.save();
 }
 
-userSchema.methods.addStudyingCourse = function(courseId,code,title,groupId){
+userSchema.methods.addStudyingCourse = function(courseId,code,title,groupId,practiceRecordId){
   this.courses.studying.push({
     courseId : courseId,
     code: code,
     title:title,
-    groupId: groupId
+    groupId: groupId,
+    practice:{
+      record:practiceRecordId,
+      solvedQuestions:[]
+    }
   });
   return this.save();
 }

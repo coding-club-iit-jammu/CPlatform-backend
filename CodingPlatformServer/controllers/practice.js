@@ -1,4 +1,5 @@
 const Course = require('../models/course');
+const UserPracticeRecord = require('../models/practice-record-user');
 
 exports.addPracticeQuestion = async (req,res,next)=>{
     const courseId = req.courseId;
@@ -39,13 +40,13 @@ exports.getMCQ = async (req,res,next)=>{
         return;
     }
     course = course.toObject();
-    
+    console.log(course['practiceQuestions']['mcq']);
     for(let x of course['practiceQuestions']['mcq']){
         x.isSolved = solvedQuestions.includes(x._id.toString()); 
         for(let y of x['options']){
             delete y.isCorrect;
+            y['response'] = false;
         }
-        x['response'] = "";
     }
     res.status(200).json(course['practiceQuestions']['mcq']);
 }
@@ -85,4 +86,62 @@ exports.getCodingQuestion = async (req,res,next)=>{
     }
     course = course.toObject();
     res.status(200).json(course['practiceQuestions']['codingQuestion']);
+}
+
+exports.submitMCQ = async (req, res, next) => {
+    const questionId = req.body.questionId;
+    const response = req.body.answer;
+    const isCorrect = req.isCorrect;
+    const d = new Date().toLocaleString();
+    const userRecordId = req.userRecordId;
+    
+    const userRecord = await UserPracticeRecord.findById(userRecordId);
+    if(!userRecord){
+        res.status(500).json({message:"Try Again"});
+        return;
+    }
+    userRecord.score += 3;
+    userRecord['questions']['mcq'].push({
+        question: questionId,
+        response:response,
+        isCorrect:isCorrect,
+        date:d
+    })
+    
+    const result = await userRecord.save();
+    if(!result){
+        res.status(500).json({message:"Try Again"});
+    } else {
+        res.status(200).json({message:"Correct Answer, 3 points added."});
+    }
+    
+}
+
+exports.submitTrueFalse = async (req, res, next) => {
+    const questionId = req.body.questionId;
+    const response = req.body.answer;
+    const isCorrect = req.isCorrect;
+    const d = new Date().toLocaleString();
+    const userRecordId = req.userRecordId;
+    
+    const userRecord = await UserPracticeRecord.findById(userRecordId);
+    if(!userRecord){
+        res.status(500).json({message:"Try Again"});
+        return;
+    }
+    userRecord.score += 1;
+    userRecord['questions']['trueFalse'].push({
+        question: questionId,
+        response:response,
+        isCorrect:isCorrect,
+        date:d
+    })
+    
+    const result = await userRecord.save();
+    if(!result){
+        res.status(500).json({message:"Try Again"});
+    } else {
+        res.status(200).json({message:"Correct Answer, 1 points added."});
+    }
+    
 }

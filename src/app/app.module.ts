@@ -22,6 +22,8 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import {MatSelectModule} from '@angular/material/select';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatTabsModule} from '@angular/material/tabs';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatRadioModule} from '@angular/material/radio';
 
 import { HttpService } from './services/http/http.service';
 import { ServerHandlerService } from './services/http/server-handler.service';
@@ -59,6 +61,8 @@ import { CreateTestComponent } from './create-test/create-test.component'
     MatSnackBarModule,
     MatSelectModule,
     MatTabsModule,
+    MatCheckboxModule,
+    MatRadioModule,
     FormsModule,
     QuillModule.forRoot()
   ],

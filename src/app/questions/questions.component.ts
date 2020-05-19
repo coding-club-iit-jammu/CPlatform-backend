@@ -238,7 +238,7 @@ export class QuestionsComponent implements OnInit {
     this.addMCQQuestion['courseCode'] = this.code;
     await this.http.post(this.storeInfo.serverUrl+'/mcq/add',this.addMCQQuestion,options).toPromise().then(response=>{
       if(response['status']==201){
-        this.mcqQuestions.push(this.addMCQQuestion);
+        this.getMCQ();
         this.resetMCQQuestion();
         this.addMCQQuestion = {
           question:'',
@@ -257,7 +257,7 @@ export class QuestionsComponent implements OnInit {
       this.matComp.openSnackBar('Question can\'t be empty',3000);
       return;
     }
-
+    this.showSpinner = true;
     const options = {
       observe: 'response' as 'body',
       headers: new HttpHeaders({
@@ -269,15 +269,16 @@ export class QuestionsComponent implements OnInit {
     let data = this.addTrueFalseQuestion.value;
     data['courseCode'] = this.code;
 
-    await this.http.post(this.storeInfo.serverUrl+'/truefalse/add', data, options).toPromise().then(response=>{
+    await this.http.post(this.storeInfo.serverUrl+'/truefalse/add', data, options).toPromise().then(async (response)=>{
       if(response['status']==201){
-        this.trueFalseQuestions.push(this.addTrueFalseQuestion.value);
         this.resetTrueFalseQuestion();
+        await this.getTrueFalse();
       }
       this.matComp.openSnackBar(response['body']['message'],3000);
     },error=>{
       this.matComp.openSnackBar(error['body']['message'],3000);
     })
+    this.showSpinner = false;
   }
 
   setTestCases(event){
@@ -383,6 +384,7 @@ export class QuestionsComponent implements OnInit {
     
     await this.http.post(this.storeInfo.serverUrl+url,formData,options).toPromise().then(response=>{
       if(response['status']==201){
+        this.getCodingQuestions();
         this.resetAddCodingQuestion();
       }
       this.matComp.openSnackBar(response['body']['message'],3000);

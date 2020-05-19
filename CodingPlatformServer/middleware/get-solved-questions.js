@@ -14,6 +14,8 @@ module.exports = async (req, res, next) => {
         return;
     }
 
+    req.courseType = flag;
+    
     const userId = req.userId;
     const courseId = req.courseId;
 

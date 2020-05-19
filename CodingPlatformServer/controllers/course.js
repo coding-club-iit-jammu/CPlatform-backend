@@ -7,6 +7,7 @@ const Course = require('../models/course');
 const User = require('../models/user');
 const Post = require('../models/post');
 const Assignment = require('../models/assignment');
+const UserPracticeRecord = require('../models/practice-record-user');
 
 exports.addCourse = (req,res,next) => {
     
@@ -39,7 +40,8 @@ exports.addCourse = (req,res,next) => {
             mcq:[],
             trueFalse:[],
             codingQuestion:[]
-        }
+        },
+        practiceRecord:[]
     });
     
     course.save().then((result)=>{
@@ -56,10 +58,12 @@ exports.addCourse = (req,res,next) => {
     });
 }
 
-exports.joinCourse = (req,res,next) => {
+exports.joinCourse = async (req,res,next) => {
     const code = req.body.code;
     const joiningCode = req.body.joiningCode;
-    Course.findOne({code:code}).then((course)=>{
+    const userId = req.userId;
+
+    Course.findOne({code:code}).then(async (course)=>{
         if(!course){
             console.log("Course not found.");
             res.status(500).json({
@@ -68,13 +72,28 @@ exports.joinCourse = (req,res,next) => {
             return;
         }
         if(joiningCode == course.joiningCode.instructor){
+            const userPracticeRecord = new UserPracticeRecord({
+                userId: userId,
+                score: 0
+            });
+
+            const newRecord = await userPracticeRecord.save();
+            if(!newRecord){
+                res.status(500).json({message:"Try Again"});
+                return; 
+            }
+            const rr = await course.addPracticeRecord(newRecord._id);
+            if(!rr){
+                res.status(500).json({message:"Try Again"});
+                return; 
+            }
             course.addInstructor(req.userId).then((result)=>{
                 if(!result){
                     res.status(500).json({"message":"Joining Failed, Try Again"}); 
                     return;
                 } else {
                     User.findById(req.userId).then( user =>{
-                        user.addTeachingCourse(course._id,course.code,course.title).then( updated =>{
+                        user.addTeachingCourse(course._id,course.code,course.title,newRecord._id).then( updated =>{
                             if(!updated){
                                 res.status(500).json({"message":"Joining Failed, Try Again"});
                                 return; 
@@ -89,12 +108,27 @@ exports.joinCourse = (req,res,next) => {
                 res.status(500).json({"message":"Internal Server Error, Try Again"}); 
             })
         } else if(joiningCode == course.joiningCode.teachingAssistant) {
+            const userPracticeRecord = new UserPracticeRecord({
+                userId: userId,
+                score: 0
+            });
+
+            const newRecord = await userPracticeRecord.save();
+            if(!newRecord){
+                res.status(500).json({message:"Try Again"});
+                return; 
+            }
+            const rr = await course.addPracticeRecord(newRecord._id);
+            if(!rr){
+                res.status(500).json({message:"Try Again"});
+                return; 
+            }
             course.addTA(req.userId).then((result)=>{
                 if(!result){
                     res.status(500).json({"message":"Joining Failed, Try Again"}); 
                 } else {
                     User.findById(req.userId).then( user =>{
-                        user.addTACourse(course._id,course.code,course.title).then( updated =>{
+                        user.addTACourse(course._id,course.code,course.title,newRecord._id).then( updated =>{
                             if(!updated){
                                 res.status(500).json({"message":"Joining Failed, Try Again"});         
                             } else {
@@ -109,12 +143,27 @@ exports.joinCourse = (req,res,next) => {
         } else {
             for(let g of course.joiningCode.groups){
                 if(g.code == joiningCode){
+                    const userPracticeRecord = new UserPracticeRecord({
+                        userId: userId,
+                        score: 0
+                    });
+        
+                    const newRecord = await userPracticeRecord.save();
+                    if(!newRecord){
+                        res.status(500).json({message:"Try Again"});
+                        return; 
+                    }
+                    const rr = await course.addPracticeRecord(newRecord._id);
+                    if(!rr){
+                        res.status(500).json({message:"Try Again"});
+                        return; 
+                    }
                     course.addStudent(req.userId, g.groupId).then((result)=>{
                         if(!result){
                             res.status(500).json({"message":"Joining Failed, Try Again"}); 
                         } else {
                             User.findById(req.userId).then( user =>{
-                                user.addStudyingCourse(course._id,course.code,course.title,g.groupId).then( updated =>{
+                                user.addStudyingCourse(course._id,course.code,course.title,g.groupId,newRecord._id).then( updated =>{
                                     if(!updated){
                                         res.status(500).json({"message":"Joining Failed, Try Again"}); 
                                     } else {

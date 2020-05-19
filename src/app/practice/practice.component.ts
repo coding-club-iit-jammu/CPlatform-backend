@@ -23,9 +23,9 @@ export class PracticeComponent implements OnInit {
   trueFalseQuestions=[];
   codingQuestions=[];
 
-  selectedMCQ:Number;
-  selectedTrueFalse:Number;
-  selectedCodingQuestion:Number;
+  selectedMCQ:any;
+  selectedTrueFalse:any;
+  selectedCodingQuestion:any;
 
   mcqQuestion = {
     _id:"",
@@ -80,7 +80,7 @@ export class PracticeComponent implements OnInit {
     this.showSpinner = false;
   }
 
-  solveQuestion(question,questionType){
+  solveQuestion(question,questionType:String){
     if(questionType=='mcq'){
       this.selectedMCQ = question;
       this.view = 1;
@@ -139,6 +139,67 @@ export class PracticeComponent implements OnInit {
     })
     this.showSpinner = false;
   }
+
+  async submitMCQ(selectedMCQ){
+    this.showSpinner = true;
+    let answer = [];
+    for(let x of this.mcqQuestions[selectedMCQ]['options']){
+      if(x['response']){
+        answer.push(x['code']);
+      }
+    }
+    let resAnswer = (answer.sort()).toString();
+    
+    const options = {
+      observe: 'response' as 'body',
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json',
+        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+      })
+    };
+    let data = {
+      questionId : this.mcqQuestions[selectedMCQ]['_id'],
+      questionType: 'mcq',
+      answer: resAnswer,
+      courseCode: this.code
+    }
+    await this.http.post(this.storeInfo.serverUrl+'/practice/submitMCQ',data,options).toPromise().then(response=>{
+      this.matComp.openSnackBar(response['body']['message'],2000);
+    },error=>{
+      console.log(error)
+      this.matComp.openSnackBar(error,3000);
+    })
+    this.showSpinner = false;
+  }
+
+  async submitTrueFalse(selectedTrueFalse){
+    this.showSpinner = true;
+    
+    const options = {
+      observe: 'response' as 'body',
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json',
+        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+      })
+    };
+    // console.log(this.trueFalseQuestions[selectedTrueFalse]);
+    let data = {
+      questionId : this.trueFalseQuestions[selectedTrueFalse]['_id'],
+      questionType: 'trueFalse',
+      answer: this.trueFalseQuestions[selectedTrueFalse]['response'],
+      courseCode: this.code
+    }
+    console.log(data);
+    await this.http.post(this.storeInfo.serverUrl+'/practice/submitTrueFalse',data,options).toPromise().then(response=>{
+      this.matComp.openSnackBar(response['body']['message'],2000);
+    },error=>{
+      console.log(error)
+      this.matComp.openSnackBar(error,3000);
+    })
+    this.showSpinner = false;
+  }
+
+
 
   setView(view){
     this.router.navigateByUrl(`/course/${this.code}/${view}`);

@@ -86,9 +86,9 @@
   }
 
   .mainClass{
-    padding-top: 2vh;
+    padding-top: 15px;
     overflow-x: auto;
-    width: 55vw;
+    width: 75vw;
     /* overflow-y: auto; */
   }
 
@@ -97,9 +97,9 @@
   }
 
   .sideInfo{
-    padding-top: 2vh;
+    padding-top: 15px;
     min-height: 91vh;
-    width: 45vw;
+    width: 25vw;
     overflow-y: unset;
     z-index: 2;
   }

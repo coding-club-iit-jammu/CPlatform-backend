@@ -17,10 +17,12 @@ export class ServerHandlerService {
         return this.http.get<{langs: LanguageTable}>(queryUrl)
                     .pipe(map(body => body.langs));
     }
-    public postCodeToRun(code: string, language: {id: string, version: string}, input: string) {
+    public postCodeToRun(code: string, language: {id: string, version: string}, 
+                        input: string, fields: string) {
         console.log('postCodeToRun()');
         const queryUrl = this.baseUrl + 'run/';
-        const requestBody = {program: code, lang: language.id, version: language.version, input: input};
+        const requestBody = {program: code, lang: language.id, version: language.version, 
+                            input: input, fields: fields};
         console.log(requestBody);
         return this.http.post<{runResult: any}>(queryUrl, requestBody)
                     .pipe(map(body => body.runResult));

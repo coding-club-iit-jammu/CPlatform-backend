@@ -1,7 +1,7 @@
 const _ = require("lodash");
 const languagesTable = require("../../util/languages-table");
 const LanguagesManager = require("../../util/languagesManager");
-const RequestHandler = require("../../util/jdoodle-request-handler/request-handler");
+const RequestHandler = require("../../util/judge0-request-handler/request-handler");
 
 exports.getLanguages = async (req, res, next) => {
     console.log('GET: \'/langs\'');
@@ -19,7 +19,7 @@ function validatePostRun (reqBody) {
 
 exports.postCode = async (req, res, next) => {
     console.log({ msg: 'POST: \'/run\'' });
-    let body = _.pick(req.body, ['lang', 'version', 'program', 'input']);
+    let body = _.pick(req.body, ['lang', 'version', 'program', 'input', 'fields']);
     // console.log(body);
     if (!validatePostRun(body)) {
         console.log('Invalid body parameters!');
@@ -35,13 +35,27 @@ exports.postCode = async (req, res, next) => {
                 return res.status(400).send(error);
         })
             .on('success', function (result) {
-            console.log({ msg: 'postRunRequest on success', params: result });
-            // TODO: Fetch token and get submission response
-            return res.status(200).send({ runResult: result });
+                console.log({ msg: 'postRunRequest on success', params: result });
+                // TODO: Fetch token and get submission response
+                let token = result.token;
+                console.log(token);
+                // create another request to fetch runResult, wait for 2 sec to process
+                setTimeout(() => {
+                    RequestHandler.RequestHandler.getSubmissionStatus(token, body.fields)
+                        .on('error', function(error) {
+                            console.log({ msg: 'getSubmissionStatus on error', params: error });
+                            return res.status(400).send(error);
+                    })
+                        .on('success', function(result) {
+                            console.log({ msg: 'getSubmissionStatus on success', params: result });
+                            return res.status(200).send({ runResult: result });
+                    });
+                }, 2000);
         });
     }
     catch (error) {
         console.log('request fail');
+        console.log(error);
         return res.status(400).send('request fail');
     }
 };

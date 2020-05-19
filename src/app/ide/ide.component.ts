@@ -9,6 +9,20 @@ import { ServerHandlerService } from '../services/http/server-handler.service';
 import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
+// Reference: https://github.com/judge0/ide/blob/master/js/ide.js
+function encode(str) {
+  return btoa(unescape(encodeURIComponent(str || "")));
+}
+
+function decode(bytes) {
+  var escaped = escape(atob(bytes || ""));
+  try {
+      return decodeURIComponent(escaped);
+  } catch {
+      return unescape(escaped);
+  }
+}
+
 import {
   DEFAULT_INIT_EDITOR_OPTIONS,
   DEFAULT_SUPPORTED_EDITOR_THEMES,
@@ -305,10 +319,11 @@ export class IdeComponent implements OnInit {
 
   public onRunCode() {
     // console.log('onRunCode()');
-    const code = this.getContent();
-    // console.log(code);
-    const input = this.myInput.nativeElement.value;
+    const code = encode(this.getContent());
+    console.log(code);
+    const input = encode(this.myInput.nativeElement.value);
     // console.log(this.languagesSelect);
+    let fields = "stdout,time,memory,compile_output,stderr,token,message,status";
     if (this.languagesSelect && code.length > 0) {
       // console.log("here");
       const languagesSelectElement = this.languagesSelect.nativeElement as HTMLSelectElement;
@@ -316,11 +331,14 @@ export class IdeComponent implements OnInit {
       const language = this.languagesArray[index];
       this.output$ = this.handler.postCodeToRun(code, {
         id: language.lang, version: language.version
-      }, input).pipe(
+      }, input, fields).pipe(
         // returning the output content
         map((response: RunResult) => {
           console.log(response);
-          return response.token;
+          if (response.compile_output != null) {
+            return decode(response.compile_output);
+          }
+          return decode(response.stdout);
         }),
         catchError((err) => {
           console.log(err);
@@ -332,5 +350,12 @@ export class IdeComponent implements OnInit {
 }
 
 interface RunResult {
+  stdout: string;
+  time: number;
+  memory: number;
+  compile_output: string;
+  stderr: string;
   token: string;
+  message: string;
+  status: string;
 }

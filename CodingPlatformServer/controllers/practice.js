@@ -40,7 +40,6 @@ exports.getMCQ = async (req,res,next)=>{
         return;
     }
     course = course.toObject();
-    console.log(course['practiceQuestions']['mcq']);
     for(let x of course['practiceQuestions']['mcq']){
         x.isSolved = solvedQuestions.includes(x._id.toString()); 
         for(let y of x['options']){

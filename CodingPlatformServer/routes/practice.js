@@ -12,7 +12,7 @@ router.get('/getMCQ',isAuth,getRole,getSolvedQuestions,practiceController.getMCQ
 router.get('/getTrueFalse',isAuth,getRole,getSolvedQuestions,practiceController.getTrueFalse);
 router.get('/getCodingQuestion',isAuth,getRole,getSolvedQuestions,practiceController.getCodingQuestion);
 
-router.post('/submitMCQ',isAuth,getRole,isAnswerCorrect,getSolvedQuestions,updateSolvedList,practiceController.submitMCQ);
-router.post('/submitTrueFalse',isAuth,getRole,isAnswerCorrect,getSolvedQuestions,updateSolvedList,practiceController.submitTrueFalse);
+router.post('/submitMCQ',isAuth,getRole,isAnswerCorrect,updateSolvedList,practiceController.submitMCQ);
+router.post('/submitTrueFalse',isAuth,getRole,isAnswerCorrect,updateSolvedList,practiceController.submitTrueFalse);
 
 module.exports = router;

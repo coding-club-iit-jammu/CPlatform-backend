@@ -100,7 +100,7 @@ export class IdeComponent implements OnInit {
   private languagesArray: Language[] = [];
   // observable of the supported languages
   public languagesArray$: Observable<Language[]>;
-
+  showSpinner: Boolean = false; 
   constructor(private handler: ServerHandlerService) { }
 
   async ngOnInit() {
@@ -353,6 +353,7 @@ export class IdeComponent implements OnInit {
   }
 
   public onRunCode() {
+    this.showSpinner = true;
     // console.log('onRunCode()');
     const code = encode(this.getContent());
     console.log(code);
@@ -369,6 +370,7 @@ export class IdeComponent implements OnInit {
       }, input, fields).pipe(
         // returning the output content
         map((response: RunResult) => {
+          this.showSpinner = false;
           console.log(response);
           if (response.compile_output != null) {
             return decode(response.compile_output);
@@ -378,6 +380,7 @@ export class IdeComponent implements OnInit {
           return decode(response.stdout);
         }),
         catchError((err) => {
+          this.showSpinner = false;
           console.log(err);
           return of(DEFAULT_RUN_ERROR_MESSAGE);
         })

@@ -26,36 +26,45 @@ exports.postCode = async (req, res, next) => {
         res.status(400).send('Invalid body parameters');
         return;
     }
+
+    // get the language id to run the program
+    let id, token;
     try {
-        let id = LanguagesManager.LanguagesManager.
-                                    getLanguageVersionIndex(body.lang, body.version);
-        RequestHandler.RequestHandler.postRunRequest(id, body.program, body.input)
-            .on('error', function(error) {
-                console.log({ msg: 'postRunRequest on error', params: error });
-                return res.status(400).send(error);
-        })
-            .on('success', function (result) {
-                console.log({ msg: 'postRunRequest on success', params: result });
-                // TODO: Fetch token and get submission response
-                let token = result.token;
-                console.log(token);
-                // create another request to fetch runResult, wait for 2 sec to process
-                setTimeout(() => {
-                    RequestHandler.RequestHandler.getSubmissionStatus(token, body.fields)
-                        .on('error', function(error) {
-                            console.log({ msg: 'getSubmissionStatus on error', params: error });
-                            return res.status(400).send(error);
-                    })
-                        .on('success', function(result) {
-                            console.log({ msg: 'getSubmissionStatus on success', params: result });
-                            return res.status(200).send({ runResult: result });
-                    });
-                }, 10000);
-        });
+        id = LanguagesManager.LanguagesManager.
+                                getLanguageVersionIndex(body.lang, body.version);
     }
     catch (error) {
-        console.log('request fail');
-        console.log(error);
-        return res.status(400).send('request fail');
+        console.log({ msg: 'unable to get language ID error'});
+        return res.status(400).send("Language Manager not working");
     }
+
+    // fetch the token using postRunRequest handler
+    try {
+        let tokenData = await RequestHandler.RequestHandler.postRunRequest(id, body.program, body.input);
+        token = tokenData.token;
+        if (token == null) {
+            console.log({ msg: 'postRunRequest on error'});
+            return res.status(400).send("Token not received");
+        }
+        console.log(token);
+    }
+    catch(error) {
+        console.log({ msg: 'postRunRequest on error', params: error });
+        console.log(error);
+        return res.status(400).send(error);
+    }
+
+    // send another request after a delay of 2 seconds so that program is run till then
+    setTimeout( async() => {
+        // fetch the submission status using getSubmissionStatus handler
+        try {
+            let submissionData = await RequestHandler.RequestHandler.getSubmissionStatus(token, body.fields);
+            console.log({ msg: 'getSubmissionStatus on success', params: submissionData });
+            return res.status(200).send({ runResult: submissionData });
+        }
+        catch (error) {
+            console.log({ msg: 'getSubmissionStatus on error', params: error });
+            return res.status(400).send(error);
+        };
+    }, 2000);
 };

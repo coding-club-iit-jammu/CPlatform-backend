@@ -35,17 +35,26 @@ import 'ace-builds/webpack-resolver';
 import 'ace-builds/src-noconflict/ext-language_tools';
 import 'ace-builds/src-noconflict/ext-beautify';
 import { LanguageTable } from './consts/language-table';
-const INIT_HEADER = ''
-const INIT_CONTENT = `
-#include <iostream>
+const INIT_HEADER_CPP = '// header code\n';
+const INIT_HEADER_JAVA = '// header code\n';
+const INIT_HEADER_PY = '# header code\n';
+const INIT_CONTENT_CPP = `#include <iostream>
 using namespace std;
 
 int main () {
     
-    
+    cout << "hello world";
     return 0;
-}`
-const INIT_FOOTER = ''
+}`;
+const INIT_CONTENT_PY = `print('hello world')`;
+const INIT_CONTENT_JAVA = `class Main {
+    public static void main(String[] args) {
+        System.out.println("hello world");
+    }
+};`;
+const INIT_FOOTER_CPP = '// footer code';
+const INIT_FOOTER_JAVA = '// footer code';
+const INIT_FOOTER_PY = '# footer code';
 const DEFAULT_THEME_MODE = 'solarized_dark';
 const DEFAULT_LANG_MODE = 'cpp14';
 
@@ -107,7 +116,7 @@ export class IdeComponent implements OnInit {
 
     this.setLanguageMode(this.initOptions.languageMode || DEFAULT_LANG_MODE);
     this.setEditorTheme(this.initOptions.theme || DEFAULT_THEME_MODE);
-    this.setContent(this.initOptions.content || INIT_CONTENT);
+    this.setContent(this.initOptions.content || INIT_CONTENT_CPP);
 
     // this.codeHeader.setShowFoldWidgets(true);
     // this.codeEditor.setShowFoldWidgets(true);
@@ -128,9 +137,9 @@ export class IdeComponent implements OnInit {
     this.codeFooter.setHighlightActiveLine(false);
 
     // set line numbers appropriately
-    let linesInHeader = INIT_HEADER.split(/\r\n|\r|\n/).length;
+    let linesInHeader = this.codeHeader.getValue().split(/\r\n|\r|\n/).length;
     this.codeEditor.setOption("firstLineNumber", linesInHeader + 1);
-    let linesInContent = INIT_CONTENT.split(/\r\n|\r|\n/).length;
+    let linesInContent = this.codeEditor.getValue().split(/\r\n|\r|\n/).length;
     let initialLinesFooter = linesInHeader + linesInContent + 1;
     this.codeFooter.setOption("firstLineNumber", initialLinesFooter);
 
@@ -199,6 +208,20 @@ export class IdeComponent implements OnInit {
         const languageModulePath = languageModuleMap.get(langMode);
         this.codeEditor.getSession().setMode(languageModulePath, () => {
           this.currentConfig.langMode = langMode;
+          if (langMode == 'cpp14') {
+            this.codeEditor.setValue(INIT_CONTENT_CPP);
+            this.codeHeader.setValue(INIT_HEADER_CPP);
+            this.codeFooter.setValue(INIT_FOOTER_CPP);
+          } else if (langMode == 'java') {
+            this.codeEditor.setValue(INIT_CONTENT_JAVA);
+            this.codeHeader.setValue(INIT_HEADER_JAVA);
+            this.codeFooter.setValue(INIT_FOOTER_JAVA);
+          } else if (langMode == 'python3') {
+            this.codeEditor.setValue(INIT_CONTENT_PY);
+            this.codeHeader.setValue(INIT_HEADER_PY);
+            this.codeFooter.setValue(INIT_FOOTER_PY);
+          }
+          this.codeEditor.clearSelection();
         });
         this.codeHeader.getSession().setMode(languageModulePath, () => {
           this.currentConfig.langMode = langMode;
@@ -267,7 +290,19 @@ export class IdeComponent implements OnInit {
    */
   public onClearContent() {
     if (this.codeEditor) {
-      this.codeEditor.setValue(INIT_CONTENT);
+      if (this.currentConfig.langMode == 'cpp14') {
+        this.codeEditor.setValue(INIT_CONTENT_CPP);
+        this.codeHeader.setValue(INIT_HEADER_CPP);
+        this.codeFooter.setValue(INIT_FOOTER_CPP);
+      } else if (this.currentConfig.langMode == 'java') {
+        this.codeEditor.setValue(INIT_CONTENT_JAVA);
+        this.codeHeader.setValue(INIT_HEADER_JAVA);
+        this.codeFooter.setValue(INIT_FOOTER_JAVA);
+      } else if (this.currentConfig.langMode == 'python3') {
+        this.codeEditor.setValue(INIT_CONTENT_PY);
+        this.codeHeader.setValue(INIT_HEADER_PY);
+        this.codeFooter.setValue(INIT_FOOTER_PY);
+      }
       this.codeEditor.clearSelection();
     }
     // test input value
@@ -283,10 +318,10 @@ export class IdeComponent implements OnInit {
       this.codeEditor.setValue(content);
     }
     if (this.codeHeader) {
-      this.codeHeader.setValue(INIT_HEADER);
+      this.codeHeader.setValue(INIT_HEADER_CPP);
     }
     if (this.codeFooter) {
-      this.codeFooter.setValue(INIT_FOOTER);
+      this.codeFooter.setValue(INIT_FOOTER_CPP);
     }
   }
 
@@ -337,6 +372,8 @@ export class IdeComponent implements OnInit {
           console.log(response);
           if (response.compile_output != null) {
             return decode(response.compile_output);
+          } else if (response.stderr != null) {
+            return decode(response.stderr);
           }
           return decode(response.stdout);
         }),

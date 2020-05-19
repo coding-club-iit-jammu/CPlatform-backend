@@ -50,7 +50,7 @@ exports.postCode = async (req, res, next) => {
                             console.log({ msg: 'getSubmissionStatus on success', params: result });
                             return res.status(200).send({ runResult: result });
                     });
-                }, 2000);
+                }, 10000);
         });
     }
     catch (error) {

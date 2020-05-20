@@ -23,7 +23,7 @@ exports.createTest = async (req,res,next)=>{
 
     let testId = req.body.courseCode + "T";
 
-    let course = await Course.findById(courseId).select('tests');
+    let course = await Course.findById(courseId).select('tests groups.groupId');
     if(!course){
         res.status(500).json({message:"Try Again"})
         return;
@@ -35,7 +35,8 @@ exports.createTest = async (req,res,next)=>{
     const test = new Test({
         testId: testId,
         title: title,
-        instructions: instructions
+        instructions: instructions,
+        groups:course['groups']
     })
 
     const result = await test.save();
@@ -110,7 +111,12 @@ exports.addQuestion = async (req, res, next)=>{
         res.status(500).json({message:"Try Again"});
         return;
     }
-    // console.log(test,id);
+    
+    if(!id){
+        res.status(500).json({message:"Try Again"});
+        return;
+    }
+
     test['questions'][questionType].push(id);
     const result = await test.save();
     if(!result){
@@ -118,6 +124,47 @@ exports.addQuestion = async (req, res, next)=>{
         return;
     }
 
-    res.status(200).json({message:`Question Added to Test ${test.testId}`});
+    res.status(200).json({message:`Question Added to Test ${test.title}`});
     return;
+}
+
+exports.getTestData = async (req,res,next) => {
+    const testCode = req.query.testId;
+
+    const test = await Test.findOne({testId:testCode}).select('-records')
+                            .populate(
+                            [{
+                                path: 'questions.mcq',
+                                model:'TestQuestionMCQ',
+                                populate:{
+                                    path:'question',
+                                    select:'question',
+                                    model:'MCQ'
+                                }
+                            },
+                            {
+                                path: 'questions.trueFalse',
+                                model:'TestQuestionTrueFalse',
+                                populate:{
+                                    path:'question',
+                                    select:'question',
+                                    model:'TrueFalseQuestion'
+                                }
+                            }
+                            ,{
+                                path: 'questions.codingQuestion',
+                                model:'TestQuestionCoding',
+                                populate:{
+                                    path:'question',
+                                    select:'title',
+                                    model:'CodingQuestion'
+                                }
+                            }]
+                            );
+    if(!test){
+        res.status(500).json({message:"Try Again"});
+        return;
+    }
+    res.status(200).json(test);
+
 }

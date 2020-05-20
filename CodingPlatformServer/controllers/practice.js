@@ -93,7 +93,7 @@ exports.submitMCQ = async (req, res, next) => {
     const questionId = req.body.questionId;
     const response = req.body.answer;
     const isCorrect = req.isCorrect;
-    const d = new Date();
+    const d = new Date().toLocaleString('en-In');
     const userRecordId = req.userRecordId;
     
     const userRecord = await UserPracticeRecord.findById(userRecordId);
@@ -124,7 +124,7 @@ exports.submitTrueFalse = async (req, res, next) => {
     const questionId = req.body.questionId;
     const response = req.body.answer;
     const isCorrect = req.isCorrect;
-    const d = new Date();
+    const d = new Date().toLocaleString('en-In');
     const userRecordId = req.userRecordId;
     
     const userRecord = await UserPracticeRecord.findById(userRecordId);

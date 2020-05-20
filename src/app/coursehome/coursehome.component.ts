@@ -278,9 +278,11 @@ export class CoursehomeComponent implements OnInit {
       })
     };
     data['courseCode'] = this.code;
-    await this.http.post(this.storeInfo.serverUrl+'/test/create', data, options).subscribe( response => {
+    await this.http.post(this.storeInfo.serverUrl+'/test/create', data, options).toPromise().then( response => {
       if(response['status']==201){
         this.matComp.openSnackBar(response['body']['message'],2000);
+        this.getTests();
+        this.resetTestForm();
       } else {
         this.matComp.openSnackBar(response['body']['message'],2000);
       }

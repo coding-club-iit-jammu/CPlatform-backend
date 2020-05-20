@@ -8,7 +8,8 @@ const TestQuestionMCQ = require('./questions/test-questions/test-question-mcq');
 const testSchema = new Schema({
     testId:{
         type: String,
-        required: true
+        required: true,
+        unique:true
     },
     title:{
         type: String,
@@ -24,12 +25,10 @@ const testSchema = new Schema({
             required: true
         },
         startTime:{
-            type: Date,
-            required: true
+            type: Date
         },
         endTime:{
-            type: Date,
-            required: true
+            type: Date
         }
     }],
     questions:{
@@ -45,12 +44,23 @@ const testSchema = new Schema({
             type: Schema.Types.ObjectId,
             ref: "TestQuestionCoding"
         }]
-    }
+    },
+    records:[
+        {
+            type:Schema.Types.ObjectId,
+            ref:"UserTestRecord"
+        }
+    ]
 });
 
 
 testSchema.methods.addQuestion = async (id,questionType)=>{
     this.questions[questionType].push(id);
+    return this.save();
+}
+
+testSchema.methods.addUserRecord = async (id) => {
+    this.records.push(id);
     return this.save();
 }
 

@@ -1,0 +1,151 @@
+<div class="wrapper">
+    <div class="overlay" *ngIf="showSpinner">   
+        <div class="spinner-wrapper">
+            <app-spinner></app-spinner>
+        </div>
+    </div>
+    <div [class.blurred]="!showSpinner">
+        <div class="navBarCss mb-3">
+            <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+                <span class="navbar-brand mb-0 h1">{{code.substring(8) | uppercase}}</span>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+                </button>
+            
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" (click) = "setView(1)"> Stream</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" (click) = "setView(2)"> Assignments</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" (click) = "setView(3)"> Tests</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" (click)="changePage('questions')">Questions</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" (click)="changePage('practice')">Practice</a>
+                        </li>
+                    </ul>
+                    <button class="btn btn-warning mr-2 my-sm-0" type="button" (click)="moveBack()">Home</button>
+                    &nbsp;&nbsp;<br>
+                    <button class="btn btn-danger my-2 my-sm-0" type="button" (click)="signOut()">Sign Out</button>
+                </div>
+            </nav>
+        </div>
+        <div class="completeView bg-secondary py-3">
+            <div class="mx-auto w-80 my-3">
+                <div class="card">
+                    <div class="card-header text-center">
+                        {{test.testId}}
+                    </div>
+                    <div class="card-body">
+                        <form [formGroup]="testForm">
+                            <div class="form-group">
+                                <label for="title form-label">Title</label>
+                                <input type="text" class="form-control" formControlName="title">
+                            </div>
+                            <div class="form-group">
+                                <label for="instructions">Instructions</label>
+                                <quill-editor formControlName="instructions">
+                                </quill-editor>
+                            </div>
+                            <div class="form-group">
+                                <label>Groups</label>
+                                <div class="card py-3 text-center">
+                                    <ng-container formArrayName = "groups">
+                                        <div *ngFor="let control of testForm.get('groups').controls; index as i">
+                                          <ng-container class="form-group mx-auto px-3" [formGroup]="control">
+                                              <div class="d-flex flex-column">
+                                                <div>
+                                                    <input type="text" class="form-control-plaintext text-center" formControlName="groupId" [readonly]="true">
+                                                </div>
+                                                <div class="form-group row w-50 mx-auto">
+                                                    <label>Start Time</label>
+                                                    <input type="datetime-local" class="form-control" formControlName="startTime" required>
+                                                </div>
+                                                <div class="form-group row mx-auto w-50">
+                                                    <label>End Time</label>
+                                                    <input type="datetime-local" class="form-control"   formControlName="endTime" required>
+                                                </div>
+                                            </div>
+                                          </ng-container>
+                                        </div>
+                                      </ng-container>
+                                </div>
+                            </div>
+                            <div class="form-group" *ngIf="testForm.get('mcq').value.length > 0">
+                                <label>MCQ</label>
+                                <div class="card py-3 text-center">
+                                    <ng-container formArrayName = "mcq">
+                                        <div class="card mx-3 py-3" *ngFor="let control of testForm.get('mcq').controls; index as i">
+                                          <ng-container class="form-group mx-auto px-3" [formGroup]="control">
+                                              <div class="d-flex flex-column">
+                                                <div>
+                                                    <div [innerHtml]="control.get('question').value"></div>
+                                                </div>
+                                                <div class="form-group row w-50 mx-auto">
+                                                    <label>Marks</label>
+                                                    <input type="number" class="form-control" formControlName="marks">
+                                                </div>
+                                            </div>
+                                          </ng-container>
+                                        </div>
+                                      </ng-container>
+                                </div>
+                            </div>
+                            <div class="form-group" *ngIf="testForm.get('trueFalse').value.length > 0">
+                                <label>True False</label>
+                                <div class="card py-3 text-center">
+                                    <ng-container formArrayName = "trueFalse">
+                                        <div class="card mx-3 py-3" *ngFor="let control of testForm.get('trueFalse').controls; index as i">
+                                          <ng-container class="form-group mx-auto px-3" [formGroup]="control">
+                                              <div class="d-flex flex-column">
+                                                <div>
+                                                   <div [innerHtml]="control.get('question').value"></div>
+                                                </div>
+                                                <div class="form-group row w-50 mx-auto">
+                                                    <label>Marks</label>
+                                                    <input type="number" class="form-control" formControlName="marks">
+                                                </div>
+                                            </div>
+                                          </ng-container>
+                                        </div>
+                                      </ng-container>
+                                </div>
+                            </div>
+                            <div class="form-group" *ngIf="testForm.get('codingQuestion').value.length > 0">
+                                <label>Coding Questions</label>
+                                <div class="card py-3 text-center">
+                                    <ng-container formArrayName = "codingQuestion">
+                                        <div class="card mx-3 py-3" *ngFor="let control of testForm.get('codingQuestion').controls; index as i">
+                                          <ng-container class="form-group mx-auto px-3" [formGroup]="control">
+                                              <div class="d-flex flex-column">
+                                                <div>
+                                                   <div [innerHtml]="control.get('title').value"></div>
+                                                </div>
+                                                <div class="form-group row w-50 mx-auto">
+                                                    <label>Marks</label>
+                                                    <input type="number" class="form-control" formControlName="marks">
+                                                </div>
+                                            </div>
+                                          </ng-container>
+                                        </div>
+                                      </ng-container>
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <button class="btn btn-primary" (click)="saveTest()">
+                                    Save
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

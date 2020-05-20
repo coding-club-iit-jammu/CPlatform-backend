@@ -32,7 +32,7 @@ import { MaterialComponentService } from './services/material-component.service'
 import { QuillModule } from 'ngx-quill';
 import { QuestionsComponent } from './questions/questions.component';
 import { PracticeComponent } from './practice/practice.component';
-import { CreateTestComponent } from './create-test/create-test.component'
+import { CreateTestComponent } from './test-settings/create-test.component'
 
 @NgModule({
   declarations: [

@@ -9,12 +9,7 @@ const testQuestionSchema = new Schema({
     marks:{
         type: Number,
         default: 0
-    },
-    submissions:[{
-        type: Schema.Types.ObjectId,
-        ref:"QuestionSubmission",
-        required: true
-    }]
+    }
 });
 
 const TestQuestionTrueFalse = mongoose.model('TestQuestionTrueFalse',testQuestionSchema);

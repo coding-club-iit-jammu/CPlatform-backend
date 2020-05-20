@@ -8,7 +8,7 @@ import { QuizComponent } from './quiz/quiz.component'
 import { IdeComponent } from './ide/ide.component';
 import { QuestionsComponent } from './questions/questions.component';
 import { PracticeComponent } from './practice/practice.component';
-import { CreateTestComponent } from './create-test/create-test.component';
+import { CreateTestComponent } from './test-settings/create-test.component';
 
 const routes: Routes = [
   {

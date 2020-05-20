@@ -10,4 +10,6 @@ const testController = require('../controllers/test');
 router.get('/getTitles',isAuth,getRole,isNotStudent,testController.getTestsTitles);
 router.post('/create',isAuth,getRole,isNotStudent,testController.createTest);
 router.post('/addQuestion',isAuth,getRole,isNotStudent, testController.addQuestion);
+
+router.get('/getTestData',isAuth,getRole,isNotStudent,testController.getTestData);
 module.exports = router;

@@ -54,57 +54,10 @@ exports.createTest = async (req,res,next)=>{
     res.status(201).json({message:"Test Created"});
 }
 
-const addMCQ = async (questionId) => {
-    const testQuestion = new TestQuestionMCQ({
-        question : questionId
-    })
-    const result = await testQuestion.save();
-    console.log(result);
-    if(!result){
-
-        return null;
-    }
-    return result._id;
-}
-
-const addTrueFalse = async (questionId) => {
-    const testQuestion = new TestQuestionTrueFalse({
-        question : questionId
-    })
-    const result = await testQuestion.save();
-    console.log(result);
-    if(!result){
-        return null;
-    }
-    return result._id;
-}
-
-const addCoding = async (questionId) => {
-    const testQuestion = new TestQuestionCoding({
-        question : questionId
-    })
-    const result = await testQuestion.save();
-    console.log(result);
-    if(!result){
-        return null;
-    }
-    return result._id;
-}
-
-
 exports.addQuestion = async (req, res, next)=>{
     const testId = req.body.testId;
     const questionId = req.body.questionId;
     const questionType = req.body.questionType;
-
-    let id = null;
-    if(questionType == 'mcq'){
-        id = await addMCQ(questionId);
-    } else if(questionType == 'trueFalse'){
-        id = await addTrueFalse(questionId);
-    } else if(questionType == "codingQuestion"){
-        id = await addCoding(questionId);
-    }
 
     const test = await Test.findById(testId);
     if(!test){
@@ -112,12 +65,10 @@ exports.addQuestion = async (req, res, next)=>{
         return;
     }
     
-    if(!id){
-        res.status(500).json({message:"Try Again"});
-        return;
-    }
-
-    test['questions'][questionType].push(id);
+    test['questions'][questionType].push({
+        question: questionId,
+        marks: 0   
+    });
     const result = await test.save();
     if(!result){
         res.status(500).json({message:"Try Again"});
@@ -134,31 +85,19 @@ exports.getTestData = async (req,res,next) => {
     const test = await Test.findOne({testId:testCode}).select('-records')
                             .populate(
                             [{
-                                path: 'questions.mcq',
-                                model:'TestQuestionMCQ',
-                                populate:{
-                                    path:'question',
-                                    select:'question',
-                                    model:'MCQ'
-                                }
+                                path: 'questions.mcq.question',
+                                model:'MCQ',
+                                select:'question'
                             },
                             {
-                                path: 'questions.trueFalse',
-                                model:'TestQuestionTrueFalse',
-                                populate:{
-                                    path:'question',
-                                    select:'question',
-                                    model:'TrueFalseQuestion'
-                                }
+                                path: 'questions.trueFalse.question',
+                                select:'question',
+                                model:'TrueFalseQuestion'
                             }
                             ,{
-                                path: 'questions.codingQuestion',
-                                model:'TestQuestionCoding',
-                                populate:{
-                                    path:'question',
-                                    select:'title',
-                                    model:'CodingQuestion'
-                                }
+                                path: 'questions.codingQuestion.question',
+                                select:'title',
+                                model:'CodingQuestion'
                             }]
                             );
     if(!test){

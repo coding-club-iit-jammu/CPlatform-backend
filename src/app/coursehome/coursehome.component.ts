@@ -272,6 +272,7 @@ export class CoursehomeComponent implements OnInit {
   async createTest(data: Object){
     this.showSpinner = true;
     const options = {
+      observe: 'response' as 'body',
       headers: new HttpHeaders({
         'Content-Type':  'application/json',
         'Authorization': 'Bearer ' + sessionStorage.getItem('token')

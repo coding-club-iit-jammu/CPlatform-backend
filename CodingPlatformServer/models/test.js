@@ -33,16 +33,34 @@ const testSchema = new Schema({
     }],
     questions:{
         mcq:[{
-            type: Schema.Types.ObjectId,
-            ref: "TestQuestionMCQ"
+            question:{
+                type: Schema.Types.ObjectId,
+                ref:"MCQ"
+            },
+            marks:{
+                type: Number,
+                default:0
+            }
         }],
         trueFalse:[{
-            type: Schema.Types.ObjectId,
-            ref: "TestQuestionTrueFalse"
+            question:{
+                type: Schema.Types.ObjectId,
+                ref:"TrueFalseQuestion"
+            },
+            marks:{
+                type: Number,
+                default:0
+            }
         }],
         codingQuestion:[{
-            type: Schema.Types.ObjectId,
-            ref: "TestQuestionCoding"
+            question:{
+                type: Schema.Types.ObjectId,
+                ref:"CodingQuestion"
+            },
+            marks:{
+                type: Number,
+                default:0
+            }
         }]
     },
     records:[
@@ -55,7 +73,10 @@ const testSchema = new Schema({
 
 
 testSchema.methods.addQuestion = async (id,questionType)=>{
-    this.questions[questionType].push(id);
+    this.questions[questionType].push({
+        question:id,
+        marks:0
+    });
     return this.save();
 }
 

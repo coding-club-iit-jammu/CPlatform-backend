@@ -40,10 +40,10 @@
             <div class="mx-auto w-80 my-3">
                 <div class="card">
                     <div class="card-header text-center">
-                        {{test.testId}}
+                        {{testId}}
                     </div>
-                    <div class="card-body">
-                        <form [formGroup]="testForm">
+                    <form [formGroup]="testForm">
+                        <div class="card-body">
                             <div class="form-group">
                                 <label for="title form-label">Title</label>
                                 <input type="text" class="form-control" formControlName="title">
@@ -55,21 +55,23 @@
                             </div>
                             <div class="form-group">
                                 <label>Groups</label>
-                                <div class="card py-3 text-center">
+                                <div class="card py-3 text-center bg-light">
                                     <ng-container formArrayName = "groups">
                                         <div *ngFor="let control of testForm.get('groups').controls; index as i">
                                           <ng-container class="form-group mx-auto px-3" [formGroup]="control">
-                                              <div class="d-flex flex-column">
+                                              <div class="d-flex flex-column card py-2 my-2 mx-3">
                                                 <div>
                                                     <input type="text" class="form-control-plaintext text-center" formControlName="groupId" [readonly]="true">
                                                 </div>
-                                                <div class="form-group row w-50 mx-auto">
-                                                    <label>Start Time</label>
-                                                    <input type="datetime-local" class="form-control" formControlName="startTime" required>
-                                                </div>
-                                                <div class="form-group row mx-auto w-50">
-                                                    <label>End Time</label>
-                                                    <input type="datetime-local" class="form-control"   formControlName="endTime" required>
+                                                <div class="d-flex flex-row justify-content-around">
+                                                    <div class="form-group row w-25 mx-auto">
+                                                        <label>Start Time</label>
+                                                        <input type="datetime-local" class="form-control" formControlName="startTime" required>
+                                                    </div>
+                                                    <div class="form-group row mx-auto w-25">
+                                                        <label>End Time</label>
+                                                        <input type="datetime-local" class="form-control"   formControlName="endTime" required>
+                                                    </div>
                                                 </div>
                                             </div>
                                           </ng-container>
@@ -78,14 +80,20 @@
                                 </div>
                             </div>
                             <div class="form-group" *ngIf="testForm.get('mcq').value.length > 0">
-                                <label>MCQ</label>
-                                <div class="card py-3 text-center">
+                                <label>Multiple Choice Questions</label>
+                                <div class="card py-3 text-center bg-light">
                                     <ng-container formArrayName = "mcq">
                                         <div class="card mx-3 py-3" *ngFor="let control of testForm.get('mcq').controls; index as i">
                                           <ng-container class="form-group mx-auto px-3" [formGroup]="control">
                                               <div class="d-flex flex-column">
-                                                <div>
+                                                <div class="d-flex flex-row justify-content-between w-100 px-3">
+                                                    <div></div>
                                                     <div [innerHtml]="control.get('question').value"></div>
+                                                    <div>
+                                                        <button type="button" class="close" aria-label="Close">
+                                                         <span aria-hidden="true">&times;</span>
+                                                       </button>
+                                                    </div>
                                                 </div>
                                                 <div class="form-group row w-50 mx-auto">
                                                     <label>Marks</label>
@@ -98,14 +106,20 @@
                                 </div>
                             </div>
                             <div class="form-group" *ngIf="testForm.get('trueFalse').value.length > 0">
-                                <label>True False</label>
-                                <div class="card py-3 text-center">
+                                <label>True/False Questions</label>
+                                <div class="card py-3 text-center bg-light">
                                     <ng-container formArrayName = "trueFalse">
                                         <div class="card mx-3 py-3" *ngFor="let control of testForm.get('trueFalse').controls; index as i">
                                           <ng-container class="form-group mx-auto px-3" [formGroup]="control">
                                               <div class="d-flex flex-column">
-                                                <div>
+                                                <div class="d-flex flex-row justify-content-between w-100 px-3">
+                                                    <div></div>
                                                    <div [innerHtml]="control.get('question').value"></div>
+                                                   <div>
+                                                       <button type="button" class="close" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                      </button>
+                                                   </div>
                                                 </div>
                                                 <div class="form-group row w-50 mx-auto">
                                                     <label>Marks</label>
@@ -119,14 +133,20 @@
                             </div>
                             <div class="form-group" *ngIf="testForm.get('codingQuestion').value.length > 0">
                                 <label>Coding Questions</label>
-                                <div class="card py-3 text-center">
+                                <div class="card py-3 text-center bg-light">
                                     <ng-container formArrayName = "codingQuestion">
                                         <div class="card mx-3 py-3" *ngFor="let control of testForm.get('codingQuestion').controls; index as i">
                                           <ng-container class="form-group mx-auto px-3" [formGroup]="control">
                                               <div class="d-flex flex-column">
-                                                <div>
-                                                   <div [innerHtml]="control.get('title').value"></div>
-                                                </div>
+                                                <div class="d-flex flex-row justify-content-between w-100 px-3">
+                                                    <div></div>
+                                                    <div [innerHtml]="control.get('title').value"></div>
+                                                    <div>
+                                                        <button type="button" class="close" aria-label="Close">
+                                                         <span aria-hidden="true">&times;</span>
+                                                       </button>
+                                                    </div>
+                                                 </div>
                                                 <div class="form-group row w-50 mx-auto">
                                                     <label>Marks</label>
                                                     <input type="number" class="form-control" formControlName="marks">
@@ -137,13 +157,13 @@
                                       </ng-container>
                                 </div>
                             </div>
-                            <div class="text-center">
-                                <button class="btn btn-primary" (click)="saveTest()">
-                                    Save
-                                </button>
-                            </div>
-                        </form>
-                    </div>
+                        </div>
+                        <div class="text-center card-footer">
+                            <button class="btn btn-dark" (click)="saveTest()">
+                                Save
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

@@ -1,4 +1,5 @@
 const Course = require('../models/course');
+const User = require('../models/user');
 const UserPracticeRecord = require('../models/practice-record-user');
 
 exports.addPracticeQuestion = async (req,res,next)=>{
@@ -88,10 +89,11 @@ exports.getCodingQuestion = async (req,res,next)=>{
 }
 
 exports.submitMCQ = async (req, res, next) => {
+    console.log("SUBMITTING");
     const questionId = req.body.questionId;
     const response = req.body.answer;
     const isCorrect = req.isCorrect;
-    const d = new Date().toLocaleString();
+    const d = new Date();
     const userRecordId = req.userRecordId;
     
     const userRecord = await UserPracticeRecord.findById(userRecordId);
@@ -99,6 +101,7 @@ exports.submitMCQ = async (req, res, next) => {
         res.status(500).json({message:"Try Again"});
         return;
     }
+    console.log(userRecord);
     userRecord.score += 3;
     userRecord['questions']['mcq'].push({
         question: questionId,
@@ -117,10 +120,11 @@ exports.submitMCQ = async (req, res, next) => {
 }
 
 exports.submitTrueFalse = async (req, res, next) => {
+    console.log("SUBMITTING");
     const questionId = req.body.questionId;
     const response = req.body.answer;
     const isCorrect = req.isCorrect;
-    const d = new Date().toLocaleString();
+    const d = new Date();
     const userRecordId = req.userRecordId;
     
     const userRecord = await UserPracticeRecord.findById(userRecordId);
@@ -143,4 +147,34 @@ exports.submitTrueFalse = async (req, res, next) => {
         res.status(200).json({message:"Correct Answer, 1 points added."});
     }
     
+}
+
+getEntries = async (courseRecords) => {
+    let entries = [];
+    for (const practiceRecord of courseRecords['practiceRecord']) {
+        const userPracticeRecord = await UserPracticeRecord.findById(practiceRecord);
+        const score = userPracticeRecord['score'];
+        const userId = userPracticeRecord['userId'];
+        const userRecord = await User.findById(userId);
+        const userName = userRecord['name'];
+        entries.push({'name': userName, 'score': score});
+        // console.log(`name: ${userName} score: ${score}`);
+    }
+    return entries;
+}
+
+exports.getLeaderboard = async (req, res, next) => {
+    console.log("Getting leaderboard");
+    const courseId = req.courseId;
+
+    // find all practice records for this course
+    const courseRecords = await Course.findById(courseId).select('practiceRecord');
+    
+    let entries = await getEntries(courseRecords);
+    
+    if (entries.length == 0) {
+        res.status(500).json({message: "No entries in leaderboard"});
+    } else {
+        res.status(200).json({message: entries});
+    }
 }

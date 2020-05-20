@@ -1,8 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { MaterialComponentService } from '../services/material-component.service';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams, HttpHandler } from '@angular/common/http';
 import { StoreInfoService } from '../services/store-info.service';
+
+interface LeaderboardEntry {
+  name: string,
+  score: number
+}
+
 @Component({
   selector: 'app-practice',
   templateUrl: './practice.component.html',
@@ -26,7 +32,6 @@ export class PracticeComponent implements OnInit {
   selectedMCQ:any;
   selectedTrueFalse:any;
   selectedCodingQuestion:any;
-
   mcqQuestion = {
     _id:"",
     question:"A",
@@ -50,12 +55,46 @@ export class PracticeComponent implements OnInit {
   codingQuestion = {
 
   };
+  leaderboard: LeaderboardEntry[];
 
-  ngOnInit() {
+  async ngOnInit() {
     this.code = this.activatedRoute.snapshot.paramMap.get('courseId').toString();
-    this.getMCQ();
-    this.getTrueFalse();
-    this.getCodingQuestion();
+    this.leaderboard = [];
+    await this.getMCQ();
+    await this.getTrueFalse();
+    await this.getCodingQuestion();
+    await this.getLeaderBoard();
+  }
+
+  async getLeaderBoard() {
+    this.showSpinner = true;
+    const options = {
+      observe: 'response' as 'body',
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+      }),
+      params: new HttpParams().set('courseCode', this.code.toString())
+    };
+    await this.http.get(this.storeInfo.serverUrl+'/practice/leaderboard', options).toPromise().then( (response) => {
+      if (response['status'] == 200) {
+        // console.log(response['body']);
+        // update the LeaderBoard Entries
+        let entries = response['body']['message'];
+        for (let entry of entries) {
+          let leaderboardEntry = {name: "", score: 0};
+          leaderboardEntry.name = entry.name;
+          leaderboardEntry.score = entry.score;
+          this.leaderboard.push(leaderboardEntry);
+        }
+      }
+    }, (error) => {
+      console.log(error);
+      this.matComp.openSnackBar(error, 3000);
+    })
+    console.log(this.leaderboard);
+    this.leaderboard.sort((a, b) => {return b.score - a.score});
+    this.showSpinner = false;
   }
 
   async getMCQ(){

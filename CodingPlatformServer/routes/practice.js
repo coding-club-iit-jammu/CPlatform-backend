@@ -14,5 +14,5 @@ router.get('/getCodingQuestion',isAuth,getRole,getSolvedQuestions,practiceContro
 
 router.post('/submitMCQ',isAuth,getRole,isAnswerCorrect,updateSolvedList,practiceController.submitMCQ);
 router.post('/submitTrueFalse',isAuth,getRole,isAnswerCorrect,updateSolvedList,practiceController.submitTrueFalse);
-
+router.get('/leaderboard',isAuth,getRole,practiceController.getLeaderboard);
 module.exports = router;

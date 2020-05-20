@@ -351,7 +351,7 @@ exports.addPost = async (req,res,next) => {
     if(!req.file){
         post = new Post({
             by: name,
-            date: new Date().toLocaleString('en-In'),
+            date: new Date(),
             title: title,
             description: description,
             audience: audience
@@ -377,7 +377,7 @@ exports.addPost = async (req,res,next) => {
 
         post = new Post({
             by: name,
-            date: new Date().toLocaleString('en-In'),
+            date: new Date(),
             title: title,
             description: description,
             file: newPath,

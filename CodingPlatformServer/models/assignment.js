@@ -36,7 +36,7 @@ const assignmentSchema = new Schema({
 assignmentSchema.methods.addSubmission = function(userEmail,submissionUrl){
     const submission = new Submission({
         submissionUrl : submissionUrl,
-        submissionTime :  new Date().toLocaleString('en-In'),
+        submissionTime :  new Date(),
         email : userEmail
     })
     return submission.save().then((result)=>{

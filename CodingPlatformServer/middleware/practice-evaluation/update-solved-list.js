@@ -48,6 +48,7 @@ module.exports = async (req,res,next)=>{
             console.log("Couldn't push questionId in solved question list.");
             res.status(500).json({message:"Try Again."});
         } else {
+            console.log(result);
             next();
             return;
         }

@@ -105,19 +105,29 @@
                             <div class="card-header bg-dark text-light">
                                 LeaderBoard
                             </div>
-                            <div class="card-body">
-                                Top 10 will be shown here
-                            </div>
-                            <div class="card-footer text-light bg-secondary">
-                                Rank Name Score
-                            </div>
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Score</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr *ngFor="let entry of leaderboard; index as i">
+                                    <th scope="row">{{ i + 1 }}</th>
+                                    <td>{{ entry.name }}</td>
+                                    <td>{{ entry.score | number }}</td>
+                                </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="bottom bg-dark py-3 text-light text-center">
-            <h3>course.title</h3>
+            <h3>{{code.substring(8)}}</h3>
         </div>
         <div class="modal fade" id="mcqModal" role="dialog" *ngIf="view==1 && selectedMCQ!=null">
             <div class="modal-dialog modal-dialog-centered">

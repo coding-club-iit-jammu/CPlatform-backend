@@ -180,7 +180,7 @@ exports.submitAssignment = async (req,res,next) => {
         if(!moved)
             newPath = oldPath;
         
-        oldSubmission.submissionTime = new Date().toLocaleString('en-In');
+        oldSubmission.submissionTime = new Date();
         oldSubmission.submissionUrl = newPath;
 
         let result = await oldSubmission.save();
@@ -231,7 +231,7 @@ exports.submitAssignment = async (req,res,next) => {
 
 exports.shiftDeadline = (req,res,next) => {
     const assignmentId = req.body.assignmentId;
-    const newDeadline = new Date(req.body.newDeadline).toLocaleString('en-In');
+    const newDeadline = new Date(req.body.newDeadline);
     
     Assignment.findById(assignmentId).then(assignment => {
         if(!assignment){

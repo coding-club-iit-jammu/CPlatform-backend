@@ -55,8 +55,9 @@ exports.createUser = async (req,res,next) =>{
             res.status(500).json({message:"Try Again"})
         }
         
-    }).catch(()=>{
-        res.status(401).json({message:'Error Occured.'});
+    }).catch((error)=>{
+        let msg = (error.message) ? error.message : "Error occured.";
+        res.status(401).json({message: msg});
     })
 }
 

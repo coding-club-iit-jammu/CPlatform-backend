@@ -60,7 +60,8 @@ export class DetailsComponent implements OnInit {
         this.router.navigate(['/']);
         this.showSpinner = false;
       },error=>{
-        this.matComp.openSnackBar('Network Problem!',2500);
+        // console.log(error);
+        this.matComp.openSnackBar(error.error.message,2500);
         this.showSpinner = false
       })
 

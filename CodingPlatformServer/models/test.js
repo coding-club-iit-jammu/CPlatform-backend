@@ -29,6 +29,9 @@ const testSchema = new Schema({
         },
         endTime:{
             type: Date
+        },
+        password:{
+            type: String
         }
     }],
     questions:{
@@ -77,6 +80,11 @@ testSchema.methods.addQuestion = async (id,questionType)=>{
         question:id,
         marks:0
     });
+    return this.save();
+}
+
+testSchema.methods.addUserRecord = async (id) => {
+    this.records.push(id);
     return this.save();
 }
 

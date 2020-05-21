@@ -41,7 +41,9 @@ export class CreateTestComponent implements OnInit {
     let fg = this.formBuilder.group({ 
       groupId: this.formBuilder.control(data.groupId),
       startTime: this.formBuilder.control(this.toDateString(new Date(data['startTime']))),
-      endTime: this.formBuilder.control(this.toDateString(new Date(data['endTime'])))
+      endTime: this.formBuilder.control(this.toDateString(new Date(data['endTime']))),
+      password:this.formBuilder.control(data['password']),
+      showPassword:this.formBuilder.control(false)
     })
     arraay.push(fg);
   }
@@ -57,6 +59,11 @@ export class CreateTestComponent implements OnInit {
     arraay.push(fg);
   }
 
+  removeMCQ(i){
+    let arraay = this.testForm.get('mcq') as FormArray;
+    arraay.removeAt(i);
+  }
+
   addTrueFalse(data){
     let arraay = this.testForm.get('trueFalse') as FormArray; 
     let l = arraay.length;
@@ -68,6 +75,11 @@ export class CreateTestComponent implements OnInit {
     arraay.push(fg);
   }
 
+  removeTrueFalseQuestion(i){
+    let arraay = this.testForm.get('trueFalse') as FormArray;
+    arraay.removeAt(i);
+  }
+
   addCodingQuestion(data){
     let arraay = this.testForm.get('codingQuestion') as FormArray; 
     let l = arraay.length;
@@ -77,6 +89,11 @@ export class CreateTestComponent implements OnInit {
       marks: this.formBuilder.control(data['marks'])
     })
     arraay.push(fg);
+  }
+
+  removeCodingQuestion(i){
+    let arraay = this.testForm.get('codingQuestion') as FormArray;
+    arraay.removeAt(i);
   }
 
   fillTestForm(data){

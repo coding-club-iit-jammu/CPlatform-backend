@@ -37,7 +37,7 @@ exports.addMCQ = async (req,res,next) => {
 exports.getMCQ = (req,res,next)=>{
     const courseId = req.courseId;
     
-    Course.findById(courseId).select('questions').populate({
+    Course.findById(courseId).select('questions title').populate({
         path: 'questions.mcq'
     }).then((course)=>{
         if(!course){

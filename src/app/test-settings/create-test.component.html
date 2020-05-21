@@ -24,10 +24,13 @@
                             <a class="nav-link" (click) = "setView(3)"> Tests</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" (click)="changePage('questions')">Questions</a>
+                            <a class="nav-link" (click)="goToQuestions()">Questions</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" (click)="changePage('practice')">Practice</a>
+                            <a class="nav-link" (click)="goToPractice()">Practice</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" (click) = "setView(4)">IDE</a>
                         </li>
                     </ul>
                     <button class="btn btn-warning mr-2 my-sm-0" type="button" (click)="moveBack()">Home</button>
@@ -38,7 +41,7 @@
         </div>
         <div class="completeView bg-secondary py-3">
             <div class="mx-auto w-80 my-3">
-                <div class="card">
+                <div class="card shadow-lg">
                     <div class="card-header bg-light text-center">
                         <h3>
                             {{testId}}
@@ -57,11 +60,11 @@
                             </div>
                             <div class="form-group">
                                 <label>Groups</label>
-                                <div class="card py-3 text-center bg-light">
+                                <div class="card shadow py-3 text-center bg-light">
                                     <ng-container formArrayName = "groups">
                                         <div *ngFor="let control of testForm.get('groups').controls; index as i">
                                           <ng-container class="form-group mx-auto px-3" [formGroup]="control">
-                                              <div class="d-flex flex-column card py-3 my-2 mx-3">
+                                              <div class="d-flex flex-column card shadow-sm py-3 my-2 mx-3">
                                                 <div>
                                                     <div class="input-group mb-3 w-75 mx-auto">
                                                         <div class="input-group-prepend">
@@ -101,9 +104,9 @@
                             </div>
                             <div class="form-group" *ngIf="testForm.get('mcq').value.length > 0">
                                 <label>Multiple Choice Questions</label>
-                                <div class="card py-3 text-center bg-light">
+                                <div class="card shadow py-3 text-center bg-light">
                                     <ng-container formArrayName = "mcq">
-                                        <div class="card mx-3 py-3 my-2" *ngFor="let control of testForm.get('mcq').controls; index as i">
+                                        <div class="card shadow-sm mx-3 py-3 my-2" *ngFor="let control of testForm.get('mcq').controls; index as i">
                                           <ng-container class="form-group mx-auto px-3" [formGroup]="control">
                                               <div class="d-flex flex-column">
                                                 <div class="d-flex flex-row justify-content-between w-100 px-3">
@@ -131,9 +134,9 @@
                             </div>
                             <div class="form-group" *ngIf="testForm.get('trueFalse').value.length > 0">
                                 <label>True/False Questions</label>
-                                <div class="card py-3 text-center bg-light">
+                                <div class="card shadow py-3 text-center bg-light">
                                     <ng-container formArrayName = "trueFalse">
-                                        <div class="card mx-3 py-3 my-2" *ngFor="let control of testForm.get('trueFalse').controls; index as i">
+                                        <div class="card shadow-sm mx-3 py-3 my-2" *ngFor="let control of testForm.get('trueFalse').controls; index as i">
                                           <ng-container class="form-group mx-auto px-3" [formGroup]="control">
                                               <div class="d-flex flex-column">
                                                 <div class="d-flex flex-row justify-content-between w-100 px-3">
@@ -161,9 +164,9 @@
                             </div>
                             <div class="form-group" *ngIf="testForm.get('codingQuestion').value.length > 0">
                                 <label>Coding Questions</label>
-                                <div class="card py-3 text-center bg-light">
+                                <div class="card shadow py-3 text-center bg-light">
                                     <ng-container formArrayName = "codingQuestion">
-                                        <div class="card mx-3 py-3 my-2" *ngFor="let control of testForm.get('codingQuestion').controls; index as i">
+                                        <div class="card shadow-sm mx-3 py-3 my-2" *ngFor="let control of testForm.get('codingQuestion').controls; index as i">
                                           <ng-container class="form-group mx-auto px-3" [formGroup]="control">
                                               <div class="d-flex flex-column">
                                                 <div class="d-flex flex-row justify-content-between w-100 px-3">

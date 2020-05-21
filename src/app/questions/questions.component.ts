@@ -13,6 +13,7 @@ export class QuestionsComponent implements OnInit {
 
   view: Number = 0;
   code: string;
+  courseTitle: String;
   showSpinner: Boolean = false; 
   addMCQQuestion: any = {
     question:'',
@@ -142,6 +143,7 @@ export class QuestionsComponent implements OnInit {
     await this.http.get(this.storeInfo.serverUrl+'/mcq/getMCQ',options).toPromise().then(response=>{
       if(response['status'] == 200){
         this.mcqQuestions = response['body']['questions']['mcq'];
+        this.courseTitle = response['body']['title'];
       }
     },error=>{
       console.log(error)
@@ -164,6 +166,7 @@ export class QuestionsComponent implements OnInit {
     await this.http.get(this.storeInfo.serverUrl+'/truefalse/getTrueFalse',options).toPromise().then(response=>{
       if(response['status'] == 200){
         this.trueFalseQuestions = response['body']['questions']['trueFalse'];
+        this.courseTitle = response['body']['title'];
       }
     },error=>{
       console.log(error)
@@ -186,6 +189,7 @@ export class QuestionsComponent implements OnInit {
     await this.http.get(this.storeInfo.serverUrl+'/codingQuestion/getCodingQuestions',options).toPromise().then(response=>{
       if(response['status'] == 200){
         this.codingQuestions = response['body']['questions']['codingQuestion'];
+        this.courseTitle = response['body']['title'];
       }
     },error=>{
       console.log(error)
@@ -298,7 +302,6 @@ export class QuestionsComponent implements OnInit {
   }
 
   setMainCode(event) {
-    console.log('dfsfe');
     const file = (event.target as HTMLInputElement).files[0];
     this.addCodingQuestion.patchValue({
       mainCode: file

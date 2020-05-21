@@ -23,7 +23,7 @@
                         <li class="nav-item" [ngClass]='{active: view==3}'>
                             <a class="nav-link" (click) = "setView(3)"> Tests</a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item" *ngIf="course.role!='student'">
                             <a class="nav-link" (click)="changePage('questions')">Questions</a>
                         </li>
                         <li class="nav-item">
@@ -43,7 +43,7 @@
             <div class = "mainClass" >
                 <div class="view1 mt-6 pb-3" *ngIf="view==1">
                     <div class="row mx-3 pl-4">
-                        <div class="card text-center mt-3 mx-2 border-info width45" *ngFor="let post of course.posts">
+                        <div class="card shadow-sm text-center mt-3 mx-2 border-info width45" *ngFor="let post of course.posts">
                             <div class="card-header border-info text-left">
                               {{post.by}}
                             </div>
@@ -66,7 +66,7 @@
                 
                 <div class="view2" *ngIf="view==2">
                     <div class="row mx-3 pl-4">
-                        <div class="card text-center mt-3 mx-2 border-warning width45" *ngFor="let assignment of course.assignments">
+                        <div class="card shadow-sm text-center mt-3 mx-2 border-warning width45" *ngFor="let assignment of course.assignments">
                             <div class="card-header border-warning">
                                 {{assignment.title}}
                             </div>
@@ -114,7 +114,7 @@
     
                 <div class="view3" *ngIf="view==3">
                     <div class="row mx-3 pl-4">
-                        <div class="card text-center mt-3 mx-2 border-danger width45" *ngFor="let test of course.tests">
+                        <div class="card shadow-sm text-center mt-3 mx-2 border-danger width45" *ngFor="let test of course.tests">
                             <div class="card-header border-danger">
                               {{test.testId}}
                             </div>
@@ -122,8 +122,10 @@
                               <h5 class="card-title">{{test.title}}</h5>
                               <p class="card-text" [innerHtml]="test.description"></p>
                             </div>
+
                             <div class="card-footer border-danger text-muted">
-                              <button class="btn btn-outline-primary" (click)="openTest(test.testId,test._id)">Open</button>
+                                <button class="btn btn-outline-primary" *ngIf="course.role=='student'" (click)="startTest(test.testId,test._id)">Start</button>
+                                <button class="btn btn-outline-primary" *ngIf="course.role!='student'" (click)="openTest(test.testId,test._id)">Settings</button>
                             </div>
                         </div>
                     </div>
@@ -138,7 +140,7 @@
             </div>
             <div class="sideInfo">
                 <div class="text-center">
-                    <div class="card w-75 mx-auto my-3 border-primary">
+                    <div class="card shadow-sm w-75 mx-auto my-3 border-primary">
                         <div class="card-content">
                             <div class="card-header font-weight-bold border-primary">
                                 Instructors
@@ -150,7 +152,7 @@
                     </div>
                 </div>
                 <div class="text-center" *ngIf="course.teachingAssistants.length > 0">
-                    <div class="card w-75 mx-auto my-3 border-primary">
+                    <div class="card shadow-sm w-75 mx-auto my-3 border-primary">
                         <div class="card-content">
                             <div class="card-header font-weight-bold border-primary">
                                 Teaching Assistants

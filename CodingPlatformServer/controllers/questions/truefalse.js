@@ -38,7 +38,7 @@ exports.getTrueFalse = async (req, res, next) => {
     const courseId = req.courseId;
 
     const course = await Course.findById(courseId)
-                        .select('questions.trueFalse')
+                        .select('questions.trueFalse title')
                         .populate({
                             path:'questions.trueFalse'
                         });

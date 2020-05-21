@@ -7,7 +7,7 @@ const isNotStudent = require('../middleware/is-not-student');
 
 const testController = require('../controllers/test');
 
-router.get('/getTitles',isAuth,getRole,isNotStudent,testController.getTestsTitles);
+router.get('/getTitles',isAuth,getRole,testController.getTestsTitles);
 router.post('/create',isAuth,getRole,isNotStudent,testController.createTest);
 router.post('/addQuestion',isAuth,getRole,isNotStudent, testController.addQuestion);
 router.post('/saveTestData',isAuth,getRole,isNotStudent,testController.saveTestData);

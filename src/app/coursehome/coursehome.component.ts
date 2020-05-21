@@ -58,7 +58,9 @@ export class CoursehomeComponent implements OnInit {
     assignments:[],
     tests:[],
     _id:'',
-    role:''
+    role:'',
+    groupId:"",
+    groups:[]
   };
   // assignments:any = [];
   selectedAssignment:number;
@@ -84,14 +86,6 @@ export class CoursehomeComponent implements OnInit {
 
     this.code = this.activatedRoute.snapshot.paramMap.get('courseId');
     let view = parseInt(this.activatedRoute.snapshot.paramMap.get('view'));
-    if(!Number.isNaN(view)){
-      this.setView(view);
-      if(view < 1 || view > 3){
-        this.setView(1);
-      }
-    } else {
-      this.setView(1);
-    }
     
     if(!sessionStorage.getItem('token')){
       this.router.navigateByUrl('/');
@@ -115,17 +109,28 @@ export class CoursehomeComponent implements OnInit {
       } else {
         this.matComp.openSnackBar(data['body']['message'],2000);
       }
-      this.showSpinner = false;
     },error => {
       alert(error.message)
-      this.showSpinner = false;
     })
 
-    await this.getPosts();
+    this.showSpinner = false;
+
+    if(!Number.isNaN(view)){
+      this.setView(view);
+      if(view < 1 || view > 4){
+        this.setView(1);
+      }
+    } else {
+      this.setView(1);
+    }
   }
 
   changePage(p){
     this.router.navigateByUrl(`/course/${this.code}/${p}`);
+  }
+
+  startTest(testId,id){
+    this.router.navigateByUrl(`/course/${this.code}/test/${testId}/${this.course.groupId}`);
   }
   
   async setView(tabvalue){
@@ -136,6 +141,8 @@ export class CoursehomeComponent implements OnInit {
       await this.getAssignments();
     } else if(tabvalue == 3){
       await this.getTests();
+    } else if(tabvalue == 4){
+
     }
   }
   
@@ -573,7 +580,8 @@ export class CoursehomeComponent implements OnInit {
   }
 
   signout(){
-    
+    sessionStorage.removeItem('token');
+    this.router.navigateByUrl('/');
   }
 
 

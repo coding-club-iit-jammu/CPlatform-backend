@@ -178,4 +178,25 @@ export class CreateTestComponent implements OnInit {
     })
     this.showSpinner = false;
   }
+
+  moveBack(){
+    this.router.navigateByUrl('/home');
+  }
+
+  setView(view){
+    this.router.navigateByUrl(`/course/${this.code}/${view}`);
+  }
+
+  goToPractice(){
+    this.router.navigateByUrl(`/course/${this.code}/practice`);
+  }
+
+  goToQuestions(){
+    this.router.navigateByUrl(`/course/${this.code}/questions`);
+  }
+
+  signOut(){
+    this.storeInfo.signOut();
+    this.router.navigateByUrl('/');
+  }
 }

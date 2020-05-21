@@ -15,19 +15,22 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item">
-                            <a class="nav-link" (click) = "setView(1)"> Stream</a>
+                            <a class="nav-link" (click) = "setView(1)">Stream</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" (click) = "setView(2)"> Assignments</a>
+                            <a class="nav-link" (click) = "setView(2)">Assignments</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" (click) = "setView(3)"> Tests</a>
+                            <a class="nav-link" (click) = "setView(3)">Tests</a>
                         </li>
                         <li class="nav-item active">
                             <a class="nav-link" (click)="goToQuestions()">Questions</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" (click)="goToPractice()">Practice</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" (click) = "setView(4)">IDE</a>
                         </li>
                     </ul>
                     <a class="btn btn-warning mr-2 my-sm-0" (click)="moveBack()">Home</a>
@@ -311,7 +314,7 @@
             </div>
         </div>
         <div class="bottom bg-dark py-3 text-light text-center">
-            <h3>course.title</h3>
+            <h3>{{courseTitle}}</h3>
         </div>
         
         <div class="modal fade" id="addOptionModal" role="dialog">

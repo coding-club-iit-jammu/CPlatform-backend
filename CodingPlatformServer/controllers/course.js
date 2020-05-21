@@ -205,7 +205,7 @@ exports.getCourseInfo = (req,res,next) => {
             grp.push(g.groupId);
         }
         data['groups'] = grp;
-
+        data['groupId'] = req.groupId;
         res.status(200).json(data);
     })
 }

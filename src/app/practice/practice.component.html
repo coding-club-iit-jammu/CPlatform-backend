@@ -29,6 +29,9 @@
                         <li class="nav-item active">
                             <a class="nav-link" (click)="goToPractice()">Practice</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" (click) = "setView(4)">IDE</a>
+                        </li>
                     </ul>
                     <a class="btn btn-warning mr-2 my-sm-0" (click)="moveBack()">Home</a>
                     &nbsp;&nbsp;<br>
@@ -127,7 +130,7 @@
             </div>
         </div>
         <div class="bottom bg-dark py-3 text-light text-center">
-            <h3>{{code.substring(8)}}</h3>
+            <h3>{{courseTitle}}</h3>
         </div>
         <div class="modal fade" id="mcqModal" role="dialog" *ngIf="view==1 && selectedMCQ!=null">
             <div class="modal-dialog modal-dialog-centered">

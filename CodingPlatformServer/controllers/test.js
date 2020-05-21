@@ -1,10 +1,6 @@
 const Course = require('../models/course');
 const Test = require('../models/test');
 
-const TestQuestionCoding = require('../models/questions/test-questions/test-question-coding');
-const TestQuestionTrueFalse = require('../models/questions/test-questions/test-question-truefalse');
-const TestQuestionMCQ = require('../models/questions/test-questions/test-question-mcq');
-
 exports.getTestsTitles = async (req,res,next)=>{
     const courseId = req.courseId;
     const course = await Course.findById(courseId).select('tests _id').populate('tests',"_id testId title instructions");
@@ -12,7 +8,9 @@ exports.getTestsTitles = async (req,res,next)=>{
         res.json(500).json({message:'Try Again'});
         return;
     }
-    res.status(200).json(course);
+    let data = course.toObject();
+    data['groupId'] = req.groupId;
+    res.status(200).json(data);
 }
 
 

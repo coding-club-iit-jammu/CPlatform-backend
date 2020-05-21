@@ -25,6 +25,7 @@ export class PracticeComponent implements OnInit {
   showSpinner: Boolean = false;
   view:Number = 0;
   code:String;
+  courseTitle:String;
   mcqQuestions=[];
   trueFalseQuestions=[];
   codingQuestions=[];

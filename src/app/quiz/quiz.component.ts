@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-quiz',
@@ -8,7 +9,12 @@ import { HttpClient } from '@angular/common/http';
 })
 export class QuizComponent implements OnInit {
 
+  code:any;
+  testId:any;
+  groupId:any;
+
   remainTime:any = "30:00:00";
+  time:String;
   showSpinner:boolean = false;
   view:boolean = true; //False for First View and True for Second View.
   questions = [[0,1,2,3,4,5,6,7],[0,1,2,3,4,5,6,7]]
@@ -238,15 +244,21 @@ export class QuizComponent implements OnInit {
   ]
     
   }
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private router: Router,
+              private activatedRoute: ActivatedRoute) {
+                let x = new Date();
+                setInterval(() => {
+                  this.time = new Date().toLocaleString('en-In');
+                }, 500);
+              }
 
   async ngOnInit() {
     this.showSpinner = true;
-    this.http.post('http://localhost:8080/login',{'username': "2016ucs0049",'quizCode': "IN0101",'courseCode':'2019_02_CSL100'}).pipe().subscribe((data)=>{
-      console.log(data);
-    },error =>{
-      console.log(error);
-    })
+    this.code = this.activatedRoute.snapshot.paramMap.get('courseId');
+    this.testId = this.activatedRoute.snapshot.paramMap.get('testId');
+    this.groupId = this.activatedRoute.snapshot.paramMap.get('groupId');
+
+    console.log(this.code,this.testId,this.groupId);
     this.showSpinner = false;
   }
 

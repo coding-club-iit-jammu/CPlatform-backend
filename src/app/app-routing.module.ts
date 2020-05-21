@@ -44,7 +44,7 @@ const routes: Routes = [
     component: DetailsComponent
   },
   {
-    path: 'quiz',
+    path: 'course/:courseId/test/:testId/:groupId',
     component: QuizComponent
   },
   {

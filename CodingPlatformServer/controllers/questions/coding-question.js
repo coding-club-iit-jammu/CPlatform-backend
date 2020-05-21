@@ -28,15 +28,13 @@ const shiftFile = async (courseCode,currPath,cl)=>{
 }
 
 exports.addCodingQuestion = async (req,res,next)=>{
-    console.log("Adding coding question");
     const courseId = req.courseId;
     const title = req.body.title;
     const description = req.body.description;
     const sampleInput = req.body.sampleInput;
     const sampleOutput = req.body.sampleOutput;
 
-    console.log(req.files);
-
+    
     const testcasesPath = await shiftFile(req.body.courseCode,req.files['testcases'][0].path,"testcases");
     const codingQuestion = new CodingQuestion({
         title: title,
@@ -147,7 +145,7 @@ exports.getCodingQuestions = async (req,res,next)=>{
     const courseId = req.courseId;
 
     const course = await Course.findById(courseId)
-                        .select('questions.codingQuestion')
+                        .select('questions.codingQuestion title')
                         .populate({
                             path:'questions.codingQuestion'
                         });

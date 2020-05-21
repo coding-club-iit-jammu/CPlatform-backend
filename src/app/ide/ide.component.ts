@@ -34,10 +34,10 @@ import 'ace-builds/webpack-resolver';
 import 'ace-builds/src-noconflict/ext-language_tools';
 import 'ace-builds/src-noconflict/ext-beautify';
 import { LanguageTable } from './consts/language-table';
-const INIT_HEADER_CPP = '// header code\n';
-const INIT_HEADER_JAVA = '// header code\n';
-const INIT_HEADER_PY = '# header code\n';
-const INIT_CONTENT_CPP = `#include <iostream>
+let INIT_HEADER_CPP = '// header code\n';
+let INIT_HEADER_JAVA = '// header code\n';
+let INIT_HEADER_PY = '# header code\n';
+let INIT_CONTENT_CPP = `#include <iostream>
 using namespace std;
 
 int main () {
@@ -45,17 +45,17 @@ int main () {
     cout << "hello world";
     return 0;
 }`;
-const INIT_CONTENT_PY = `print('hello world')`;
-const INIT_CONTENT_JAVA = `class Main {
+let INIT_CONTENT_PY = `print('hello world')`;
+let INIT_CONTENT_JAVA = `class Main {
     public static void main(String[] args) {
         System.out.println("hello world");
     }
 };`;
-const INIT_FOOTER_CPP = '// footer code';
-const INIT_FOOTER_JAVA = '// footer code';
-const INIT_FOOTER_PY = '# footer code';
-const DEFAULT_THEME_MODE = 'solarized_dark';
-const DEFAULT_LANG_MODE = 'cpp14';
+let INIT_FOOTER_CPP = '// footer code';
+let INIT_FOOTER_JAVA = '// footer code';
+let INIT_FOOTER_PY = '# footer code';
+let DEFAULT_THEME_MODE = 'solarized_dark';
+let DEFAULT_LANG_MODE = 'cpp14';
 
 @Component({
   selector: 'app-ide',
@@ -103,6 +103,12 @@ export class IdeComponent implements OnInit {
   constructor(private handler: ServerHandlerService,
               private cd: ChangeDetectorRef) { }
 
+  // input from parent component
+  @Input('headerCode') headerCode: string;
+  @Input('footerCode') footerCode: string;
+  @Input('mainCode') mainCode: string;
+  @Input('problemInput') problemInput: string;
+
   async ngOnInit() {
     ace.require('ace/ext/language_tools');
     const editorMain = this.codeEditorElmRef.nativeElement;
@@ -136,16 +142,10 @@ export class IdeComponent implements OnInit {
     this.codeHeader.setHighlightActiveLine(false);
     this.codeFooter.setHighlightActiveLine(false);
 
-    // set line numbers appropriately
-    let linesInHeader = this.codeHeader.getValue().split(/\r\n|\r|\n/).length;
-    this.codeEditor.setOption("firstLineNumber", linesInHeader + 1);
-    let linesInContent = this.codeEditor.getValue().split(/\r\n|\r|\n/).length;
-    let initialLinesFooter = linesInHeader + linesInContent + 1;
-    this.codeFooter.setOption("firstLineNumber", initialLinesFooter);
-
     this.codeEditor.on("change", (delta) => {
       const content = this.codeEditor.getValue();
-      linesInContent = content.split(/\r\n|\r|\n/).length;
+      let linesInContent = content.split(/\r\n|\r|\n/).length;
+      let linesInHeader = this.codeHeader.getValue().split(/\r\n|\r|\n/).length;
       // console.log(linesInContent);
       this.codeFooter.setOption("firstLineNumber", linesInHeader + linesInContent + 1);
     });
@@ -155,6 +155,17 @@ export class IdeComponent implements OnInit {
   async ngAfterViewInit() {
     this.cantReachServer = false;
     this.cd.detectChanges();
+    if (this.headerCode != null) {
+      INIT_HEADER_CPP = this.headerCode;
+    }
+    if (this.footerCode != null) {
+      INIT_FOOTER_CPP = this.footerCode;
+    }
+    if (this.mainCode != null) {
+      INIT_CONTENT_CPP = this.mainCode;
+    }
+    this.setContent(this.mainCode);
+    this.myInput.nativeElement.value = this.problemInput;
   }
 
   private pipeSupportedLanguages() {
@@ -328,6 +339,16 @@ export class IdeComponent implements OnInit {
     if (this.codeFooter) {
       this.codeFooter.setValue(INIT_FOOTER_CPP);
     }
+
+    // set line numbers appropriately
+    let linesInHeader = this.codeHeader.getValue().split(/\r\n|\r|\n/).length;
+    this.codeEditor.setOption("firstLineNumber", linesInHeader + 1);
+    let linesInContent = this.codeEditor.getValue().split(/\r\n|\r|\n/).length;
+    console.log(linesInHeader);
+    console.log(linesInContent);
+    let initialLinesFooter = linesInHeader + linesInContent + 1;
+    console.log(initialLinesFooter);
+    this.codeFooter.setOption("firstLineNumber", initialLinesFooter);
   }
 
   /**

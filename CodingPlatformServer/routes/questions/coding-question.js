@@ -24,7 +24,7 @@ const codingController = require('../../controllers/questions/coding-question');
 router.get('/getCodingQuestions', isAuth, getRole, isNotStudent, codingController.getCodingQuestions);
 router.get('/getItem', isAuth, getRole, isNotStudent, codingController.getItem);
 
-var cpUpload = upload.fields([{ name: 'testcases', maxCount: 1 }, { name: 'header', maxCount: 1 }, { name: 'footer', maxCount: 1 }])
+var cpUpload = upload.fields([{ name: 'testcases', maxCount: 1 }, { name: 'header', maxCount: 1 }, { name: 'footer', maxCount: 1 }, { name: 'mainCode', maxCount: 1}]);
 router.post('/add', isAuth, cpUpload, getRole, isNotStudent, codingController.addCodingQuestion);
 router.post('/edit', isAuth, cpUpload, getRole, isNotStudent, codingController.editCodingQuestion);
 

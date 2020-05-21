@@ -297,6 +297,15 @@ export class QuestionsComponent implements OnInit {
     this.addCodingQuestion.get('header').updateValueAndValidity()
   }
 
+  setMainCode(event) {
+    console.log('dfsfe');
+    const file = (event.target as HTMLInputElement).files[0];
+    this.addCodingQuestion.patchValue({
+      mainCode: file
+    });
+    this.addCodingQuestion.get('mainCode').updateValueAndValidity();
+  }
+
   setFooterCode(event){
     const file = (event.target as HTMLInputElement).files[0];
     this.addCodingQuestion.patchValue({
@@ -362,7 +371,9 @@ export class QuestionsComponent implements OnInit {
       formData.append('testcases',this.addCodingQuestion.get('testcases').value);
     if(this.addCodingQuestion.get('header').value)
       formData.append('header',this.addCodingQuestion.get('header').value);
-    if(this.addCodingQuestion.get('testcases').value)
+    if(this.addCodingQuestion.get('mainCode').value) 
+      formData.append('mainCode', this.addCodingQuestion.get('mainCode').value);
+    if(this.addCodingQuestion.get('footer').value)
       formData.append('footer',this.addCodingQuestion.get('footer').value);
     
     formData.append('courseCode',this.code);
@@ -427,6 +438,7 @@ export class QuestionsComponent implements OnInit {
       testcases: this.formBuilder.control(null),
       header: this.formBuilder.control(null),
       footer: this.formBuilder.control(null),
+      mainCode: this.formBuilder.control(null),
       _id: this.formBuilder.control(null)
     })
   }

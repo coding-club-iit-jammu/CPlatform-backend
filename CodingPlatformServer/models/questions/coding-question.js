@@ -26,6 +26,10 @@ const codingSchema = new Schema({
         type: String,
         required: false
     },
+    mainCode:{
+        type: String,
+        required: false
+    },
     footer:{
         type: String,
         required: false

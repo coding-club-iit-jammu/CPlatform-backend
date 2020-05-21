@@ -49,7 +49,9 @@ exports.addCodingQuestion = async (req,res,next)=>{
     if(req.files['header']){
         codingQuestion.header = await shiftFile(req.body.courseCode,req.files['header'][0].path,"header");
     }
-
+    if (req.files['mainCode']) {
+        codingQuestion.mainCode = await shiftFile(req.body.courseCode,req.files['mainCode'][0].path,"mainCode");
+    }
     if(req.files['footer']){
         codingQuestion.footer = await shiftFile(req.body.courseCode,req.files['footer'][0].path,"footer");
     }
@@ -103,7 +105,7 @@ exports.editCodingQuestion = async (req,res,next)=>{
     if(req.files['testcases']){
         let oldUrl = codingQuestion.testcases;
         codingQuestion.testcases = await shiftFile(req.body.courseCode, req.files['testcases'][0].path,"testcases");
-        fs.unlink(oldUrl,(err)=>{
+        if (oldUrl) fs.unlink(oldUrl,(err)=>{
             console.log(err);
         });
     }
@@ -111,15 +113,21 @@ exports.editCodingQuestion = async (req,res,next)=>{
     if(req.files['header']){
         let oldUrl = codingQuestion.header;
         codingQuestion.header = await shiftFile(req.body.courseCode, req.files['header'][0].path,"header");
-        fs.unlink(oldUrl,(err)=>{
+        if (oldUrl) fs.unlink(oldUrl,(err)=>{
             console.log(err);
         });
     }
-
+    if (req.files['mainCode']) {
+        let oldUrl = codingQuestion.mainCode;
+        codingQuestion.mainCode = await shiftFile(req.body.courseCode,req.files['mainCode'][0].path,"mainCode");
+        if (oldUrl) fs.unlink(oldUrl,(err)=>{
+            console.log(err);
+        })
+    }
     if(req.files['footer']){
         let oldUrl = codingQuestion.footer;
         codingQuestion.footer = await shiftFile(req.body.courseCode, req.files['footer'][0].path,"footer");
-        fs.unlink(oldUrl,(err)=>{
+        if (oldUrl) fs.unlink(oldUrl,(err)=>{
             console.log(err);
         });
     }
@@ -183,6 +191,11 @@ exports.deleteCoding = async (req,res,next)=>{
                 fs.unlink(data['testcases'],err=>{
                     ;
                 })
+            }
+            if (data['mainCode']) {
+                fs.unlink(data['mainCode']),err=>{
+                    ;
+                }
             }
             if(data['footer']){
                 fs.unlink(data['testcases'],err=>{

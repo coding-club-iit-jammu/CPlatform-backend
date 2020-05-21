@@ -60,10 +60,10 @@ export class PracticeComponent implements OnInit {
   async ngOnInit() {
     this.code = this.activatedRoute.snapshot.paramMap.get('courseId').toString();
     this.leaderboard = [];
-    await this.getMCQ();
-    await this.getTrueFalse();
-    await this.getCodingQuestion();
-    await this.getLeaderBoard();
+    this.getMCQ();
+    this.getTrueFalse();
+    this.getCodingQuestion();
+    this.getLeaderBoard();
   }
 
   async getLeaderBoard() {
@@ -158,6 +158,7 @@ export class PracticeComponent implements OnInit {
   }
 
   async getCodingQuestion(){
+    console.log("Getting coding questions");
     this.showSpinner = true;
     const options = {
       observe: 'response' as 'body',

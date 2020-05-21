@@ -1,6 +1,5 @@
-import { Component, Directive, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, Directive, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { Input } from '@angular/core'
-import { Output, EventEmitter } from '@angular/core';
 import * as ace from 'ace-builds'; // ace-module
 import { languageModuleMap } from './consts/language-module-table';
 import { Language } from 'src/models/languages/languages';
@@ -101,7 +100,8 @@ export class IdeComponent implements OnInit {
   // observable of the supported languages
   public languagesArray$: Observable<Language[]>;
   showSpinner: Boolean = false; 
-  constructor(private handler: ServerHandlerService) { }
+  constructor(private handler: ServerHandlerService,
+              private cd: ChangeDetectorRef) { }
 
   async ngOnInit() {
     ace.require('ace/ext/language_tools');
@@ -150,6 +150,11 @@ export class IdeComponent implements OnInit {
       this.codeFooter.setOption("firstLineNumber", linesInHeader + linesInContent + 1);
     });
 
+  }
+
+  async ngAfterViewInit() {
+    this.cantReachServer = false;
+    this.cd.detectChanges();
   }
 
   private pipeSupportedLanguages() {

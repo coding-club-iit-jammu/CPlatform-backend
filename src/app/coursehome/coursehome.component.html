@@ -29,6 +29,9 @@
                         <li class="nav-item">
                             <a class="nav-link" (click)="changePage('practice')">Practice</a>
                         </li>
+                        <li class="nav-item" [ngClass]='{active: view==4}'>
+                            <a class="nav-link" (click)="setView(4)">IDE</a>
+                        </li>
                     </ul>
                     <button class="btn btn-warning mr-2 my-sm-0" type="button" (click)="moveBack()">Home</button>
                     &nbsp;&nbsp;<br>
@@ -127,6 +130,10 @@
                     <div class="row mx-3 pl-4 fixed-bottom mb-4">
                         <button class="btn btn-success border-success mx-auto bigButton rounded-circle btn-lg" *ngIf="course.role=='instructor'" data-toggle="modal" data-target="#createTestModal">+</button>
                     </div>
+                </div>
+
+                <div class="view4" *ngIf="view==4">
+                    <app-ide></app-ide>
                 </div>
             </div>
             <div class="sideInfo">

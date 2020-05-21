@@ -3,24 +3,23 @@ import { HttpService } from './http.service';
 import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { LanguageTable } from 'src/models/languages/languages';
+import { StoreInfoService } from '../store-info.service';
 
 @Injectable()
 export class ServerHandlerService {
-    private baseUrl: string;
-    constructor (private http: HttpService) {
-        this.baseUrl = environment.BASE_URL;
-    }
+    constructor (private http: HttpService,
+                private storeInfo: StoreInfoService) { }
 
     public getAllSupportedLangs() {
         console.log('getAllSupportedLangs()');
-        const queryUrl = this.baseUrl + 'langs/';
+        const queryUrl = this.storeInfo.serverUrl + '/langs/';
         return this.http.get<{langs: LanguageTable}>(queryUrl)
                     .pipe(map(body => body.langs));
     }
     public postCodeToRun(code: string, language: {id: string, version: string}, 
                         input: string, fields: string) {
         console.log('postCodeToRun()');
-        const queryUrl = this.baseUrl + 'run/';
+        const queryUrl = this.storeInfo.serverUrl + '/run/';
         const requestBody = {program: code, lang: language.id, version: language.version, 
                             input: input, fields: fields};
         console.log(requestBody);

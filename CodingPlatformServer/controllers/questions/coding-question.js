@@ -28,7 +28,7 @@ const shiftFile = async (courseCode,currPath,cl)=>{
 }
 
 exports.addCodingQuestion = async (req,res,next)=>{
-    
+    console.log("Adding coding question");
     const courseId = req.courseId;
     const title = req.body.title;
     const description = req.body.description;

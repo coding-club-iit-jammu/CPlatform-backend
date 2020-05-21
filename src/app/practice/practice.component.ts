@@ -32,29 +32,12 @@ export class PracticeComponent implements OnInit {
   selectedMCQ:any;
   selectedTrueFalse:any;
   selectedCodingQuestion:any;
-  mcqQuestion = {
-    _id:"",
-    question:"A",
-    options:
-          [{
-            code: "A",
-            option: "A"
-           },
-           {
-            code: "B",
-            option: "B"
-           }
-          ]
 
-  };
-  trueFalseQuestion = {
-    _id:"",
-    question:"A",
-    response:true
-  };
-  codingQuestion = {
+  headerCode: string;
+  footerCode: string;
+  mainCode: string;
+  problemInput: string;
 
-  };
   leaderboard: LeaderboardEntry[];
 
   async ngOnInit() {
@@ -128,6 +111,7 @@ export class PracticeComponent implements OnInit {
       this.view = 2;
     } else if(questionType == 'codingQuestion'){
       this.selectedCodingQuestion = question;
+      this.setCodingQuestionParameters(question);
       this.view = 3;
     } else {
       this.view = 0;
@@ -155,6 +139,15 @@ export class PracticeComponent implements OnInit {
       this.matComp.openSnackBar(error,3000);
     })
     this.showSpinner = false;
+  }
+
+  async setCodingQuestionParameters(question) {
+    // console.log("setting parameters");
+    let q = this.codingQuestions[question];
+    this.headerCode = q.header;
+    this.footerCode = q.footer;
+    this.mainCode = q.mainCode;
+    this.problemInput = q.sampleInput;
   }
 
   async getCodingQuestion(){

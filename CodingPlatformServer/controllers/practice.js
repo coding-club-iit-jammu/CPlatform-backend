@@ -1,6 +1,8 @@
 const Course = require('../models/course');
 const User = require('../models/user');
 const UserPracticeRecord = require('../models/practice-record-user');
+const fs = require('fs');
+const path = require('path');
 
 exports.addPracticeQuestion = async (req,res,next)=>{
     const courseId = req.courseId;
@@ -72,6 +74,12 @@ exports.getTrueFalse = async (req,res,next)=>{
     res.status(200).json(course['practiceQuestions']['trueFalse']);
 }
 
+extractContent = async (fileName) => {
+    let filepath = path.join(fileName);
+    // console.log(filepath);
+    return fs.readFileSync(filepath, 'utf-8');
+}
+
 exports.getCodingQuestion = async (req,res,next)=>{
     const courseId = req.courseId;
     // const solvedQuestions = req.solvedQuestions;
@@ -85,6 +93,13 @@ exports.getCodingQuestion = async (req,res,next)=>{
         return;
     }
     course = course.toObject();
+    for (let x of course['practiceQuestions']['codingQuestion']) {
+        delete x.testcases;
+        // read the files to get the codes to fill in IDE     
+        x.header = await extractContent(x.header);
+        x.footer = await extractContent(x.footer);
+        x.mainCode = await extractContent(x.mainCode);
+    }
     res.status(200).json(course['practiceQuestions']['codingQuestion']);
 }
 

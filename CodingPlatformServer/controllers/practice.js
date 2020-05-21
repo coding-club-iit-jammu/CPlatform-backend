@@ -75,8 +75,9 @@ exports.getTrueFalse = async (req,res,next)=>{
 }
 
 extractContent = async (fileName) => {
-    let filepath = path.join(fileName);
-    // console.log(filepath);
+    let serverPath = path.join(__dirname, '..'); // one directory back
+    let filepath = path.join(serverPath, fileName);
+    console.log(filepath);
     return fs.readFileSync(filepath, 'utf-8');
 }
 
@@ -179,7 +180,7 @@ getEntries = async (courseRecords) => {
 }
 
 exports.getLeaderboard = async (req, res, next) => {
-    console.log("Getting leaderboard");
+    // console.log("Getting leaderboard");
     const courseId = req.courseId;
 
     // find all practice records for this course

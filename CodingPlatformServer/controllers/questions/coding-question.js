@@ -8,13 +8,18 @@ const CodingQuestion = require('../../models/questions/coding-question');
 const shiftFile = async (courseCode,currPath,cl)=>{
     const fileName = path.basename(currPath);
     let oldPath = currPath;
-    let newPath = path.join(__dirname,'..','..','data',courseCode,'questions',cl).toString();
-        
-    await mkdirp(newPath);
-    newPath = path.join(newPath,fileName);
+    let serverPath = path.join(__dirname, '..', '..');
+    let actualPath = path.join(__dirname,'..','..','data',courseCode,'questions',cl).toString();
+    
+    // get the path from serverPath to the actualPath
+    let finalPath = path.relative(serverPath, actualPath);
 
+    await mkdirp(actualPath);
+    actualPath = path.join(actualPath,fileName);
+    finalPath = path.join(finalPath, fileName);
+    
     let moved = true;
-    await fs.renameSync(oldPath, newPath, function (err) {
+    await fs.renameSync(oldPath, actualPath, function (err) {
         if (err) {
             moved = false;
             throw err
@@ -22,9 +27,17 @@ const shiftFile = async (courseCode,currPath,cl)=>{
     })
 
     if(!moved)
-        newPath = oldPath;
+        finalPath = oldPath;
 
-    return newPath;
+    console.log(finalPath);
+    return finalPath;
+}
+
+// get absolute path from the server folder
+getAbsolutePath = async (relPath) => {
+    let serverPath = path.join(__dirname, '..', '..');
+    let actualPath = path.join(serverPath, relPath);
+    return actualPath;
 }
 
 exports.addCodingQuestion = async (req,res,next)=>{
@@ -34,7 +47,6 @@ exports.addCodingQuestion = async (req,res,next)=>{
     const sampleInput = req.body.sampleInput;
     const sampleOutput = req.body.sampleOutput;
 
-    
     const testcasesPath = await shiftFile(req.body.courseCode,req.files['testcases'][0].path,"testcases");
     const codingQuestion = new CodingQuestion({
         title: title,
@@ -102,31 +114,35 @@ exports.editCodingQuestion = async (req,res,next)=>{
 
     if(req.files['testcases']){
         let oldUrl = codingQuestion.testcases;
+        oldUrl = await getAbsolutePath(oldUrl);
         codingQuestion.testcases = await shiftFile(req.body.courseCode, req.files['testcases'][0].path,"testcases");
         if (oldUrl) fs.unlink(oldUrl,(err)=>{
-            console.log(err);
+            ;
         });
     }
 
     if(req.files['header']){
         let oldUrl = codingQuestion.header;
+        oldUrl = await getAbsolutePath(oldUrl);
         codingQuestion.header = await shiftFile(req.body.courseCode, req.files['header'][0].path,"header");
         if (oldUrl) fs.unlink(oldUrl,(err)=>{
-            console.log(err);
+            console.log(err); // null if successfull
         });
     }
     if (req.files['mainCode']) {
         let oldUrl = codingQuestion.mainCode;
+        oldUrl = await getAbsolutePath(oldUrl);
         codingQuestion.mainCode = await shiftFile(req.body.courseCode,req.files['mainCode'][0].path,"mainCode");
         if (oldUrl) fs.unlink(oldUrl,(err)=>{
-            console.log(err);
+            ;
         })
     }
     if(req.files['footer']){
         let oldUrl = codingQuestion.footer;
+        oldUrl = await getAbsolutePath(oldUrl);
         codingQuestion.footer = await shiftFile(req.body.courseCode, req.files['footer'][0].path,"footer");
         if (oldUrl) fs.unlink(oldUrl,(err)=>{
-            console.log(err);
+            ;
         });
     }
 
@@ -177,26 +193,30 @@ exports.getItem = async (req, res, next) => {
 
 exports.deleteCoding = async (req,res,next)=>{
     const codingId = req.query.questionId;
-    CodingQuestion.findByIdAndRemove(codingId).then((data)=>{
+    CodingQuestion.findByIdAndRemove(codingId).then( async (data)=>{
         console.log(data);
         if(data){
             if(data['testcases']){
-                fs.unlink(data['testcases'],err=>{
+                let filePath = await getAbsolutePath(data['testcases']);
+                fs.unlink(filePath,err=>{
                     ;
                 })
             }
             if(data['header']){
-                fs.unlink(data['testcases'],err=>{
+                let filePath = await getAbsolutePath(data['header']);
+                fs.unlink(filePath,err=>{
                     ;
                 })
             }
             if (data['mainCode']) {
-                fs.unlink(data['mainCode']),err=>{
+                let filePath = await getAbsolutePath(data['mainCode']);
+                fs.unlink(filePath,err=>{
                     ;
-                }
+                })
             }
             if(data['footer']){
-                fs.unlink(data['testcases'],err=>{
+                let filePath = await getAbsolutePath(data['footer']);
+                fs.unlink(filePath,err=>{
                     ;
                 })
             }

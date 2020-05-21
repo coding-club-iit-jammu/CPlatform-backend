@@ -4,7 +4,7 @@ const LanguagesManager = require("../../util/languagesManager");
 const RequestHandler = require("../../util/judge0-request-handler/request-handler");
 
 exports.getLanguages = async (req, res, next) => {
-    console.log('GET: \'/langs\'');
+    // console.log('GET: \'/langs\'');
     res.status(200).send({ langs: languagesTable.languagesTable});
 };
 

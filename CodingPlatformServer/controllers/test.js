@@ -87,16 +87,16 @@ exports.getTestData = async (req,res,next) => {
                             [{
                                 path: 'questions.mcq.question',
                                 model:'MCQ',
-                                select:'question'
+                                select:'question _id'
                             },
                             {
                                 path: 'questions.trueFalse.question',
-                                select:'question',
+                                select:'question _id',
                                 model:'TrueFalseQuestion'
                             }
                             ,{
                                 path: 'questions.codingQuestion.question',
-                                select:'title',
+                                select:'title _id',
                                 model:'CodingQuestion'
                             }]
                             );
@@ -106,4 +106,56 @@ exports.getTestData = async (req,res,next) => {
     }
     res.status(200).json(test);
 
+}
+
+exports.saveTestData = async (req,res,next)=>{
+    const _id = req.body._id;
+    const testData = req.body;
+    const test = await Test.findById(_id);
+    test.title = testData['title'];
+    test.instructions = testData['instructions'];
+    for(let x of testData['groups']){
+        
+        x['startTime'] = new Date(x['startTime']).toLocaleString('en-In',{timeZone:'Asia/Kolkata'});
+        x['endTime'] = new Date(x['endTime']).toLocaleString('en-In',{timeZone:'Asia/Kolkata'});
+    }
+
+    test.groups = testData['groups'];
+    
+    let mcq = [];
+    for(let x of testData['mcq']){
+        mcq.push({
+            question:x['question'],
+            marks:x['marks']
+        });
+    }
+
+    let trueFalse = [];
+    for(let x of testData['trueFalse']){
+        trueFalse.push({
+            question:x['question'],
+            marks:x['marks']
+        });
+    }
+
+    let codingQuestion = [];
+    for(let x of testData['codingQuestion']){
+        codingQuestion.push({
+            question:x['question'],
+            marks:x['marks']
+        });
+    }
+
+    test.questions.mcq = mcq;
+    test.questions.trueFalse = trueFalse;
+    test.questions.codingQuestion = codingQuestion;
+
+    const result = await test.save();
+
+    if(!result){
+        res.status(500).json({message:"Couldn't save."})
+        return;
+    }
+
+    res.status(200).json({message:"Saved."})
 }

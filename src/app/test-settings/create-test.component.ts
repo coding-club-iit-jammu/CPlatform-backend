@@ -29,13 +29,19 @@ export class CreateTestComponent implements OnInit {
     await this.getTestData();
   }
 
+  private toDateString(date: Date): string {
+    return (date.getFullYear().toString() + '-' 
+       + ("0" + (date.getMonth() + 1)).slice(-2) + '-' 
+       + ("0" + (date.getDate())).slice(-2))
+       + 'T' + date.toTimeString().slice(0,5);
+  }
   addGroup(data){
     let arraay = this.testForm.get('groups') as FormArray; 
     let l = arraay.length;
-    let fg = this.formBuilder.group({
+    let fg = this.formBuilder.group({ 
       groupId: this.formBuilder.control(data.groupId),
-      startTime: this.formBuilder.control(data['startTime']),
-      endTime: this.formBuilder.control(data['endTime'])
+      startTime: this.formBuilder.control(this.toDateString(new Date(data['startTime']))),
+      endTime: this.formBuilder.control(this.toDateString(new Date(data['endTime'])))
     })
     arraay.push(fg);
   }
@@ -44,8 +50,8 @@ export class CreateTestComponent implements OnInit {
     let arraay = this.testForm.get('mcq') as FormArray; 
     let l = arraay.length;
     let fg = this.formBuilder.group({
-      questionId: this.formBuilder.control(data['_id']),
-      question: this.formBuilder.control(data['question']['question']),
+      question: this.formBuilder.control(data['question']['_id']),
+      questionContent: this.formBuilder.control(data['question']['question']),
       marks: this.formBuilder.control(data['marks'])
     })
     arraay.push(fg);
@@ -55,8 +61,8 @@ export class CreateTestComponent implements OnInit {
     let arraay = this.testForm.get('trueFalse') as FormArray; 
     let l = arraay.length;
     let fg = this.formBuilder.group({
-      questionId: this.formBuilder.control(data['_id']),
-      question: this.formBuilder.control(data['question']['question']),
+      question: this.formBuilder.control(data['question']['_id']),
+      questionContent: this.formBuilder.control(data['question']['question']),
       marks: this.formBuilder.control(data['marks'])
     })
     arraay.push(fg);
@@ -66,7 +72,7 @@ export class CreateTestComponent implements OnInit {
     let arraay = this.testForm.get('codingQuestion') as FormArray; 
     let l = arraay.length;
     let fg = this.formBuilder.group({
-      questionId: this.formBuilder.control(data['_id']),
+      question: this.formBuilder.control(data['question']['_id']),
       title: this.formBuilder.control(data['question']['title']),
       marks: this.formBuilder.control(data['marks'])
     })
@@ -77,7 +83,8 @@ export class CreateTestComponent implements OnInit {
     
     this.testForm.patchValue({
       title:data.title,
-      instructions:data.instructions
+      instructions:data.instructions,
+      _id:data._id
     });
     
     for(let x of data['groups']){
@@ -100,6 +107,7 @@ export class CreateTestComponent implements OnInit {
 
   resetTestForm(){
     this.testForm = this.formBuilder.group({
+      _id:this.formBuilder.control(''),
       title: this.formBuilder.control(''),
       instructions:this.formBuilder.control(''),
       groups: new FormArray([]),
@@ -134,7 +142,23 @@ export class CreateTestComponent implements OnInit {
 
   async saveTest(){
     this.showSpinner = true;
+    const options = {
+      observe: 'response' as 'body',
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json',
+        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+      })
+    };
+    let data = this.testForm.value;
+    data['courseCode'] = this.code;
     
+    await this.http.post(this.storeInfo.serverUrl+'/test/saveTestData', data, options).toPromise().then((response)=>{
+      if(response['status']==200){
+        this.matComp.openSnackBar(response['body']['message'],3000);
+      }
+    },(error)=>{
+      this.matComp.openSnackBar(error,2500);
+    })
     this.showSpinner = false;
   }
 }

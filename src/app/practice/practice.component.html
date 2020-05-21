@@ -83,7 +83,7 @@
                                 <div class="card-header" id="headingOne">
                                     <div class="w-100 text-center" [innerHtml]='q.title'></div>
                                     <div class="text-center" >
-                                        <button class="btn btn-outline-primary" (click)="solveQuestion(i,'codingQuestion')">
+                                        <button class="btn btn-outline-primary" (click)="solveQuestion(i,'codingQuestion')" data-toggle="modal" data-target="#codingQuestionModal">
                                             Solve
                                         </button>
                                     </div>
@@ -190,21 +190,32 @@
                 </div>
             </div>
         </div>
-        <div class="modal fade" id="codingQuestionModal" role="dialog" *ngIf="view==3 && selectedCodingQuestion!=null">
-            <div class="modal-dialog modal-dialog-centered">
+        <div class="modal fade bd-example-modal-xl" id="codingQuestionModal" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true" *ngIf="view==3 && selectedCodingQuestion!=null">
+            <div class="modal-dialog modal-xl">
                 <div class="modal-content">
                     <div class="modal-header text-center bg-light">
                         <div class="text-center" [innerHtml]="this.codingQuestions[selectedCodingQuestion].title"></div>
                         <button type="button" class="close" data-dismiss="modal" style="float: right;">&times;</button>
                     </div>
-                    <div class="modal-body text-center">
-                        <div class="text-center my-3">
-                            Show Data for Coding Question here.
+                    <div class="modal-body">
+                        <div class="my-3 w-100" [innerHtml]="this.codingQuestions[selectedCodingQuestion].description">
+                        </div>
+                        <div class="my-3 w-100">
+                            Sample Input
+                            <div class="card" [innerHtml]="this.codingQuestions[selectedCodingQuestion].sampleInput">
+                            </div>
+                        </div>
+                        <div class="my-3 w-100">
+                            Sample Output
+                            <div class="card" [innerHtml]="this.codingQuestions[selectedCodingQuestion].sampleOutput">
+                            </div>
                         </div>
                     </div>
+                    <app-ide>
+                    </app-ide>
                     <div class="modal-footer d-flex justify-content-around bg-light">
                         <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                        <button class="btn btn-success my-3" (click)="submitCodingQuestion()" data-dismiss="modal">Submit</button>
+                        <button class="btn btn-success my-3" data-dismiss="modal">Submit</button>
                     </div>
                 </div>
             </div>

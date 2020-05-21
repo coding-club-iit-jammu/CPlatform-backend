@@ -74,7 +74,7 @@ exports.getTrueFalse = async (req,res,next)=>{
 
 exports.getCodingQuestion = async (req,res,next)=>{
     const courseId = req.courseId;
-    const solvedQuestions = req.solvedQuestions;
+    // const solvedQuestions = req.solvedQuestions;
     let course = await Course.findById(courseId)
                         .select('practiceQuestions.codingQuestion')
                         .populate({

@@ -171,7 +171,7 @@ export class PracticeComponent implements OnInit {
     };
     await this.http.get(this.storeInfo.serverUrl+'/practice/getCodingQuestion',options).toPromise().then(response=>{
       if(response['status'] == 200){
-        this.trueFalseQuestions = response['body'];
+        this.codingQuestions = response['body'];
       }
     },error=>{
       console.log(error)

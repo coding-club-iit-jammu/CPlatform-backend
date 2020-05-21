@@ -10,7 +10,7 @@ const practiceController = require('../controllers/practice');
 
 router.get('/getMCQ',isAuth,getRole,getSolvedQuestions,practiceController.getMCQ);
 router.get('/getTrueFalse',isAuth,getRole,getSolvedQuestions,practiceController.getTrueFalse);
-router.get('/getCodingQuestion',isAuth,getRole,getSolvedQuestions,practiceController.getCodingQuestion);
+router.get('/getCodingQuestion',isAuth,getRole,practiceController.getCodingQuestion);
 
 router.post('/submitMCQ',isAuth,getRole,isAnswerCorrect,updateSolvedList,practiceController.submitMCQ);
 router.post('/submitTrueFalse',isAuth,getRole,isAnswerCorrect,updateSolvedList,practiceController.submitTrueFalse);

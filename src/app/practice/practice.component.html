@@ -214,11 +214,11 @@
                             </div>
                         </div>
                     </div>
-                    <app-ide [headerCode]="headerCode" [footerCode]="footerCode" [mainCode]="mainCode" [problemInput]="problemInput">
+                    <app-ide [headerCode]="headerCode" [footerCode]="footerCode" [mainCode]="mainCode" [problemInput]="problemInput" #codeEditor>
                     </app-ide>
                     <div class="modal-footer d-flex justify-content-around bg-light">
                         <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                        <button class="btn btn-success my-3" data-dismiss="modal">Submit</button>
+                        <button class="btn btn-success my-3" (click)="submitCodingQuestion(selectedCodingQuestion, codeEditor.getContent())">Submit</button>
                     </div>
                 </div>
             </div>

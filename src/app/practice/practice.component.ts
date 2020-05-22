@@ -233,6 +233,35 @@ export class PracticeComponent implements OnInit {
     this.showSpinner = false;
   }
 
+  async submitCodingQuestion(selectedCodingQuestion, submitCode) {
+    this.showSpinner = true;
+
+    const options = {
+      observe: 'response' as 'body',
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json',
+        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+      })
+    };
+
+    // fetch user code from the child component, passed in function
+    // console.log(submitCode);
+    let data = {
+      questionId : this.codingQuestions[selectedCodingQuestion]['_id'],
+      questionType: 'codingQuestion',
+      courseCode: this.code,
+      submitCode: submitCode
+    }
+    // console.log(data);
+    await this.http.post(this.storeInfo.serverUrl+'/practice/submitCodingQuestion',data,options).toPromise().then(response=>{
+      this.matComp.openSnackBar(response['body']['message'],2000);
+    },error=>{
+      console.log(error)
+      this.matComp.openSnackBar(error,3000);
+    })
+    
+    this.showSpinner = false;
+  }
 
 
   setView(view){

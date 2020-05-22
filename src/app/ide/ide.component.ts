@@ -73,8 +73,6 @@ export class IdeComponent implements OnInit {
   @ViewChild('sampleInput', {static: true}) myInput: ElementRef;
   // observable of the run request output
   public output$: Observable<string>;
-  // observable of the sample input
-  public input$: Observable<string>;
   // current editor theme name
   public activatedTheme: string;
 
@@ -294,7 +292,7 @@ export class IdeComponent implements OnInit {
    */
   public getContent() {
     if (this.codeEditor) {
-      const code = this.codeHeader.getValue() + this.codeEditor.getValue() + this.codeFooter.getValue();
+      const code = this.codeHeader.getValue() + "\n" + this.codeEditor.getValue() + "\n" + this.codeFooter.getValue();
       // console.log(code);
       return code;
     }
@@ -323,7 +321,7 @@ export class IdeComponent implements OnInit {
     }
     // test input value
     let input = this.myInput.nativeElement.value;
-    console.log(input);
+    // console.log(input);
   }
 
   /**
@@ -344,10 +342,10 @@ export class IdeComponent implements OnInit {
     let linesInHeader = this.codeHeader.getValue().split(/\r\n|\r|\n/).length;
     this.codeEditor.setOption("firstLineNumber", linesInHeader + 1);
     let linesInContent = this.codeEditor.getValue().split(/\r\n|\r|\n/).length;
-    console.log(linesInHeader);
-    console.log(linesInContent);
+    // console.log(linesInHeader);
+    // console.log(linesInContent);
     let initialLinesFooter = linesInHeader + linesInContent + 1;
-    console.log(initialLinesFooter);
+    // console.log(initialLinesFooter);
     this.codeFooter.setOption("firstLineNumber", initialLinesFooter);
   }
 

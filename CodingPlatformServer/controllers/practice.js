@@ -77,7 +77,7 @@ exports.getTrueFalse = async (req,res,next)=>{
 extractContent = async (fileName) => {
     let serverPath = path.join(__dirname, '..'); // one directory back
     let filepath = path.join(serverPath, fileName);
-    console.log(filepath);
+    // console.log(filepath);
     return fs.readFileSync(filepath, 'utf-8');
 }
 
@@ -161,6 +161,40 @@ exports.submitTrueFalse = async (req, res, next) => {
         res.status(500).json({message:"Try Again"});
     } else {
         res.status(200).json({message:"Correct Answer, 1 points added."});
+    }
+    
+}
+
+exports.submitCodingQuestion = async (req, res, next) => {
+    console.log("SUBMITTING");
+    const questionId = req.body.questionId;
+    // fetch code
+    const response = req.body.submitCode;
+
+    // fetch the verdict: WA, AC, RE, TLE, Compilation Error
+    const verdict = req.verdict;
+    const date = new Date();
+    const userRecordId = req.userRecordId;
+    
+    const userRecord = await UserPracticeRecord.findById(userRecordId);
+    if(!userRecord){
+        res.status(500).json({message:"Try Again"});
+        return;
+    }
+    console.log(userRecord);
+    userRecord.score += 5;
+    userRecord['questions']['codingQuestion'].push({
+        question: questionId,
+        response:response,
+        verdict: verdict,
+        date:date
+    })
+    
+    const result = await userRecord.save();
+    if(!result){
+        res.status(500).json({message:"Try Again"});
+    } else {
+        res.status(200).json({message:"Correct Answer, 5 points added."});
     }
     
 }

@@ -1,6 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const mkdirp = require('mkdirp');
+const AdmZip = require('adm-zip');
 
 const Course = require('../../models/course');
 const CodingQuestion = require('../../models/questions/coding-question');
@@ -8,16 +9,14 @@ const CodingQuestion = require('../../models/questions/coding-question');
 const shiftFile = async (courseCode,currPath,cl)=>{
     const fileName = path.basename(currPath);
     let oldPath = currPath;
-    let serverPath = path.join(__dirname, '..', '..');
+    
+    // move from uploads folder to data
+    
     let actualPath = path.join(__dirname,'..','..','data',courseCode,'questions',cl).toString();
-    
-    // get the path from serverPath to the actualPath
-    let finalPath = path.relative(serverPath, actualPath);
-
     await mkdirp(actualPath);
-    actualPath = path.join(actualPath,fileName);
-    finalPath = path.join(finalPath, fileName);
-    
+
+    actualPath = path.join(actualPath, fileName);
+
     let moved = true;
     await fs.renameSync(oldPath, actualPath, function (err) {
         if (err) {
@@ -26,10 +25,32 @@ const shiftFile = async (courseCode,currPath,cl)=>{
         }
     })
 
-    if(!moved)
+    if(!moved) {
         finalPath = oldPath;
+        console.log("Unable to move to data!");
+        return finalPath;
+    }
 
-    console.log(finalPath);
+    // if testcase file, extract it 
+    let zipPath = actualPath;
+    let folderPath = path.join(actualPath, '..', path.basename(fileName, ".zip"));
+    // console.log(folderPath);
+    await mkdirp(folderPath);
+    if (cl == "testcases") {
+        let zip = new AdmZip(zipPath);
+        zip.extractAllTo(folderPath, true);
+    }
+    // remove the zip file
+    fs.unlink(zipPath, () => {
+        ;
+    })
+ 
+    let serverPath = path.join(__dirname, '..', '..');
+    actualPath = folderPath;
+    // get the path from serverPath to the actualPath
+    let finalPath = path.relative(serverPath, actualPath);
+
+    // console.log(finalPath);
     return finalPath;
 }
 
@@ -116,9 +137,9 @@ exports.editCodingQuestion = async (req,res,next)=>{
         let oldUrl = codingQuestion.testcases;
         oldUrl = await getAbsolutePath(oldUrl);
         codingQuestion.testcases = await shiftFile(req.body.courseCode, req.files['testcases'][0].path,"testcases");
-        if (oldUrl) fs.unlink(oldUrl,(err)=>{
+        if (oldUrl) fs.rmdir(oldUrl, () => {
             ;
-        });
+        })
     }
 
     if(req.files['header']){
@@ -198,7 +219,7 @@ exports.deleteCoding = async (req,res,next)=>{
         if(data){
             if(data['testcases']){
                 let filePath = await getAbsolutePath(data['testcases']);
-                fs.unlink(filePath,err=>{
+                fs.rmdir(filePath,err=>{
                     ;
                 })
             }

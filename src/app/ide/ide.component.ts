@@ -376,6 +376,19 @@ export class IdeComponent implements OnInit {
     this.setLanguageMode(langMode);
   }
 
+  public getLangId() {
+    const languagesSelectElement = this.languagesSelect.nativeElement as HTMLSelectElement;
+    const index = languagesSelectElement.selectedIndex;
+    const language = this.languagesArray[index];
+    return language.lang;
+  }
+
+  public getLangVersion() {
+    const languagesSelectElement = this.languagesSelect.nativeElement as HTMLSelectElement;
+    const index = languagesSelectElement.selectedIndex;
+    const language = this.languagesArray[index];
+    return language.version;
+  }
   public onRunCode() {
     this.showSpinner = true;
     // console.log('onRunCode()');
@@ -386,11 +399,10 @@ export class IdeComponent implements OnInit {
     let fields = "stdout,time,memory,compile_output,stderr,token,message,status";
     if (this.languagesSelect && code.length > 0) {
       // console.log("here");
-      const languagesSelectElement = this.languagesSelect.nativeElement as HTMLSelectElement;
-      const index = languagesSelectElement.selectedIndex;
-      const language = this.languagesArray[index];
+      const langId = this.getLangId();
+      const langVersion = this.getLangVersion();
       this.output$ = this.handler.postCodeToRun(code, {
-        id: language.lang, version: language.version
+        id: langId, version: langVersion
       }, input, fields).pipe(
         // returning the output content
         map((response: RunResult) => {

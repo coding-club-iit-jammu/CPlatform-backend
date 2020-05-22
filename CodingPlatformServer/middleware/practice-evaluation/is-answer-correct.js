@@ -3,6 +3,39 @@ const TrueFalse = require('../../models/questions/truefalsequestion');
 const CodingQuestion = require('../../models/questions/coding-question');
 const path = require('path');
 const fs = require('fs');
+const fields = "stdout,time,memory,compile_output,stderr,token,message,status";
+const runner = require('../../controllers/ide/runner');
+const RequestHandler = require("../../util/judge0-request-handler/request-handler");
+
+const universalBtoa = str => {
+    try {
+      return btoa(str);
+    } catch (err) {
+      return Buffer.from(str).toString('base64');
+    }
+};
+  
+const universalAtob = b64Encoded => {
+    try {
+      return atob(b64Encoded);
+    } catch (err) {
+      return Buffer.from(b64Encoded, 'base64').toString();
+    }
+};
+  
+// Reference: https://github.com/judge0/ide/blob/master/js/ide.js
+function encode(str) {
+    return universalBtoa(unescape(encodeURIComponent(str || "")));
+  }
+  
+function decode(bytes) {
+    var escaped = escape(universalAtob(bytes || ""));
+    try {
+        return decodeURIComponent(escaped);
+    } catch {
+        return unescape(escaped);
+    }
+}
 
 module.exports = async (req,res,next)=>{
     const questionId = req.body.questionId;
@@ -48,6 +81,8 @@ module.exports = async (req,res,next)=>{
             return;
         }
     } else if (questionType == 'codingQuestion') {
+        const langId = req.body.langId;
+        const langVersion = req.body.langVersion;
         const submitCode = req.body.submitCode;
         // fetch the question
         const question = await CodingQuestion.findById(questionId);
@@ -66,13 +101,76 @@ module.exports = async (req,res,next)=>{
         // for each test case
         // need to use post-code API from ide/runner
         // decode and trim the stdout and validate with the expected output
+        let data = {
+            lang : langId,
+            version : langVersion,
+            program : encode(submitCode),
+            fields : fields,
+            input : ""
+        }
+
+        // validate the request data
+        if (!runner.validatePostRun(data)) {
+            res.status(500).json({message:"Invalid body parameters"});
+            return;
+        }
+
+        // get language id
+        let languageId = runner.getLangId(langId, langVersion);
+        
+        let caseId = 0;
+        let passed = 0;
         for (let caseNumber in inputs) {
             const input = inputs[caseNumber];
             const output = outputs[caseNumber];
-            console.log(input);
-            console.log(output);
+            // update the input for the request
+            data.input = encode(input);
+            let response = await runner.runTestCase(languageId, data);
+            let actualOutput = decode(response.stdout);
+            console.log(`Input: ${input}, Expected Output: ${output}, Actual Output: ${actualOutput}`);
+
+            if (response.status.id == 5) {
+                req.verdict = `TLE on Test Case ${caseId}`;
+                res.status(500).json({message: req.verdict});
+                return;
+            } else if (response.status.id == 6) {
+                req.verdict = `Compilation Error on Test Case ${caseId}`;
+                res.status(500).json({message: req.verdict});
+                return;
+            } else if (response.status.id >= 7 && response.status.id <= 12) {
+                req.verdict = `Runtime Error on Test Case ${caseId}`;
+                res.status(500).json({message: req.verdict});
+                return;
+            } else if (response.status.id >= 13) {
+                req.verdict = `Internal Error on Test Case ${caseId}`;
+                res.status(500).json({message: req.verdict});
+                return;
+            }
+
+            let check = await compareOutputs(output, actualOutput);
+            if (check == false) {
+                req.verdict = `Wrong Answer on Test Case ${caseId}`;
+                res.status(500).json({message: req.verdict});
+                return;
+            } else {
+                ++passed;
+            }
+            ++caseId;
+        }
+
+        if (passed == caseId) {
+            // all test cases passed
+            req.verdict = "ACCEPTED!";
+            // res.status(500).json({message: req.verdict});
+            // res.status(200).json({message:"ACCEPTED!"});
+            // return;
+            next();
         }
     }
+}
+
+compareOutputs = async (actual, expected) => {
+    return actual == expected;
 }
 
 extractCases = async (files, testPath, inputs, outputs) => {

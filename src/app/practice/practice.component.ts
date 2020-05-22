@@ -38,7 +38,7 @@ export class PracticeComponent implements OnInit {
   footerCode: string;
   mainCode: string;
   problemInput: string;
-
+  submitted: Boolean;
   leaderboard: LeaderboardEntry[];
 
   async ngOnInit() {
@@ -233,9 +233,9 @@ export class PracticeComponent implements OnInit {
     this.showSpinner = false;
   }
 
-  async submitCodingQuestion(selectedCodingQuestion, submitCode) {
+  async submitCodingQuestion(selectedCodingQuestion, submitCode, langId, langVersion) {
     this.showSpinner = true;
-
+    this.submitted = true;
     const options = {
       observe: 'response' as 'body',
       headers: new HttpHeaders({
@@ -250,17 +250,23 @@ export class PracticeComponent implements OnInit {
       questionId : this.codingQuestions[selectedCodingQuestion]['_id'],
       questionType: 'codingQuestion',
       courseCode: this.code,
-      submitCode: submitCode
+      submitCode: submitCode,
+      langId: langId,
+      langVersion: langVersion
     }
     // console.log(data);
     await this.http.post(this.storeInfo.serverUrl+'/practice/submitCodingQuestion',data,options).toPromise().then(response=>{
-      this.matComp.openSnackBar(response['body']['message'],2000);
+      if (response['body']['error']) {
+        this.matComp.openSnackBar(response['body']['error']['message'],10000);  
+      }
+      this.matComp.openSnackBar(response['body']['message'],10000);
     },error=>{
       console.log(error)
-      this.matComp.openSnackBar(error,3000);
+      this.matComp.openSnackBar(error['error']['message'],3000);
     })
     
     this.showSpinner = false;
+    this.submitted = false;
   }
 
 

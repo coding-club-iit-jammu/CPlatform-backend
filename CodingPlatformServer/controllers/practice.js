@@ -172,6 +172,7 @@ exports.submitCodingQuestion = async (req, res, next) => {
     const response = req.body.submitCode;
 
     // fetch the verdict: WA, AC, RE, TLE, Compilation Error
+    // handled in is-answer-correct middleware
     const verdict = req.verdict;
     const date = new Date();
     const userRecordId = req.userRecordId;
@@ -186,7 +187,7 @@ exports.submitCodingQuestion = async (req, res, next) => {
     userRecord['questions']['codingQuestion'].push({
         question: questionId,
         response:response,
-        verdict: verdict,
+        isCorrect:true,
         date:date
     })
     

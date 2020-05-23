@@ -23,4 +23,6 @@ router.post('/endTest',isAuth,getRole,isStudent,testController.endTest);
 
 router.get('/getTestData',isAuth,getRole,isNotStudent,testController.getTestData);
 router.get('/getQuestions',isAuth,getRole,isStudent,testController.getQuestions);
+router.get('/getEndTime',isAuth,getRole,isStudent,testController.getEndTime);
+
 module.exports = router;

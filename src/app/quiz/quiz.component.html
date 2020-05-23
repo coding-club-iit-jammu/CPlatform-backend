@@ -41,23 +41,19 @@
         <!-- Div for Second View -->
         <div *ngIf="view">
             <mat-sidenav-container class="example-container">
-                <mat-sidenav class="bg-dark w-25 h-auto min-vh-100" [@inOutAnimation] #sidenav mode="side" [(opened)]="opened" (opened)="console.log('open')"
-                             (closed)="console.log('closed')">
+                <mat-sidenav class="bg-dark w-25 h-auto min-vh-100" [@inOutAnimation] #sidenav mode="side" [(opened)]="opened">
                     <div class="text-center text-white">
                         <div>
                             <h3>{{testId}}</h3>
                         </div>
                     </div>
                     <div class="questions">
-                        <h3 class="text-white">Section {{questionType | uppercase}}</h3>
+                        <h3 class="text-white">Section {{questionType | titlecase}}</h3>
                         <div *ngFor="let q of questions;let i=index;">
                             <div class="btn btn-secondary" (click)="changeQuestion(i)" [ngClass]="{'attemptedQuestion': questions[current.question].response!='','unattemptedQuestion': questions[current.question].response=='' && !questions[current.question].visited , 'seenUnattemptedQuestion': questions[current.question]['response']=='' && questions[current.question].visited}">
                                 Question {{i+1}}
                             </div>
                         </div>
-                    </div>
-                    <div class="text-center bottom my-3">
-                        <button class="btn btn-danger" style="float: none;" data-toggle="modal" data-target="#nextSectionModal" accesskey="b" title="ShortCut: Alt + b">Next Section</button>
                     </div>
                 </mat-sidenav>
               
@@ -71,7 +67,7 @@
                             <div [ngClass]="{'w-100':opened,'w-95':!opened}" (mouseover)="opened=false">
                                 <nav class="navbar navbar-info bg-info">
                                     <div class="navbar-nav text-center mx-auto">
-                                            <span class="nav-item text-white">{{time}}</span>
+                                        <span class="nav-item btn btn-danger text-white" (click)="getEndTime()">Time Remaining {{time}}</span>
                                     </div>
                                     <button class="btn btn-danger my-2 my-sm-0" data-toggle="modal" data-target="#myModal">End Test</button>
                                 </nav>
@@ -143,6 +139,9 @@
                                         </div>
                                     </div>
                                 </div> 
+                                <div class="text-center fixed-bottom my-3">
+                                    <button class="btn btn-danger" data-toggle="modal" data-target="#nextSectionModal" accesskey="b" title="ShortCut: Alt + b">Next Section</button>
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -45,6 +45,7 @@ export class QuizComponent implements OnInit {
 
   remainTime:any = "30:00:00";
   time:String;
+  endTime:any = new Date();
 
   startTestForm:FormGroup;
 
@@ -65,7 +66,8 @@ export class QuizComponent implements OnInit {
               private activatedRoute: ActivatedRoute, private formBuilder: FormBuilder,
               private storeInfo: StoreInfoService, private matComp: MaterialComponentService) {
                 setInterval(() => {
-                  this.time = new Date().toLocaleString('en-In');
+                  let t = this.getTimeRemaining(this.endTime.toLocaleString('en-In'));
+                  this.time = t.days + " : " + t.hours + " : " + t.minutes + " : " + t.seconds;
                 }, 500);
               }
 
@@ -78,6 +80,23 @@ export class QuizComponent implements OnInit {
     console.log(this.code,this.testId,this.groupId);
     this.resetStartTestForm();
     this.showSpinner = false;
+  }
+
+  getTimeRemaining(endtime){
+    console.log(endtime,Date.parse(endtime),Date.parse(new Date().toString()));
+    var t = Date.parse(endtime) - Date.parse(new Date().toString());
+    console.log(t);
+    var seconds = Math.floor( (t/1000) % 60 );
+    var minutes = Math.floor( (t/1000/60) % 60 );
+    var hours = Math.floor( (t/(1000*60*60)) % 24 );
+    var days = Math.floor( t/(1000*60*60*24) );
+    return {
+      'total': t,
+      'days': days,
+      'hours': hours,
+      'minutes': minutes,
+      'seconds': seconds
+    };
   }
 
   resetStartTestForm(){
@@ -106,6 +125,7 @@ export class QuizComponent implements OnInit {
         if(response['body']['userTestRecord']){
           this.userTestRecordId = response['body']['userTestRecord'];
           this.test_id = response['body']['test_id'];
+          this.endTime = response['body']['endTime'];
           await this.getQuestions();
           this.view = true;
         } else {
@@ -137,7 +157,7 @@ export class QuizComponent implements OnInit {
     
     await this.http.post(this.storeInfo.serverUrl+'/test/endTest', data, options).toPromise().then(async (response)=>{
       if(response['status'] == 200 ){
-        this.showSpinner = false;
+        this.showSpinner = false; 
         this.matComp.openSnackBar(response['body']['message'],3000);
         this.router.navigateByUrl(`/course/${this.code}`);
       }
@@ -182,6 +202,9 @@ export class QuizComponent implements OnInit {
     }
     await this.http.post(this.storeInfo.serverUrl+'/test/submitQuestion',data,options).toPromise().then(response=>{
       this.matComp.openSnackBar(response['body']['message'],2000);
+      if(response['body']['ended'] && response['body']['ended']==true){
+        this.matComp.openSnackBar("Test Ended.",5000);
+      }
     },error=>{
       console.log(error)
       this.matComp.openSnackBar(error,3000);
@@ -233,6 +256,26 @@ export class QuizComponent implements OnInit {
     this.changeQuestion(this.current.question-1)
   }
 
+  async getEndTime(){
+    this.showSpinner = true;
+    const options = {
+      observe: 'response' as 'body',
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json',
+        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+      }),
+      params: new HttpParams().set('courseCode',this.code).set('test_id',this.test_id)
+    };
+    await this.http.get(this.storeInfo.serverUrl+'/test/getEndTime', options).toPromise().then(async (response)=>{
+      if(response['status'] == 200){
+        this.endTime = response['body']['endTime'];
+      }
+    },(error)=>{
+      this.matComp.openSnackBar("Something\'s is wrong. Try Again.",2500);
+    })
+    this.showSpinner = false;
+  }
+
   async getQuestions(){
     this.showSpinner = true;
     const options = {
@@ -246,9 +289,14 @@ export class QuizComponent implements OnInit {
     
     await this.http.get(this.storeInfo.serverUrl+'/test/getQuestions', options).toPromise().then(async (response)=>{
       if(response['status']==200 ){
-        this.questions = response['body']['questions'];
-        this.questionType = response['body']['questionType'];
-        this.current.question = 0;
+        if(response['body']['ended'] && response['body']['ended']==true){
+          this.showSpinner = false;
+          this.matComp.openSnackBar("Test Ended",5000);
+        } else {
+          this.questions = response['body']['questions'];
+          this.questionType = response['body']['questionType'];
+          this.current.question = 0;
+        }
       }
     },(error)=>{
       this.matComp.openSnackBar("Something\'s is wrong. Try Again.",2500);
@@ -275,7 +323,7 @@ export class QuizComponent implements OnInit {
         if( response['body']['ended']==false){
           await this.getQuestions();
         } else {
-
+          this.matComp.openSnackBar("Test Ended.",5000);
         }
       }
     },(error)=>{

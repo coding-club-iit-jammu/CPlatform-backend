@@ -275,7 +275,8 @@ exports.joinTest = async (req,res,next) => {
     res.status(200).json({
         message:"Starting Test.",
         userTestRecord:result._id,
-        test_id:test._id
+        test_id:test._id,
+        endTime: req.endTime
     });
 
 }
@@ -352,7 +353,7 @@ exports.submitSection = async (req,res,next)=>{
             res.status(500).json({message:"Try Again"});
             return;
         }
-        res.status(200).json({message:"Section Submitted.",ended:false});
+        res.status(200).json({message:"Section Submitted.",ended:true});
         return;
     }
 
@@ -373,7 +374,7 @@ exports.submitQuestion = async (req,res,next) => {
         return;
     } 
     mcq.response = response;
-    console.log(isCorrect);
+    
     if(isCorrect){
         mcq.securedMarks = mcq.marks;
     } else {
@@ -386,6 +387,28 @@ exports.submitQuestion = async (req,res,next) => {
         return;
     }
     res.status(200).json({message:'Submission Successful.'})
+}
+
+exports.getEndTime = async (req,res,next) => {
+    const groupId = req.groupId;
+    const test_Id = req.query.test_id;
+
+    const test = await Test.findById(test_Id);
+
+    if(!test){
+        res.status(500).json({message:'Try Again'});
+        return;
+    }
+
+    let grp = test['groups'].find(obj => obj.groupId == groupId);
+    
+    if(!grp){
+        res.status(500).json({message:'Try Again'});
+        return;
+    }
+    
+    res.status(200).json({endTime:new Date(grp.endTime).toLocaleString('en-In')});
+
 }
 
 exports.getQuestions = async (req,res,next) => {
@@ -415,6 +438,10 @@ exports.getQuestions = async (req,res,next) => {
     if(!userTestRecord){
         res.status(500).json({message:"Try Again"});
         return;
+    }
+
+    if(userTestRecord.ended){
+        res.status(200).json({message:"Test Already Ended.",ended:true});
     }
 
     if(userTestRecord.userId.toString()!=userId){
@@ -501,7 +528,7 @@ exports.getQuestions = async (req,res,next) => {
         }
     }
 
-    res.status(200).json({message:"No Questions Left. You can end the test."});
+    res.status(200).json({message:"No Questions Left. You can end the test.",ended:true}    );
 
 
 }

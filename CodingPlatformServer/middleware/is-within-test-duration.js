@@ -12,7 +12,7 @@ module.exports = async (req,res,next) => {
         return;
     }
 
-    let d = new Date();
+    let d = new Date().toLocaleString('en-In');
     let grp = test['groups'].find(obj=>obj.groupId==groupId);
 
     if(!grp){
@@ -20,10 +20,10 @@ module.exports = async (req,res,next) => {
         return;
     }
 
-    if(d > new Date(grp['startTime']) && d < new Date(grp['endTime'])){
+    if(d > new Date(grp['startTime']).toLocaleString() && d < new Date(grp['endTime']).toLocaleString()){
         next();
     }
 
-    res.status(200).json({message:'Test Over.'});
+    res.status(200).json({message:'Test Over.',ended:true});
 
 }

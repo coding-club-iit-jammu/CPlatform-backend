@@ -107,7 +107,19 @@ const userSchema = new Schema({
                     solvedQuestions:[{
                       type:Schema.Types.ObjectId
                     }]
-                  }
+                  },
+                  tests:[
+                    {
+                      testId: {
+                        type:Schema.Types.ObjectId,
+                        ref:"Test"
+                      },
+                      record:{
+                        type:Schema.Types.ObjectId,
+                        ref:"UserTestRecord"
+                      }
+                    }
+                  ]
                 }]
   }
 });

@@ -1,15 +1,15 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const TestQuestionCoding = require('./questions/test-questions/test-question-coding');
-const TestQuestionTrueFalse = require('./questions/test-questions/test-question-truefalse');
-const TestQuestionMCQ = require('./questions/test-questions/test-question-mcq');
-
 const testSchema = new Schema({
     testId:{
         type: String,
         required: true,
         unique:true
+    },
+    revealMarks:{
+        type: Boolean,
+        default: false
     },
     title:{
         type: String,
@@ -18,6 +18,10 @@ const testSchema = new Schema({
     instructions:{
         type: String,
         required: true
+    },
+    startTest:{
+        type: Boolean,
+        default: false
     },
     groups:[{
         groupId:{
@@ -80,11 +84,6 @@ testSchema.methods.addQuestion = async (id,questionType)=>{
         question:id,
         marks:0
     });
-    return this.save();
-}
-
-testSchema.methods.addUserRecord = async (id) => {
-    this.records.push(id);
     return this.save();
 }
 

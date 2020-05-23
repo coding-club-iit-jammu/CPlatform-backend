@@ -179,6 +179,29 @@ export class CreateTestComponent implements OnInit {
     this.showSpinner = false;
   }
 
+  async startTest(){
+    this.showSpinner = true;
+    const options = {
+      observe: 'response' as 'body',
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json',
+        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+      })
+    };
+    let data = {}
+    data['_id'] = this.testForm.get('_id').value;
+    data['courseCode'] = this.code;
+    
+    await this.http.post(this.storeInfo.serverUrl+'/test/startTest', data, options).toPromise().then((response)=>{
+      if(response['status']==200){
+        this.matComp.openSnackBar(response['body']['message'],3000);
+      }
+    },(error)=>{
+      this.matComp.openSnackBar(error,2500);
+    })
+    this.showSpinner = false;
+  }
+
   moveBack(){
     this.router.navigateByUrl('/home');
   }

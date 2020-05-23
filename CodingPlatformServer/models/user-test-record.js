@@ -6,13 +6,13 @@ const testRecordSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref:'User'
     },
-    revealMarks:{
-        type: Boolean,
-        default: false
-    },
     testId:{
         type: Schema.Types.ObjectId,
         ref:'Test'
+    },
+    ended:{
+        type:Boolean,
+        default:false
     },
     mcq:{
             submitted:{
@@ -22,7 +22,11 @@ const testRecordSchema = new Schema({
             problems:[{
                 question:{
                     type:Schema.Types.ObjectId,
-                    ref:'TestQuestionMCQ'
+                    ref:'MCQ'
+                },
+                marks:{
+                    type:Number,
+                    default:0
                 },
                 response:{
                     type:String,
@@ -42,7 +46,11 @@ const testRecordSchema = new Schema({
             problems:[{
                 question:{
                     type:Schema.Types.ObjectId,
-                    ref:'TestQuestionTrueFalse'
+                    ref:'TrueFalseQuestion'
+                },
+                marks:{
+                    type:Number,
+                    default:0
                 },
                 response:{
                     type:Boolean
@@ -61,7 +69,11 @@ const testRecordSchema = new Schema({
         problems:[{
             question:{
                 type:Schema.Types.ObjectId,
-                ref:'TestQuestionMCQ'
+                ref:'CodingQuestion'
+            },
+            marks:{
+                type:Number,
+                default:0
             },
             response:{
                 type:String,
@@ -70,11 +82,15 @@ const testRecordSchema = new Schema({
             securedMarks:{
                 type:Number,
                 default:0
+            },
+            visited:{
+                type:Boolean,
+                default:false
             }
         }]
     }
 });
 
-const UserTestRecord = mongoose.model('UserTestRecord',UserTestRecord);
+const UserTestRecord = mongoose.model('UserTestRecord',testRecordSchema);
 
 module.exports = UserTestRecord;

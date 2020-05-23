@@ -1,4 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -24,7 +25,7 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatRadioModule} from '@angular/material/radio';
-
+import {MatSidenavModule} from '@angular/material/sidenav';
 import { HttpService } from './services/http/http.service';
 import { ServerHandlerService } from './services/http/server-handler.service';
 import { MaterialComponentService } from './services/material-component.service';
@@ -50,6 +51,7 @@ import { CreateTestComponent } from './test-settings/create-test.component'
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     AppRoutingModule,
     ReactiveFormsModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
@@ -64,6 +66,7 @@ import { CreateTestComponent } from './test-settings/create-test.component'
     MatCheckboxModule,
     MatRadioModule,
     FormsModule,
+    MatSidenavModule,
     QuillModule.forRoot({
       modules: {
         syntax: true,

@@ -1,3 +1,19 @@
+.example-container {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.w-5{
+  width: 5%;
+}
+
+.w-95{
+  width: 95%;
+}
+
 .sidenav {
     height: 100%; /* Full-height: remove this if you want "auto" height */
     width: 25%; /* Set the width of the sidebar */
@@ -14,9 +30,9 @@
   
   /* Style page content */
   .main {
-    margin-left: 25%; /* Same as the width of the sidebar */
+    /* margin-left: 25%; Same as the width of the sidebar */
     /* padding: 0px 10px; */
-    width: 75%;
+    width: 100%;
     min-height: 100vh;
     background-color: white !important;
   }
@@ -61,32 +77,17 @@
       width: 20%;
   }
 
-  .quizQuestion{
-      min-height: 70vh;
-      width: 80%;
-      margin-left: 10%;
+  .mcqQuestion{
+      min-width: 600px;
+      height: auto;
       margin-top: 5%;
       /* background-color: darkgoldenrod; */
   }
   .question-header{
-      min-height: 25vh;
+      min-height: 15vh;
       height: auto;
       line-height: auto;
       vertical-align: middle;
-  }
-
-  .options{
-      display: flex;
-      flex-wrap: wrap;
-      flex-direction: row;
-  }
-
-  .option{
-      min-width: 48%;
-      min-height: 48%;
-      margin: 1%;
-      /* background-color: darkred; */
-      /* border: black solid; */
   }
 
   .questions{

@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 export class StoreInfoService {
 
   token:string;
-  serverUrl: string = "http://localhost:8080";
+  serverUrl: string = "https://coding-platform-btp.herokuapp.com";
   role = {
   };
 

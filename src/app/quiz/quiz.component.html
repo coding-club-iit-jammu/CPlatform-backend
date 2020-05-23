@@ -76,7 +76,8 @@
                                     <button class="btn btn-danger my-2 my-sm-0" data-toggle="modal" data-target="#myModal">End Test</button>
                                 </nav>
                                 <!-- Quiz Part here -->
-                                <div class="mcqQuestion card shadow my-3 w-50 mx-auto   ">
+                                <!-- MCQ and True False -->
+                                <div class="mcqQuestion card shadow my-3 w-50 mx-auto" *ngIf="questionType=='mcq' || questionType=='trueFalse'">
                                 <!-- Show Question here -->
                                     <div class="card-header text-center question-header align-center" [innerHtml]="questions[current.question].question">
                                     </div>
@@ -94,12 +95,12 @@
                                         </div>
                                         <div class="d-flex flex-column" *ngIf="questionType=='trueFalse'">
                                             <div class="card shadow my-2 d-flex flex-row flex-wrap text-center">
-                                                <div class="w-100 h-100 btn btn-light" (click)="questions[current.question]['response']=true" [ngClass]="{'border-success': questions[current.question]['response'],'border-light': !questions[current.question]['response']}">
+                                                <div class="w-100 h-100 btn btn-light" (click)="questions[current.question]['response']=true" [ngClass]="{'border-success': questions[current.question]['response'] == true,'border-light': questions[current.question]['response']==false}">
                                                     True
                                                 </div>
                                             </div>
                                             <div class="card shadow-sm my-2 d-flex flex-row flex-wrap text-center">
-                                                <div class="w-100 h-100 btn btn-light" (click)="questions[current.question]['response']=false" [ngClass]="{'border-success': !questions[current.question]['response'],'border-light': questions[current.question]['response']}">
+                                                <div class="w-100 h-100 btn btn-light" (click)="questions[current.question]['response']=false" [ngClass]="{'border-success': questions[current.question]['response'] == false,'border-light': questions[current.question]['response']==true}">
                                                     False
                                                 </div>
                                             </div>
@@ -107,10 +108,41 @@
                                     </div>
                                     <div class="card-footer d-flex flex-row justify-content-around ">
                                         <button class="btn btn-warning" [disabled]="current.question == 0" (click)="previousQuestion()" accesskey="p" title="ShortCut: Alt + p">Previous</button>
-                                        <button class="btn btn-success" (click)="submitQuestion()">Submit</button>
+                                        <button class="btn btn-success" (click)="submitQuestion(current.question,questionType)">Submit</button>
                                         <button class="btn btn-warning" [disabled]="current.question == questions.length-1" (click)="nextQuestion()" accesskey="n" title="ShortCut: Alt + n">Next</button>
                                     </div>
-                                </div>  
+                                </div> 
+                                <!-- Coding Question -->
+                                <div *ngIf="questionType=='codingQuestion'">
+                                    <div class="">
+                                        <div class="text-center bg-light">
+                                            <div class="text-center" [innerHtml]="this.questions[current.question].title"></div>
+                                        </div>
+                                        <div class="">
+                                            <div class="my-3 w-100" [innerHtml]="this.questions[current.question].description">
+                                            </div>
+                                            <div class="my-3 w-100">
+                                                Sample Input
+                                                <div class="card" [innerHtml]="this.questions[current.question].sampleInput">
+                                                </div>
+                                            </div>
+                                            <div class="my-3 w-100">
+                                                Sample Output
+                                                <div class="card" [innerHtml]="this.questions[current.question].sampleOutput">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <app-ide [headerCode]="headerCode" [footerCode]="footerCode" [mainCode]="mainCode" [problemInput]="problemInput" #codeEditor>
+                                        </app-ide>
+                                        <div class="d-flex justify-content-around bg-light">
+                                            <button class="btn btn-success my-3" (click)="submitCodingQuestion(selectedCodingQuestion, codeEditor.getContent(),
+                                                                                        codeEditor.getLangId(), codeEditor.getLangVersion())">Submit</button>
+                                            <div class="spinner-border" role="status" *ngIf="submitted">
+                                                <span class="sr-only">Loading...</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> 
                             </div>
                         </div>
                     </div>

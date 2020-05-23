@@ -360,6 +360,33 @@ exports.submitSection = async (req,res,next)=>{
 
 }
 
+exports.submitQuestion = async (req,res,next) => {
+    const isCorrect = req.isCorrect;
+    const questionId = req.body.questionId;
+    const response = req.body.answer;
+    const questionType = req.body.questionType;
+    const userTestRecordId = req.body.userTestRecordId;
+    const userTestRecord = await UserTestRecord.findById(userTestRecordId).select(`${questionType}`);
+    let mcq = userTestRecord[questionType]['problems'].find(obj=>obj.question.toString() == questionId);
+    if(!mcq){
+        res.status(200).json({message:"Submission Unsuccessful, Try Again."});
+        return;
+    } 
+    mcq.response = response;
+    console.log(isCorrect);
+    if(isCorrect){
+        mcq.securedMarks = mcq.marks;
+    } else {
+        mcq.securedMarks = 0;
+    }
+
+    const result = await userTestRecord.save();
+    if(!result){
+        res.status(200).json({message:"Submission Unsuccessful, Try Again."});
+        return;
+    }
+    res.status(200).json({message:'Submission Successful.'})
+}
 
 exports.getQuestions = async (req,res,next) => {
     const userTestRecordId = req.query.userTestRecordId;
@@ -405,14 +432,17 @@ exports.getQuestions = async (req,res,next) => {
             data['questions'].push({
                 question:x.question.question,
                 questionId:x.question._id,
-                response:x.response,
+                response:x.response?x.response:false,
                 marks:x.marks,
                 visited:(x.securedMarks == 0?false:true)
             })
         }
-
-        res.status(200).json(data);
-        return;
+        if(data.questions.length == 0){
+            userTestRecord.trueFalse.submitted = true;
+        } else {
+            res.status(200).json(data);
+            return;
+        }
     }
 
     if(!userTestRecord.mcq.submitted){
@@ -423,36 +453,55 @@ exports.getQuestions = async (req,res,next) => {
         };
         for(let x of userTestRecord.mcq.problems){
             
-            for(let y of x.question.options){
+            let opts = [];
+            let Options = x.question.options.toObject();
+            for(let y of Options){
                 y['response'] = false;
+                opts.push(y);
             }
             
             let splitResponse = x.response.split(',');
+            console.log(splitResponse);
             for(let i = 0; i<splitResponse.length;i++){
-                x.question.options[parseInt(splitResponse)-1] = true; 
+                opts[parseInt(splitResponse[i])-1].response = true; 
             }
+            console.log(opts);
             data['questions'].push({
                 question:x.question.question,
                 questionId:x.question._id,
-                options:x.question.options,
+                options:opts,
                 response:x.response,
                 marks:x.marks,
                 visited:x.securedMarks==0?false:true
             })
         }
-
-        res.status(200).json(data);
-        return;
+        if(data.questions.length == 0){
+            userTestRecord.codingQuestion.submitted = true;
+        } else {
+            res.status(200).json(data);
+            return;
+        }
     }
 
     if(!userTestRecord.codingQuestion.submitted){
         // Send Coding Questions
         let data = {
-            questionType:'codingQuestion'
+            questionType:'codingQuestion',
+            questions:[]
         };
+
+        /*
+            Add Code here.
+        */
+        if(data.questions.length == 0){
+            userTestRecord.codingQuestion.submitted = true;
+        } else {
+            res.status(200).json(data);
+            return;
+        }
     }
 
-    res.status(200).json({message:"No Questions Left."});
+    res.status(200).json({message:"No Questions Left. You can end the test."});
 
 
 }

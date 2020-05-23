@@ -49,8 +49,11 @@ export class QuizComponent implements OnInit {
   startTestForm:FormGroup;
 
   showSideNav:Boolean = true;
-  showSpinner:boolean = false;
-  view:boolean = false; //False for First View and True for Second View.
+  showSpinner:Boolean = false;
+  submitted:Boolean = false;
+  view:Boolean = false; //False for First View and True for Second View.
+  opened:Boolean;
+
   questions:any;
   questionType:String;
   current = {
@@ -58,230 +61,6 @@ export class QuizComponent implements OnInit {
     question: 0
   }
 
-  opened: boolean;
-
-  // quiz:any = {
-  //   id: "2019_02_EFC004U1M_Quiz1",
-  //   title: "Quiz 1",
-  //   startTime: "",
-  //   endTime: "",
-  //   sections:[{
-  //     questions:[{
-  //       question:"What is the captial of India?",
-  //         options:{
-  //           a:"New Delhi",
-  //           b:"Mumbai",
-  //           c:"Kolkata",
-  //           d:"Chennai"
-  //         },
-  //         selectedOption:"",
-  //         correctOption:'a',
-  //         marks:1,
-  //         visited:true
-  //       },
-  //       {
-  //         question:"What is the captial of MP?",
-  //         options:{
-  //           a:"Indore",
-  //           b:"Mandsaur",
-  //           c:"Bhopal",
-  //           d:"None of the Above"
-  //         },
-  //         selectedOption:"",
-  //         correctOption:'c',
-  //         marks:1,
-  //         visited:false
-  //       },
-  //       {
-  //         question:"What is the captial of Gujrat?",
-  //         options:{
-  //           a:"Varodara",
-  //           b:"Ahmedabad",
-  //           c:"Surat",
-  //           d:"Gandhinagar"
-  //         },
-  //         selectedOption:"",
-  //         correctOption:'d',
-  //         marks:1,
-  //         visited:false
-  //       },
-  //       {
-  //         question:"What is the captial of Rajasthan?",
-  //         options:{
-  //           a:"Udaipur",
-  //           b:"Jaipur",
-  //           c:"Kolkata",
-  //           d:"Chennai"
-  //         },
-  //         selectedOption:"",
-  //         correctOption:'b',
-  //         marks:1,
-  //         visited:false
-  //       },
-  //       {
-  //         question:"What is the captial of Haryana?",
-  //         options:{
-  //           a:"Chandigarh",
-  //           b:"Mumbai",
-  //           c:"Kolkata",
-  //           d:"Chennai"
-  //         },
-  //         selectedOption:"",
-  //         correctOption:'a',
-  //         marks:1,
-  //         visited:false
-  //       },
-  //       {
-  //         question:"What is the captial of Punjab?",
-  //         options:{
-  //           a:"Chandigarh",
-  //           b:"Mumbai",
-  //           c:"Kolkata",
-  //           d:"Chennai"
-  //         },
-  //         selectedOption:"",
-  //         correctOption:'a',
-  //         marks:1,
-  //         visited:false
-  //       },
-  //       {
-  //         question:"What is the captial of UP?",
-  //         options:{
-  //           a:"New Delhi",
-  //           b:"Mumbai",
-  //           c:"Lucknow",
-  //           d:"Chennai"
-  //         },
-  //         selectedOption:"",
-  //         correctOption:'b',
-  //         marks:1,
-  //         visited:false
-  //       },
-  //       {
-  //         question:"What is the captial of West Bengal?",
-  //         options:{
-  //           a:"New Delhi",
-  //           b:"Mumbai",
-  //           c:"Kolkata",
-  //           d:"Chennai"
-  //         },
-  //         selectedOption:"",
-  //         correctOption:'c',
-  //         marks:1,
-  //         visited:false
-  //       }],
-  //     previousComplete:true
-  //   },{
-  //     questions:[{
-  //     question:"What is the captial of India?",
-  //     options:{
-  //       a:"New Delhi",
-  //       b:"Mumbai",
-  //       c:"Kolkata",
-  //       d:"Chennai"
-  //     },
-  //     selectedOption:"",
-  //     correctOption:'a',
-  //     marks:1,
-  //     visited:true
-  //   },
-  //   {
-  //     question:"What is the captial of MP?",
-  //     options:{
-  //       a:"Indore",
-  //       b:"Mandsaur",
-  //       c:"Bhopal",
-  //       d:"None of the Above"
-  //     },
-  //     selectedOption:"",
-  //     correctOption:'c',
-  //     marks:1,
-  //     visited:false
-  //   },
-  //   {
-  //     question:"What is the captial of Gujrat?",
-  //     options:{
-  //       a:"Varodara",
-  //       b:"Ahmedabad",
-  //       c:"Surat",
-  //       d:"Gandhinagar"
-  //     },
-  //     selectedOption:"",
-  //     correctOption:'d',
-  //     marks:1,
-  //     visited:false
-  //   },
-  //   {
-  //     question:"What is the captial of Rajasthan?",
-  //     options:{
-  //       a:"Udaipur",
-  //       b:"Jaipur",
-  //       c:"Kolkata",
-  //       d:"Chennai"
-  //     },
-  //     selectedOption:"",
-  //     correctOption:'b',
-  //     marks:1,
-  //     visited:false
-  //   },
-  //   {
-  //     question:"What is the captial of Haryana?",
-  //     options:{
-  //       a:"Chandigarh",
-  //       b:"Mumbai",
-  //       c:"Kolkata",
-  //       d:"Chennai"
-  //     },
-  //     selectedOption:"",
-  //     correctOption:'a',
-  //     marks:1,
-  //     visited:false
-  //   },
-  //   {
-  //     question:"What is the captial of Punjab?",
-  //     options:{
-  //       a:"Chandigarh",
-  //       b:"Mumbai",
-  //       c:"Kolkata",
-  //       d:"Chennai"
-  //     },
-  //     selectedOption:"",
-  //     correctOption:'a',
-  //     marks:1,
-  //     visited:false
-  //   },
-  //   {
-  //     question:"What is the captial of UP?",
-  //     options:{
-  //       a:"New Delhi",
-  //       b:"Mumbai",
-  //       c:"Lucknow",
-  //       d:"Chennai"
-  //     },
-  //     selectedOption:"",
-  //     correctOption:'b',
-  //     marks:1,
-  //     visited:false
-  //   },
-  //   {
-  //     question:"What is the captial of West Bengal?",
-  //     options:{
-  //       a:"New Delhi",
-  //       b:"Mumbai",
-  //       c:"Kolkata",
-  //       d:"Chennai"
-  //     },
-  //     selectedOption:"",
-  //     correctOption:'c',
-  //     marks:1,
-  //     visited:false
-  //   }
-  //     ],
-  //     previousCompleted:false
-  //   }
-  // ]
-    
-  // }
   constructor(private http: HttpClient, private router: Router,
               private activatedRoute: ActivatedRoute, private formBuilder: FormBuilder,
               private storeInfo: StoreInfoService, private matComp: MaterialComponentService) {
@@ -358,6 +137,7 @@ export class QuizComponent implements OnInit {
     
     await this.http.post(this.storeInfo.serverUrl+'/test/endTest', data, options).toPromise().then(async (response)=>{
       if(response['status'] == 200 ){
+        this.showSpinner = false;
         this.matComp.openSnackBar(response['body']['message'],3000);
         this.router.navigateByUrl(`/course/${this.code}`);
       }
@@ -367,8 +147,82 @@ export class QuizComponent implements OnInit {
     this.showSpinner = false;
   }
 
-  markSubmit(q){
-    // this.quiz.sections[this.current.section].questions[this.current.question].selectedOption = q
+  async submitQuestion(currentQuestion,questionType){
+    this.showSpinner = true;
+    let answer = [];
+    let resAnswer;
+
+    if(questionType == 'mcq'){
+      for(let x of this.questions[currentQuestion]['options']){
+        if(x['response']){
+          answer.push(x['code']);
+        }
+      }
+      resAnswer = (answer.sort()).toString();
+    } else if(questionType == 'trueFalse'){
+      resAnswer = this.questions[currentQuestion]['response'];
+    } else {
+      this.showSpinner = false;
+      return;
+    }
+    
+    const options = {
+      observe: 'response' as 'body',
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json',
+        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+      })
+    };
+    let data = {
+      questionId : this.questions[currentQuestion]['questionId'],
+      questionType: questionType,
+      answer: resAnswer,
+      courseCode: this.code,
+      userTestRecordId: this.userTestRecordId
+    }
+    await this.http.post(this.storeInfo.serverUrl+'/test/submitQuestion',data,options).toPromise().then(response=>{
+      this.matComp.openSnackBar(response['body']['message'],2000);
+    },error=>{
+      console.log(error)
+      this.matComp.openSnackBar(error,3000);
+    })
+    this.showSpinner = false;
+  }
+
+  async submitCodingQuestion(selectedCodingQuestion, submitCode, langId, langVersion) {
+    this.showSpinner = true;
+    this.submitted = true;
+    const options = {
+      observe: 'response' as 'body',
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json',
+        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+      })
+    };
+
+    // fetch user code from the child component, passed in function
+    // console.log(submitCode);
+    let data = {
+      questionId : this.questions[selectedCodingQuestion]['questionId'],
+      questionType: 'codingQuestion',
+      courseCode: this.code,
+      submitCode: submitCode,
+      langId: langId,
+      langVersion: langVersion
+    }
+    // console.log(data);
+    await this.http.post(this.storeInfo.serverUrl+'/test/submitQuestion',data,options).toPromise().then(response=>{
+      if (response['body']['error']) {
+        this.matComp.openSnackBar(response['body']['error']['message'],10000);  
+      }
+      this.matComp.openSnackBar(response['body']['message'],10000);
+    },error=>{
+      console.log(error)
+      this.matComp.openSnackBar(error['error']['message'],3000);
+    })
+    
+    this.showSpinner = false;
+    this.submitted = false;
   }
   
   nextQuestion(){

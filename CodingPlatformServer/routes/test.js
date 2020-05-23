@@ -7,6 +7,8 @@ const isNotStudent = require('../middleware/is-not-student');
 const isStudent = require('../middleware/is-student');
 const isTestEnrolled = require('../middleware/is-test-enrolled');
 const isWithinDuration = require('../middleware/is-within-test-duration');
+
+const isAnswerCorrect = require('../middleware/test-evaluation/is-answer-correct');
 const testController = require('../controllers/test');
 
 router.get('/getTitles',isAuth,getRole,testController.getTestsTitles);
@@ -16,6 +18,7 @@ router.post('/saveTestData',isAuth,getRole,isNotStudent,testController.saveTestD
 router.post('/startTest',isAuth,getRole,isNotStudent,testController.startTest);
 router.post('/joinTest',isAuth,getRole,isStudent,isTestEnrolled,testController.joinTest);
 router.post('/submitSection',isAuth,getRole,isStudent,testController.submitSection);
+router.post('/submitQuestion',isAuth,getRole,isStudent,isAnswerCorrect,testController.submitQuestion);
 router.post('/endTest',isAuth,getRole,isStudent,testController.endTest);
 
 router.get('/getTestData',isAuth,getRole,isNotStudent,testController.getTestData);

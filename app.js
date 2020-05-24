@@ -38,23 +38,27 @@ app.use('/test',testRoute);
 app.use('/practice',practiceRoute);
 app.use(ideRunnerRoute);
 
-// // enable cross origin
-// function enableCrossOrigin() {
-//     app.use((req, res, next) => {
-//         const origin = req.headers.origin;
-//         if (origin && typeof origin === 'string') {
-//             res.setHeader('Access-Control-Allow-Origin', origin);
-//             res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-//             res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-//             res.setHeader('Access-Control-Allow-Credentials', 'true');
-//         }
-//         next();
-//     });
-// };
+// enable cross origin
+function enableCrossOrigin() {
+    app.use((req, res, next) => {      
+        const origin = req.headers.origin;
+        if (origin && typeof origin === 'string') {
+            // Website you wish to allow to connect
+            res.setHeader('Access-Control-Allow-Origin', origin);
+            // Request methods you wish to allow
+            res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+            // Request headers you wish to allow
+            res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+            // Set to true if you need the website to include cookies in the requests sent
+            // to the API (e.g. in case you use sessions)
+            res.setHeader('Access-Control-Allow-Credentials', true);
+        }
+        // Pass to next layer of middleware
+        next();
+    });
+};
 
-// if (process.env.NODE_ENV != 'test') {
-//     enableCrossOrigin();
-// }
+enableCrossOrigin();
 
 // connect with mongoose
 mongoose.connect("mongodb+srv://pratikparmar:dafiQxSJ4qttuhwr@cluster0-ihjbl.mongodb.net/CodingPlatform?retryWrites=true&w=majority",

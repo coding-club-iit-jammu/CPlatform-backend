@@ -32,11 +32,15 @@ exports.addPracticeQuestion = async (req,res,next)=>{
 
 exports.getMCQ = async (req,res,next)=>{
     const courseId = req.courseId;
-    const solvedQuestions = req.solvedQuestions;
+    let solvedQuestions = [];
+    if(req.solvedQuestions){
+        solvedQuestions = req.solvedQuestions.map(String);
+    }
     let course = await Course.findById(courseId)
                         .select('practiceQuestions.mcq')
                         .populate({
-                            path: 'practiceQuestions.mcq'
+                            path: 'practiceQuestions.mcq',
+                            model:'MCQ'
                         });
     if(!course){
         res.status(500).json({message:"Try Again"});
@@ -44,7 +48,8 @@ exports.getMCQ = async (req,res,next)=>{
     }
     course = course.toObject();
     for(let x of course['practiceQuestions']['mcq']){
-        x.isSolved = solvedQuestions.includes(x._id.toString()); 
+        x.isSolved = solvedQuestions.includes(x['_id'].toString()); 
+
         for(let y of x['options']){
             delete y.isCorrect;
             y['response'] = false;
@@ -53,9 +58,21 @@ exports.getMCQ = async (req,res,next)=>{
     res.status(200).json(course['practiceQuestions']['mcq']);
 }
 
+const matchQuestions = (solvedQuestions,questionId) => {
+    for(let x of solvedQuestions){
+        if(x.toString()==questionId.toString()){
+            return true;
+        }
+    }
+    return false;
+}
+
 exports.getTrueFalse = async (req,res,next)=>{
     const courseId = req.courseId;
-    const solvedQuestions = req.solvedQuestions;
+    let solvedQuestions = [];
+    if(req.solvedQuestions){
+        solvedQuestions = req.solvedQuestions.map(String);
+    }
     let course = await Course.findById(courseId)
                         .select('practiceQuestions.trueFalse')
                         .populate({
@@ -67,7 +84,7 @@ exports.getTrueFalse = async (req,res,next)=>{
     }
     course = course.toObject();
     for(let x of course['practiceQuestions']['trueFalse']){
-        x.isSolved = solvedQuestions.includes(x._id.toString()); 
+        x.isSolved = matchQuestions(solvedQuestions,x['_id']);
         delete x.answer;
         x['response'] = "";
     }
@@ -83,7 +100,11 @@ extractContent = async (fileName) => {
 
 exports.getCodingQuestion = async (req,res,next)=>{
     const courseId = req.courseId;
-    // const solvedQuestions = req.solvedQuestions;
+    let solvedQuestions = [];
+    if(req.solvedQuestions){
+        solvedQuestions = req.solvedQuestions.map(String);
+    }
+    
     let course = await Course.findById(courseId)
                         .select('practiceQuestions.codingQuestion')
                         .populate({
@@ -95,6 +116,7 @@ exports.getCodingQuestion = async (req,res,next)=>{
     }
     course = course.toObject();
     for (let x of course['practiceQuestions']['codingQuestion']) {
+        x.isSolved = matchQuestions(solvedQuestions,x['_id']);
         delete x.testcases;
         // read the files to get the codes to fill in IDE     
         x.header = await extractContent(x.header);
@@ -105,7 +127,6 @@ exports.getCodingQuestion = async (req,res,next)=>{
 }
 
 exports.submitMCQ = async (req, res, next) => {
-    console.log("SUBMITTING");
     const questionId = req.body.questionId;
     const response = req.body.answer;
     const isCorrect = req.isCorrect;
@@ -117,7 +138,7 @@ exports.submitMCQ = async (req, res, next) => {
         res.status(500).json({message:"Try Again"});
         return;
     }
-    console.log(userRecord);
+    
     userRecord.score += 3;
     userRecord['questions']['mcq'].push({
         question: questionId,
@@ -136,7 +157,6 @@ exports.submitMCQ = async (req, res, next) => {
 }
 
 exports.submitTrueFalse = async (req, res, next) => {
-    console.log("SUBMITTING");
     const questionId = req.body.questionId;
     const response = req.body.answer;
     const isCorrect = req.isCorrect;
@@ -182,7 +202,6 @@ exports.submitCodingQuestion = async (req, res, next) => {
         res.status(500).json({message:"Try Again"});
         return;
     }
-    console.log(userRecord);
     userRecord.score += 5;
     userRecord['questions']['codingQuestion'].push({
         question: questionId,

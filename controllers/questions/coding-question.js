@@ -32,21 +32,21 @@ const shiftFile = async (courseCode,currPath,cl)=>{
     }
 
     // if testcase file, extract it 
-    let zipPath = actualPath;
-    let folderPath = path.join(actualPath, '..', path.basename(fileName, ".zip"));
-    // console.log(folderPath);
-    await mkdirp(folderPath);
     if (cl == "testcases") {
+        let zipPath = actualPath;
+        let folderPath = path.join(actualPath, '..', path.basename(fileName, ".zip"));
+        // console.log(folderPath);
+        await mkdirp(folderPath);
         let zip = new AdmZip(zipPath);
         zip.extractAllTo(folderPath, true);
+        // remove the zip file
+        fs.unlink(zipPath, () => {
+            ;
+        })
+        actualPath = folderPath;
     }
-    // remove the zip file
-    fs.unlink(zipPath, () => {
-        ;
-    })
  
     let serverPath = path.join(__dirname, '..', '..');
-    actualPath = folderPath;
     // get the path from serverPath to the actualPath
     let finalPath = path.relative(serverPath, actualPath);
 
@@ -135,36 +135,45 @@ exports.editCodingQuestion = async (req,res,next)=>{
 
     if(req.files['testcases']){
         let oldUrl = codingQuestion.testcases;
-        oldUrl = await getAbsolutePath(oldUrl);
+        if (oldUrl) {
+            oldUrl = await getAbsolutePath(oldUrl);
+            fs.rmdir(oldUrl, () => {
+                ;
+            })
+        }
         codingQuestion.testcases = await shiftFile(req.body.courseCode, req.files['testcases'][0].path,"testcases");
-        if (oldUrl) fs.rmdir(oldUrl, () => {
-            ;
-        })
+        
     }
 
     if(req.files['header']){
         let oldUrl = codingQuestion.header;
-        oldUrl = await getAbsolutePath(oldUrl);
+        if (oldUrl) {
+            oldUrl = await getAbsolutePath(oldUrl);
+            fs.unlink(oldUrl,(err)=>{
+                console.log(err); // null if successfull
+            });
+        }
         codingQuestion.header = await shiftFile(req.body.courseCode, req.files['header'][0].path,"header");
-        if (oldUrl) fs.unlink(oldUrl,(err)=>{
-            console.log(err); // null if successfull
-        });
     }
     if (req.files['mainCode']) {
         let oldUrl = codingQuestion.mainCode;
-        oldUrl = await getAbsolutePath(oldUrl);
+        if (oldUrl) {
+            oldUrl = await getAbsolutePath(oldUrl);
+            fs.unlink(oldUrl,(err)=>{
+                console.log(err); // null if successfull
+            });
+        }
         codingQuestion.mainCode = await shiftFile(req.body.courseCode,req.files['mainCode'][0].path,"mainCode");
-        if (oldUrl) fs.unlink(oldUrl,(err)=>{
-            ;
-        })
     }
     if(req.files['footer']){
         let oldUrl = codingQuestion.footer;
-        oldUrl = await getAbsolutePath(oldUrl);
+        if (oldUrl) {
+            oldUrl = await getAbsolutePath(oldUrl);
+            fs.unlink(oldUrl,(err)=>{
+                ;
+            });
+        }
         codingQuestion.footer = await shiftFile(req.body.courseCode, req.files['footer'][0].path,"footer");
-        if (oldUrl) fs.unlink(oldUrl,(err)=>{
-            ;
-        });
     }
 
     const result = await codingQuestion.save();
@@ -202,14 +211,34 @@ exports.getItem = async (req, res, next) => {
         res.status(404).json({message:"File Not Found."});
         return;
     }
-    
-    res.status(200).download(codingQuestion[item],(err)=>{
-        if(err){
-            console.log(err);
-            res.status(404).json({message:'File not found.'});
-            return;   
+
+    let filepath = await getAbsolutePath(codingQuestion[item]);
+    if (item == "testcases") {
+        filepath = path.join(filepath, "testCases");
+        // need to zip the file and then return
+        let zip = new AdmZip();
+        let files = fs.readdirSync(filepath);
+        for (let file of files) {
+            zip.addLocalFile(path.join(filepath, file));
         }
-    })
+        zip.writeZip("testcases.zip");
+        res.status(200).download("testcases.zip", (err) => {
+            if(err){
+                console.logls(err);
+                res.status(404).json({message:'File not found.'});
+                return;   
+            }
+        });
+        // TODO: delete the testcases.zip file
+    } else {
+        res.status(200).download(filepath,(err)=>{
+            if(err){
+                console.log(err);
+                res.status(404).json({message:'File not found.'});
+                return;   
+            }
+        });
+    }
 }
 
 exports.deleteCoding = async (req,res,next)=>{

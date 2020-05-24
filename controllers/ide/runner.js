@@ -45,7 +45,7 @@ exports.runTestCase = async (id, body) => {
     }
 
     // send another request after a delay of 3 seconds so that program is run till then
-    await timeout(2000);
+    await timeout(4000);
     
     // fetch the submission status using getSubmissionStatus handler
     try {

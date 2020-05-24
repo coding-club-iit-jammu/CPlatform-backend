@@ -17,12 +17,12 @@ router.post('/addQuestion',isAuth,getRole,isNotStudent, testController.addQuesti
 router.post('/saveTestData',isAuth,getRole,isNotStudent,testController.saveTestData);
 router.post('/startTest',isAuth,getRole,isNotStudent,testController.startTest);
 router.post('/joinTest',isAuth,getRole,isStudent,isTestEnrolled,testController.joinTest);
-router.post('/submitSection',isAuth,getRole,isStudent,testController.submitSection);
-router.post('/submitQuestion',isAuth,getRole,isStudent,isAnswerCorrect,testController.submitQuestion);
-router.post('/endTest',isAuth,getRole,isStudent,testController.endTest);
+router.post('/submitSection',isAuth,getRole,isStudent,isWithinDuration,testController.submitSection);
+router.post('/submitQuestion',isAuth,getRole,isStudent,isWithinDuration,isAnswerCorrect,testController.submitQuestion);
+router.post('/endTest',isAuth,getRole,isStudent,isWithinDuration,testController.endTest);
 
 router.get('/getTestData',isAuth,getRole,isNotStudent,testController.getTestData);
-router.get('/getQuestions',isAuth,getRole,isStudent,testController.getQuestions);
-router.get('/getEndTime',isAuth,getRole,isStudent,testController.getEndTime);
+router.get('/getQuestions',isAuth,getRole,isStudent,isWithinDuration,testController.getQuestions);
+router.get('/getEndTime',isAuth,getRole,isStudent,isWithinDuration,testController.getEndTime);
 
 module.exports = router;

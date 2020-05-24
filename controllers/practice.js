@@ -37,7 +37,7 @@ exports.getMCQ = async (req,res,next)=>{
         solvedQuestions = req.solvedQuestions.map(String);
     }
     let course = await Course.findById(courseId)
-                        .select('practiceQuestions.mcq')
+                        .select('practiceQuestions.mcq title')
                         .populate({
                             path: 'practiceQuestions.mcq',
                             model:'MCQ'
@@ -55,7 +55,12 @@ exports.getMCQ = async (req,res,next)=>{
             y['response'] = false;
         }
     }
-    res.status(200).json(course['practiceQuestions']['mcq']);
+    let data = {
+        role : req.role,
+        title : course.title,
+        mcq : course['practiceQuestions']['mcq']
+    }
+    res.status(200).json(data);
 }
 
 const matchQuestions = (solvedQuestions,questionId) => {
@@ -74,7 +79,7 @@ exports.getTrueFalse = async (req,res,next)=>{
         solvedQuestions = req.solvedQuestions.map(String);
     }
     let course = await Course.findById(courseId)
-                        .select('practiceQuestions.trueFalse')
+                        .select('practiceQuestions.trueFalse title')
                         .populate({
                             path: 'practiceQuestions.trueFalse'
                         });
@@ -88,7 +93,12 @@ exports.getTrueFalse = async (req,res,next)=>{
         delete x.answer;
         x['response'] = "";
     }
-    res.status(200).json(course['practiceQuestions']['trueFalse']);
+    let data = {
+        role : req.role,
+        title : course.title,
+        trueFalse : course['practiceQuestions']['trueFalse']
+    }
+    res.status(200).json(data);
 }
 
 extractContent = async (fileName) => {
@@ -106,7 +116,7 @@ exports.getCodingQuestion = async (req,res,next)=>{
     }
     
     let course = await Course.findById(courseId)
-                        .select('practiceQuestions.codingQuestion')
+                        .select('practiceQuestions.codingQuestion title')
                         .populate({
                             path: 'practiceQuestions.codingQuestion'
                         });
@@ -123,7 +133,12 @@ exports.getCodingQuestion = async (req,res,next)=>{
         x.footer = await extractContent(x.footer);
         x.mainCode = await extractContent(x.mainCode);
     }
-    res.status(200).json(course['practiceQuestions']['codingQuestion']);
+    let data = {
+        role : req.role,
+        title : course.title,
+        codingQuestion : course['practiceQuestions']['codingQuestion']
+    }
+    res.status(200).json(data);
 }
 
 exports.submitMCQ = async (req, res, next) => {

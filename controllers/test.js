@@ -114,6 +114,13 @@ exports.getTestData = async (req,res,next) => {
 
 }
 
+function calcTime(time){
+    var d = new Date();
+    var utc = time+(d.getTimezoneOffset()*60000);
+    var nd = new Date(utc+(3600000)*(5.5));
+    return nd.toString();
+}
+
 exports.saveTestData = async (req,res,next)=>{
     const _id = req.body._id;
     const testData = req.body;
@@ -126,12 +133,19 @@ exports.saveTestData = async (req,res,next)=>{
 
     test.title = testData['title'];
     test.instructions = testData['instructions'];
+
+    
+    
     for(let x of testData['groups']){
         
+        let d1 = new Date(x['startTime'].slice(0,10)+" "+x['startTime'].slice(11));
+        let d2 = new Date(x['endTime'].slice(0,10)+" "+x['endTime'].slice(11));
+        
         if(!test.startTest){
-            x['startTime'] = new Date(x['startTime']).toLocaleString('en-In',{timeZone:'Asia/Kolkata'});
+            x['startTime'] = calcTime(d1.getTime());
         }
-        x['endTime'] = new Date(x['endTime']).toLocaleString('en-In',{timeZone:'Asia/Kolkata'});
+        x['endTime'] = calcTime(d2.getTime());
+        
     }
 
     test.groups = testData['groups'];
@@ -439,6 +453,8 @@ exports.getQuestions = async (req,res,next) => {
         res.status(500).json({message:"Try Again"});
         return;
     }
+
+    console.log(userTestRecord);
 
     if(userTestRecord.ended){
         res.status(200).json({message:"Test Already Ended.",ended:true});

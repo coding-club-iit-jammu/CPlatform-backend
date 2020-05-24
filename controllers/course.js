@@ -9,6 +9,14 @@ const Post = require('../models/post');
 const Assignment = require('../models/assignment');
 const UserPracticeRecord = require('../models/practice-record-user');
 
+function calcTime(time){
+    var d = new Date();
+    var utc = time+(d.getTimezoneOffset()*60000);
+    var nd = new Date(utc+(3600000)*(5.5));
+    return nd.toString();
+}
+
+
 exports.addCourse = (req,res,next) => {
     
     const title = req.body.title;
@@ -351,7 +359,7 @@ exports.addPost = async (req,res,next) => {
     if(!req.file){
         post = new Post({
             by: name,
-            date: new Date(),
+            date: calcTime(new Date().getTime()),
             title: title,
             description: description,
             audience: audience
@@ -377,7 +385,7 @@ exports.addPost = async (req,res,next) => {
 
         post = new Post({
             by: name,
-            date: new Date(),
+            date: calcTime(new Date().getTime()),
             title: title,
             description: description,
             file: newPath,
@@ -417,11 +425,13 @@ exports.addAssignment = async (req,res,next) => {
     const courseId = req.courseId;
     const title = req.body.title;
     const description = req.body.description;
-    const deadline = req.body.deadline;
+    let deadline = req.body.deadline;
     const marks = req.body.marks;
     const requiresSubmission = req.body.requiresSubmission;
 
     let assignment;
+
+    deadline = calcTime(new Date(deadline.slice(0,10)+" "+deadline.slice(11)).getTime());
 
     if(req.file){
 

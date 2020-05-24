@@ -38,23 +38,23 @@ app.use('/test',testRoute);
 app.use('/practice',practiceRoute);
 app.use(ideRunnerRoute);
 
-// enable cross origin
-function enableCrossOrigin() {
-    app.use((req, res, next) => {
-        const origin = req.headers.origin;
-        if (origin && typeof origin === 'string') {
-            res.setHeader('Access-Control-Allow-Origin', origin);
-            res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-            res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-            res.setHeader('Access-Control-Allow-Credentials', 'true');
-        }
-        next();
-    });
-};
+// // enable cross origin
+// function enableCrossOrigin() {
+//     app.use((req, res, next) => {
+//         const origin = req.headers.origin;
+//         if (origin && typeof origin === 'string') {
+//             res.setHeader('Access-Control-Allow-Origin', origin);
+//             res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+//             res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+//             res.setHeader('Access-Control-Allow-Credentials', 'true');
+//         }
+//         next();
+//     });
+// };
 
-if (process.env.NODE_ENV != 'test') {
-    enableCrossOrigin();
-}
+// if (process.env.NODE_ENV != 'test') {
+//     enableCrossOrigin();
+// }
 
 // connect with mongoose
 mongoose.connect("mongodb+srv://pratikparmar:dafiQxSJ4qttuhwr@cluster0-ihjbl.mongodb.net/CodingPlatform?retryWrites=true&w=majority",

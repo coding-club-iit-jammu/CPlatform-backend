@@ -22,9 +22,8 @@ const app = express();
 app.use(cors());
 
 app.use((req, res, next) => {
-    const origin = "http://pratikparmar.me";
     // Website you wish to allow to connect
-    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Origin', "*");
     // Request methods you wish to allow
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
     // Request headers you wish to allow

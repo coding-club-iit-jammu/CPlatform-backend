@@ -129,9 +129,9 @@ exports.getCodingQuestion = async (req,res,next)=>{
         x.isSolved = matchQuestions(solvedQuestions,x['_id']);
         delete x.testcases;
         // read the files to get the codes to fill in IDE     
-        x.header = await extractContent(x.header);
-        x.footer = await extractContent(x.footer);
-        x.mainCode = await extractContent(x.mainCode);
+        if (x.header) x.header = await extractContent(x.header);
+        if (x.footer) x.footer = await extractContent(x.footer);
+        if (x.mainCode) x.mainCode = await extractContent(x.mainCode);
     }
     let data = {
         role : req.role,

@@ -114,13 +114,6 @@ exports.getTestData = async (req,res,next) => {
 
 }
 
-function calcTime(time){
-    var d = new Date();
-    var utc = time+(d.getTimezoneOffset()*60000);
-    var nd = new Date(utc+(3600000)*(5.5));
-    return nd.toString();
-}
-
 exports.saveTestData = async (req,res,next)=>{
     const _id = req.body._id;
     const testData = req.body;
@@ -142,9 +135,9 @@ exports.saveTestData = async (req,res,next)=>{
         let d2 = new Date(x['endTime'].slice(0,10)+" "+x['endTime'].slice(11));
         
         if(!test.startTest){
-            x['startTime'] = calcTime(d1.getTime());
+            x['startTime'] = new Date(d1.startTime());
         }
-        x['endTime'] = calcTime(d2.getTime());
+        x['endTime'] = new Date(d2.startTime());
         
     }
 

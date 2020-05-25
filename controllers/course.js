@@ -9,14 +9,6 @@ const Post = require('../models/post');
 const Assignment = require('../models/assignment');
 const UserPracticeRecord = require('../models/practice-record-user');
 
-function calcTime(time){
-    var d = new Date();
-    var utc = time+(d.getTimezoneOffset()*60000);
-    var nd = new Date(utc+(3600000)*(5.5));
-    return nd.toString();
-}
-
-
 exports.addCourse = (req,res,next) => {
     
     const title = req.body.title;
@@ -359,7 +351,7 @@ exports.addPost = async (req,res,next) => {
     if(!req.file){
         post = new Post({
             by: name,
-            date: calcTime(new Date().getTime()),
+            date: new Date(),
             title: title,
             description: description,
             audience: audience
@@ -385,7 +377,7 @@ exports.addPost = async (req,res,next) => {
 
         post = new Post({
             by: name,
-            date: calcTime(new Date().getTime()),
+            date: new Date(),
             title: title,
             description: description,
             file: newPath,
@@ -431,7 +423,8 @@ exports.addAssignment = async (req,res,next) => {
 
     let assignment;
 
-    deadline = calcTime(new Date(deadline.slice(0,10)+" "+deadline.slice(11)).getTime());
+    // console.log(new Date(deadline.slice(0,10)+" "+deadline.slice(11)));
+    deadline = new Date(deadline);
 
     if(req.file){
 

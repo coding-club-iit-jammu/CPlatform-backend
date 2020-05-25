@@ -7,13 +7,6 @@ const Assignment = require('../models/assignment');
 const Course = require('../models/course');
 const Submission = require('../models/submission');
 
-function calcTime(time){
-    var d = new Date();
-    var utc = time+(d.getTimezoneOffset()*60000);
-    var nd = new Date(utc+(3600000)*(5.5));
-    return nd.toString();
-}
-
 exports.getAssignmentDoc = (req, res, next) => {
     const assignmentId = req.query.assignmentId;
 
@@ -153,9 +146,9 @@ exports.submitAssignment = async (req,res,next) => {
         res.status(404).json({message:"Try Again"});
     }
 
-    let currentTime = calcTime(new Date().getTime());
+    let currentTime = new Date();
 
-    if(new Date(calcTime(new Date(assignment.deadline).getTime())) < new Date(currentTime)){
+    if(new Date(assignment.deadline) < currentTime) {
         res.status(200).json({message:"Deadline Passed. Contact Instructor."})
         return;
     }
@@ -192,7 +185,7 @@ exports.submitAssignment = async (req,res,next) => {
         if(!moved)
             newPath = oldPath;
         
-        oldSubmission.submissionTime = calcTime(new Date().getTime());
+        oldSubmission.submissionTime = new Date();
         oldSubmission.submissionUrl = newPath;
 
         let result = await oldSubmission.save();
@@ -245,7 +238,7 @@ exports.shiftDeadline = (req,res,next) => {
     const assignmentId = req.body.assignmentId;
     let newDeadline = req.body.newDeadline;
     
-    newDeadline = calcTime(new Date(newDeadline.slice(0,10)+" "+newDeadline.slice(11)).getTime());
+    newDeadline = new Date(newDeadline);
     Assignment.findById(assignmentId).then(assignment => {
         if(!assignment){
             res.status(404).json({'message':'Try Again.'});

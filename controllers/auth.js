@@ -3,33 +3,115 @@ const bcrypt = require('bcrypt');
 
 const User = require('../models/user');
 
+const jwtConfig = require('../jwtConfig');
 
-exports.login = (req,res,next) =>{
-    User.findOne({'email':req.body.email}).then((result)=>{
-        if(result){
-            bcrypt.compare(req.body.password,result.password,).then(match=>{
-                if(match){
-                    const token = jwt.sign(
-                                    {
-                                        email:result.email,
-                                        name: result.name,
-                                        userId:result._id.toString()
-                                    },
-                                    "ThisIsASecretKeyPratikParmarASDFGHJKLZXCVBNMQWERTYUIOP",
-                                    {expiresIn: '2h'});
-                    res.status(200).json({token:token,userId:result._id.toString(),message:"Login Successful"});
-                    
-                } else {
-                    console.log(err);
-                    res.status(200).json({message:"Login Unsuccessful, Email or Password is wrong."})
-                }
-            })
+const accessTokenSecret = jwtConfig.accessTokenSecret;
+const refreshTokenSecret = jwtConfig.refreshTokenSecret;
+
+function getAccessToken(payload) {
+    return jwt.sign(payload, accessTokenSecret, { expiresIn: '15min' });
+}
+
+const getRefreshToken = async (payload,user) => {
+    
+    const userRefreshTokens = user['tokens'];
+    
+    if (userRefreshTokens.length >= 5) {
+     user['tokens'] = [];
+    } 
+    
+    const refreshToken = jwt.sign(payload, refreshTokenSecret, { expiresIn: '30d' });
+    user['tokens'].push(refreshToken);
+    const result = await user.save();
+    if(!result){
+        return null;
+    } 
+    return refreshToken;
+}
+
+async function refreshToken(token) {
+    const decodedToken = jwt.verify(token, refreshTokenSecret);
+    const user = await User.findById(decodedToken.userId).select('_id email tokens name');
+    if (!user) {
+        throw new Error(`Access is forbidden`);
+    } // get all user's refresh tokens from DB
+    
+    const allRefreshTokens = user['tokens'];
+
+    if (!allRefreshTokens || !allRefreshTokens.length) {
+        throw new Error(`There is no refresh token for the user with`);
+    } 
+    const currentRefreshToken = allRefreshTokens.includes(token); 
+    if (!currentRefreshToken) {
+        throw new Error(`Refresh token is wrong`);
+    }
+    
+    const payload = {
+     userId : user.id,
+     email: user.email,
+     name: user.name
+    };
+    
+    const newRefreshToken = getUpdatedRefreshToken(payload);
+    const newAccessToken = getAccessToken(payload);
+    user['tokens'] = [newRefreshToken];
+    const result = await user.save();
+    if(!result){
+        throw new Error(`Try Again`);
+    }
+    return {
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken
+    };
+}
+
+function getUpdatedRefreshToken(payload) {
+    const newRefreshToken = jwt.sign(payload, refreshTokenSecret, { expiresIn: '30d' });
+    return newRefreshToken;
+}
+
+exports.login = async (req,res,next) =>{
+    let result = await User.findOne({'email':req.body.email}).select('name email _id tokens password');
+    
+    if(result){
+        const match = await bcrypt.compare(req.body.password,result.password);
+        if(match){
+            const payload = {
+                email: result.email,
+                name: result.name,
+                userId: result._id.toString()
+            };
+            const token = getAccessToken(payload);
+            const refreshToken = await getRefreshToken(payload,result);
+            
+            if(refreshToken){
+                res.status(200).json({token:token,refreshToken:refreshToken,userId:result._id.toString(),message:"Login Successful"});
+            } else {
+                res.status(200).json({message:"Login Unsuccessful."});
+            }
+                        
         } else {
-            res.status(200).json({message:"Login Unsuccessful, Email or Password is wrong."})
+                res.status(200).json({message:"Login Unsuccessful, Email or Password is wrong."})
         }
-    });
+    } else {
+        res.status(200).json({message:"Login Unsuccessful, Email or Password is wrong."})
+    }
     
 }
+
+exports.refreshToken = async (req, res, next) => {
+    const refreshTok = req.body.refreshToken;;
+    if (!refreshTok) {
+        return res.status(403).send('Access is forbidden');
+    } 
+    try {
+        const newTokens = await refreshToken(refreshTok, res);
+        res.status(200).json(newTokens);
+    } catch (err) {
+        const message = (err && err.message) || err;
+        res.status(403).send(message);
+    }
+};
 
 exports.createUser = async (req,res,next) =>{
     const name = req.body.name;
@@ -51,7 +133,6 @@ exports.createUser = async (req,res,next) =>{
         if(result){
             res.status(201).json({'added':true,message:"User Added Successfully."})
         } else {
-            console.log("Error occured while adding user.");
             res.status(500).json({message:"Try Again"})
         }
         

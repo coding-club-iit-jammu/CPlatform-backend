@@ -1,26 +1,42 @@
 const jwt = require('jsonwebtoken');
+const jwtConfig = require('../jwtConfig');
+
+const accessTokenSecret = jwtConfig.accessTokenSecret;
+const refreshTokenSecret = jwtConfig.refreshTokenSecret;
+
+function verifyJWTToken(token) {
+    return new Promise((resolve, reject) => {
+        if (!token.startsWith('Bearer')) {
+            return reject('Token is invalid');
+        }
+        token = token.slice(7);
+        jwt.verify(token, accessTokenSecret, (err, decodedToken) => {
+        if (err) {
+            return reject(err.message);
+        }
+        if (!decodedToken || !decodedToken.userId) {
+            return reject('Token is invalid');
+        }   
+        resolve(decodedToken);
+     })
+    });
+}
+
 
 module.exports = async (req,res,next) => {
     
-    //Getting Token from Header of Request.
+    const token = req.get('Authorization');
+    if (!token) {
+        res.status(401).send('Token is invalid');
+    } 
 
-    const token = req.get('Authorization').split(' ')[1];
-    let decodedToken;
-    try{
-        jwt.verify(token,'ThisIsASecretKeyPratikParmarASDFGHJKLZXCVBNMQWERTYUIOP',(err,decode)=>{
-            decodedToken = decode;
-            if(!decodedToken){
-                res.status(401).json({message:'Not Authenticated'});
-                return;
-            }
-        
-            req.userId = decodedToken.userId;
-            req.userEmail = decodedToken.email;
-            req.userName = decodedToken.name;
-            next();
-        })
-    } catch(err){
-        res.status(401).json({message:'Not Authenticated'});
-        return;
-    }
+    verifyJWTToken(token).then(user => {
+        req.userId = user.userId;
+        req.userEmail = user.email;
+        next();
+    }).catch(err => {
+        console.log("JWT Verification failed.");
+        res.status(401).send(err);
+    });
+
 };

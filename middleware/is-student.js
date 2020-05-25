@@ -4,7 +4,7 @@ module.exports = (req,res,next) => {
     if(req.role == 'student'){
         next();
     } else {
-        res.status(403).json({message:"Access Forbidden."});
+        res.status(404).json({message:"Access Forbidden."});
         return; 
     }
 }

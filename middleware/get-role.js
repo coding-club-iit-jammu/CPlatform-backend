@@ -49,7 +49,7 @@ module.exports = async (req, res, next) => {
     }
 
     if(!enrolled){
-        res.status(403).json({message:"Unauthorized Access."});
+        res.status(404).json({message:"Unauthorized Access."});
         return;
     }    
 

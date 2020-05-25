@@ -169,7 +169,7 @@ module.exports = async (req,res,next)=>{
 }
 
 compareOutputs = async (actual, expected) => {
-    return actual == expected;
+    return actual.trim() == expected.trim();
 }
 
 extractCases = async (files, testPath, inputs, outputs) => {

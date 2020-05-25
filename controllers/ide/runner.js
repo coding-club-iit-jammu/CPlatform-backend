@@ -44,13 +44,19 @@ exports.runTestCase = async (id, body) => {
         return -2;
     }
 
-    // send another request after a delay of 3 seconds so that program is run till then
-    await timeout(4000);
+    // send another request after a delay of 2 seconds so that program is run till then
+    await timeout(2000);
     
     // fetch the submission status using getSubmissionStatus handler
     try {
         let submissionData = await RequestHandler.RequestHandler.getSubmissionStatus(token, body.fields);
         console.log({ msg: 'getSubmissionStatus on success', params: submissionData });
+        if (submissionData.status.id <= 2) {
+            // make another fetch
+            await timeout(3000);
+            let submissionData2 = await RequestHandler.RequestHandler.getSubmissionStatus(token, body.fields);
+            return submissionData2;
+        }
         return submissionData;
     }
     catch (error) {

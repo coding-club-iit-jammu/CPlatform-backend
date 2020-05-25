@@ -135,9 +135,9 @@ exports.saveTestData = async (req,res,next)=>{
         let d2 = new Date(x['endTime'].slice(0,10)+" "+x['endTime'].slice(11));
         
         if(!test.startTest){
-            x['startTime'] = new Date(d1.startTime());
+            x['startTime'] = new Date(d1);
         }
-        x['endTime'] = new Date(d2.startTime());
+        x['endTime'] = new Date(d2);
         
     }
 

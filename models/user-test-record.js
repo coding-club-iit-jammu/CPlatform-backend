@@ -14,6 +14,10 @@ const testRecordSchema = new Schema({
         type:Boolean,
         default:false
     },
+    securedMarks:{
+        type: Number,
+        default: 0
+    },
     mcq:{
             submitted:{
                 type:Boolean,

@@ -31,6 +31,10 @@ module.exports = async (req,res,next) => {
         next();
         return;
     }
-    res.status(200).json({message:'Test Over.',ended:true});
+    if( d < new Date(grp['startTime']).getTime()){
+        res.status(200).json({message:`Test not started yet.`,ended:true});
+    } else {
+        res.status(200).json({message:'Test Over.',ended:true});
+    }
 
 }

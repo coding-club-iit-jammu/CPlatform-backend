@@ -1,8 +1,8 @@
+const mongoose = require('mongoose');
 const Course = require('../models/course');
 const Test = require('../models/test');
 const UserTestRecord = require('../models/user-test-record');
 const User = require('../models/user');
-
 exports.getTestsTitles = async (req,res,next)=>{
     const courseId = req.courseId;
     const course = await Course.findById(courseId).select('tests _id').populate('tests',"_id testId title instructions groups.groupId groups.startTime groups.endTime");
@@ -39,7 +39,18 @@ exports.createTest = async (req,res,next)=>{
         groups:course['groups'],
         records:[],
         startTest:false,
-        revealMarks:false
+        revealMarks:false,
+        stats:{
+            minMarks:{
+                marks:0,
+                students:[]
+            },
+            maxMarks:{
+                marks:0,
+                students:[]
+            },
+            avgMarks:0
+        }
     })
 
     const result = await test.save();
@@ -144,7 +155,9 @@ exports.saveTestData = async (req,res,next)=>{
     test.groups = testData['groups'];
     
     let mcq = [];
+    let testMarks = 0;
     for(let x of testData['mcq']){
+        testMarks += x['marks'];
         mcq.push({
             question:x['question'],
             marks:x['marks']
@@ -153,6 +166,7 @@ exports.saveTestData = async (req,res,next)=>{
 
     let trueFalse = [];
     for(let x of testData['trueFalse']){
+        testMarks += x['marks'];
         trueFalse.push({
             question:x['question'],
             marks:x['marks']
@@ -161,6 +175,7 @@ exports.saveTestData = async (req,res,next)=>{
 
     let codingQuestion = [];
     for(let x of testData['codingQuestion']){
+        testMarks += x['marks'];
         codingQuestion.push({
             question:x['question'],
             marks:x['marks']
@@ -171,6 +186,7 @@ exports.saveTestData = async (req,res,next)=>{
         test.questions.mcq = mcq;
         test.questions.trueFalse = trueFalse;
         test.questions.codingQuestion = codingQuestion;
+        test.marks = testMarks;
     }
     const result = await test.save();
 
@@ -374,7 +390,7 @@ exports.submitQuestion = async (req,res,next) => {
     const response = req.body.answer;
     const questionType = req.body.questionType;
     const userTestRecordId = req.body.userTestRecordId;
-    const userTestRecord = await UserTestRecord.findById(userTestRecordId).select(`${questionType}`);
+    const userTestRecord = await UserTestRecord.findById(userTestRecordId).select(`${questionType} securedMarks`);
     let mcq = userTestRecord[questionType]['problems'].find(obj=>obj.question.toString() == questionId);
     if(!mcq){
         res.status(200).json({message:"Submission Unsuccessful, Try Again."});
@@ -383,8 +399,10 @@ exports.submitQuestion = async (req,res,next) => {
     mcq.response = response;
     
     if(isCorrect){
+        userTestRecord.securedMarks += mcq.marks - mcq.securedMarks;
         mcq.securedMarks = mcq.marks;
     } else {
+        userTestRecord.securedMarks -= mcq.securedMarks;
         mcq.securedMarks = 0;
     }
 
@@ -447,8 +465,6 @@ exports.getQuestions = async (req,res,next) => {
         return;
     }
 
-    console.log(userTestRecord);
-
     if(userTestRecord.ended){
         res.status(200).json({message:"Test Already Ended.",ended:true});
     }
@@ -470,7 +486,8 @@ exports.getQuestions = async (req,res,next) => {
                 questionId:x.question._id,
                 response:x.response?x.response:false,
                 marks:x.marks,
-                visited:(x.securedMarks == 0?false:true)
+                visited:(x.securedMarks == 0?false:true),
+                submitted:(x.securedMarks == 0?false:true)
             })
         }
         if(data.questions.length == 0){
@@ -497,18 +514,19 @@ exports.getQuestions = async (req,res,next) => {
             }
             
             let splitResponse = x.response.split(',');
-            console.log(splitResponse);
             for(let i = 0; i<splitResponse.length;i++){
+                if(splitResponse[i].trim()=='')
+                    continue;
                 opts[parseInt(splitResponse[i])-1].response = true; 
             }
-            console.log(opts);
             data['questions'].push({
                 question:x.question.question,
                 questionId:x.question._id,
                 options:opts,
                 response:x.response,
                 marks:x.marks,
-                visited:x.securedMarks==0?false:true
+                visited:(x.securedMarks==0?false:true),
+                submitted:(x.securedMarks==0?false:true)
             })
         }
         if(data.questions.length == 0){
@@ -538,6 +556,108 @@ exports.getQuestions = async (req,res,next) => {
     }
 
     res.status(200).json({message:"No Questions Left. You can end the test.",ended:true}    );
+}
+
+exports.revealMarks = async (req,res,next) => {
+    const test_id = req.body._id;
+    const test = await Test.findById(test_id).select('testId _id revealMarks records marks')
+                        .populate({
+                            path:'records',
+                            model:'UserTestRecord',
+                            select:'securedMarks userId'
+                        });
+    if(!test){
+        res.status(500).json({message:"Try Again"});
+        return;
+    }
+
+    if(test.revealMarks == true){
+        res.status(200).json({message:"Marks already published."});
+    }
+
+    test.revealMarks = true;
+
+    let maxMarks = 0, maxMarksStu = [];
+
+    let minMarks = test.marks, minMarksStu = [];
+    let avgMarks = 0.0;
+
+    for(let x of test['records']){
+        if(x.securedMarks > maxMarks){
+            maxMarks = x.securedMarks;
+            maxMarksStu = [x.userId];
+        } else if(x.securedMarks == maxMarks){
+            maxMarks.push(x.userId);
+        }
+
+        avgMarks+=x.securedMarks;
+
+        if(x.securedMarks < minMarks){
+            minMarks = x.securedMarks;
+            minMarksStu = [x.userId];
+        } else if(x.securedMarks == minMarks){
+            minMarksStu.push(x.userId);
+        }
+    }
+
+    avgMarks/=test['records'].length;
+
+    test.stats = {
+        "maxMarks":{
+            marks: maxMarks,
+            students:maxMarksStu
+        },
+        'minMarks':{
+            marks: minMarks,
+            students:minMarksStu
+        },
+        'avgMarks': avgMarks
+    }
 
 
+    const result = await test.save();
+    
+    if(!result){
+        res.status(500).json({message:"Try Again"});
+        return;
+    }
+
+    res.status(200).json({
+        message:"Marks Published."
+    });
+}
+
+
+exports.checkRevealMarks = async (req,res,next) => {
+    const testId = req.query.testId;
+    const test = await Test.findOne({testId:testId}).select('testId _id revealMarks');
+    if(!test){
+        res.status(500).json({message:"Try Again"});
+        return;
+    }
+
+    res.status(200).json({
+        test_id: test._id,
+        revealMarks: test.revealMarks
+    });
+}
+
+exports.getUserTestRecord = async (req,res,next) => {
+    const test_id = req.query.test_id;
+    const userId = mongoose.Schema.Types.ObjectId(req.userId);
+
+    const test = await Test.findById(test_id).select('revealMarks stats records').populate({
+        path:'records',
+        model:'UserTestRecord',
+        match:{
+            userId:userId
+        }
+    });
+    if(!test){
+        res.status(500).json({message:"Try Again"});
+        return;
+    }
+
+    console.log(test);
+    res.status(200).json(test);
 }

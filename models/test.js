@@ -11,6 +11,10 @@ const testSchema = new Schema({
         type: Boolean,
         default: false
     },
+    marks:{
+        type:Number,
+        default:0
+    },
     title:{
         type: String,
         required: true
@@ -22,6 +26,32 @@ const testSchema = new Schema({
     startTest:{
         type: Boolean,
         default: false
+    },
+    stats:{
+        maxMarks:{
+            marks:{
+                type: Number,
+                default: 0
+            },
+            students:[{
+                type:Schema.Types.ObjectId,
+                ref:'User'
+            }]
+        },
+        minMarks:{
+            marks:{
+                type: Number,
+                default: 0
+            },
+            students:[{
+                type:Schema.Types.ObjectId,
+                ref:'User'
+            }]
+        },
+        avgMarks:{
+            type: Number,
+            default: 0
+        }
     },
     groups:[{
         groupId:{

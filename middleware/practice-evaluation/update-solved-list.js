@@ -28,7 +28,6 @@ module.exports = async (req,res,next)=>{
     }
     let isPreviouslySolved = false;
     let solvedQuestions = [];
-    console.log(user['courses'][courseType]);
     for(let studying of user['courses'][courseType]){
         if(studying.courseId.toString() == courseId){
             solvedQuestions = studying['practice']['solvedQuestions'];
@@ -40,19 +39,18 @@ module.exports = async (req,res,next)=>{
             }
             break;
         }        
-        }
+    }
     
     if(!isPreviouslySolved){
         const result = await user.save();
         if(!result){
             console.log("Couldn't push questionId in solved question list.");
             res.status(500).json({message:"Try Again."});
-        } else {
-            console.log(result);
-            next();
             return;
-        }
+        } 
+        next();
+    } else {
+        res.status(200).json({message:"Correct Answer."});
     }
-    res.status(200).json({message:"Correct Answer."});
 
 }

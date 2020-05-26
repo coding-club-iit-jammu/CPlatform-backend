@@ -62,6 +62,7 @@ module.exports = async (req,res,next)=>{
             req.isCorrect = false;
             console.log("Wrong answer");
             res.status(200).json({message:"Wrong Answer"});
+            return;
         }
         next();
     } else if(questionType == 'trueFalse'){

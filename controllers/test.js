@@ -115,7 +115,17 @@ exports.getTestData = async (req,res,next) => {
                                 path: 'questions.codingQuestion.question',
                                 select:'title _id',
                                 model:'CodingQuestion'
-                            }]
+                            },
+                            {
+                                path:'stats.minMarks.students',
+                                select:'name',
+                                model:'User'
+                            },
+                            {
+                                path:'stats.maxMarks.students',
+                                select:'name',
+                                model:'User'
+                            },]
                             );
     if(!test){
         res.status(500).json({message:"Try Again"});
@@ -587,7 +597,7 @@ exports.revealMarks = async (req,res,next) => {
             maxMarks = x.securedMarks;
             maxMarksStu = [x.userId];
         } else if(x.securedMarks == maxMarks){
-            maxMarks.push(x.userId);
+            maxMarksStu.push(x.userId);
         }
 
         avgMarks+=x.securedMarks;

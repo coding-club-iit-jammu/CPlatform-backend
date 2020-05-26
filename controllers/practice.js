@@ -249,17 +249,58 @@ getEntries = async (courseRecords) => {
 }
 
 exports.getLeaderboard = async (req, res, next) => {
-    // console.log("Getting leaderboard");
     const courseId = req.courseId;
+    const courseRecords = await Course.findById(courseId).select('practiceRecord')
+                                .populate({
+                                    path:'practiceRecord',
+                                    model:'UserPracticeRecord',
+                                    select:'score userId',
+                                    populate:{
+                                        path:'userId',
+                                        model:'User',
+                                        select:'name'
+                                    }
+                                });
+    
+    let entries = [];
+    let userEntry = {};
+    for(let x of courseRecords['practiceRecord']){
+        
+        entries.push({
+            name:x['userId']['name'],
+            score:x['score'],
+            id:x['userId']['_id'].toString()
+        });
+    }                        
+    entries.sort((a,b)=>{
+        return b.score-a.score;
+    })
 
-    // find all practice records for this course
-    const courseRecords = await Course.findById(courseId).select('practiceRecord');
-    
-    let entries = await getEntries(courseRecords);
-    
+
+    if (entries[0]) 
+        entries[0]['rank'] = 1;
+    for (var i = 1; i < entries.length; i++) {
+        if (entries[i].score === entries[i-1].score) {
+            entries[i].rank = entries[i-1].rank;
+        } else {
+            entries[i].rank = i + 1;
+        }
+    }
+
+    for(let x of entries){
+        if(x.id == req.userId){
+            userEntry = x;
+            break;
+        }
+    }
+
     if (entries.length == 0) {
         res.status(500).json({message: "No entries in leaderboard"});
     } else {
-        res.status(200).json({message: entries});
+        if(req.role=='student'){
+            res.status(200).json({message: entries.slice(0,10),userEntry:userEntry});
+        } else {
+            res.status(200).json({message: entries,userEntry:userEntry});
+        }
     }
 }

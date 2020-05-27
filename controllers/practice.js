@@ -1,6 +1,10 @@
 const Course = require('../models/course');
 const User = require('../models/user');
 const UserPracticeRecord = require('../models/practice-record-user');
+const MCQ = require('../models/questions/mcq');
+const TrueFalse = require('../models/questions/truefalsequestion');
+const CodingQuestion = require('../models/questions/coding-question');
+
 const fs = require('fs');
 const path = require('path');
 
@@ -28,6 +32,34 @@ exports.addPracticeQuestion = async (req,res,next)=>{
     }
 
     res.status(200).json({message:"Question added to Practice"});
+
+    if(questionType == 'mcq'){
+        const mcq = await MCQ.findById(questionId).select('used');
+        if(mcq){
+            mcq.used = true;
+            await mcq.save();
+            return;
+        }
+    }
+
+    if(questionType == 'trueFalse'){
+        const mcq = await TrueFalse.findById(questionId).select('used');
+        if(mcq){
+            mcq.used = true;
+            await mcq.save();
+            return;
+        }
+    }
+
+    if(questionType == 'codingQuestion'){
+        const mcq = await CodingQuestion.findById(questionId).select('used');
+        if(mcq){
+            mcq.used = true;
+            await mcq.save();
+            return;
+        }
+    }
+
 }
 
 exports.getMCQ = async (req,res,next)=>{

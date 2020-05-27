@@ -9,6 +9,10 @@ const trueFalseSchema = new Schema({
     answer:{
         type: Boolean,
         required: true
+    },
+    used:{
+        type: Boolean,
+        default: false
     }
 })
 

@@ -1,6 +1,5 @@
 const MCQ = require('../../models/questions/mcq');
 const Course = require('../../models/course');
-const MCQOption = require('../../models/questions/mcq-option');
 
 //POST mcq/add
 exports.addMCQ = async (req,res,next) => {
@@ -56,11 +55,20 @@ exports.editMCQ = (req,res,next) => {
 
 exports.deleteMCQ = async (req,res,next) => {
     const mcqId = req.query.questionId;
-    MCQ.findByIdAndRemove(mcqId).then((data)=>{
-        if(data){
-            res.status(204).json({message:"Deleted."});
-            return;
-        }
-        res.status(500).json({message:"Try Again"});
-    })
+    const mcq = await MCQ.findById(mcqId).select('used');
+    if(!mcq){
+        res.status(500).json({message: 'Try Again'});
+        return;
+    }
+    if(mcq.used == false){
+        MCQ.findByIdAndRemove(mcqId).then((data)=>{
+            if(data){
+                res.status(204).json({message:"Deleted."});
+                return;
+            }
+            res.status(500).json({message:"Try Again"});
+        })
+    } else {
+        res.status(200).json({message:'Operation not allowed. Question has been used elsewhere.'});
+    }
 }

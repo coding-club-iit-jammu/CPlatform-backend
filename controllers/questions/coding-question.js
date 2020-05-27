@@ -243,36 +243,45 @@ exports.getItem = async (req, res, next) => {
 
 exports.deleteCoding = async (req,res,next)=>{
     const codingId = req.query.questionId;
-    CodingQuestion.findByIdAndRemove(codingId).then( async (data)=>{
-        console.log(data);
-        if(data){
-            if(data['testcases']){
-                let filePath = await getAbsolutePath(data['testcases']);
-                fs.rmdir(filePath,err=>{
-                    ;
-                })
-            }
-            if(data['header']){
-                let filePath = await getAbsolutePath(data['header']);
-                fs.unlink(filePath,err=>{
-                    ;
-                })
-            }
-            if (data['mainCode']) {
-                let filePath = await getAbsolutePath(data['mainCode']);
-                fs.unlink(filePath,err=>{
-                    ;
-                })
-            }
-            if(data['footer']){
-                let filePath = await getAbsolutePath(data['footer']);
-                fs.unlink(filePath,err=>{
-                    ;
-                })
-            }
-            res.status(204).json({message:"Deleted."});
-            return;
-        }
+    const codingq = await CodingQuestion.findById(codingId).select('used');
+    if(!codingq){
         res.status(500).json({message:"Try Again"});
-    });
+        return;
+    }
+
+    if(!codingq.used){
+        CodingQuestion.findByIdAndRemove(codingId).then( async (data)=>{
+            if(data){
+                if(data['testcases']){
+                    let filePath = await getAbsolutePath(data['testcases']);
+                    fs.rmdir(filePath,err=>{
+                        ;
+                    })
+                }
+                if(data['header']){
+                    let filePath = await getAbsolutePath(data['header']);
+                    fs.unlink(filePath,err=>{
+                        ;
+                    })
+                }
+                if (data['mainCode']) {
+                    let filePath = await getAbsolutePath(data['mainCode']);
+                    fs.unlink(filePath,err=>{
+                        ;
+                    })
+                }
+                if(data['footer']){
+                    let filePath = await getAbsolutePath(data['footer']);
+                    fs.unlink(filePath,err=>{
+                        ;
+                    })
+                }
+                res.status(204).json({message:"Deleted."});
+                return;
+            }
+            res.status(500).json({message:"Try Again"});
+        });
+    } else {
+        res.status(200).json({message:'Operation not allowed. Question has been used elsewhere.'});
+    }
 }

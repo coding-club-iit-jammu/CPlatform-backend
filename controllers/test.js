@@ -3,6 +3,10 @@ const Course = require('../models/course');
 const Test = require('../models/test');
 const UserTestRecord = require('../models/user-test-record');
 const User = require('../models/user');
+const MCQ = require('../models/questions/mcq');
+const TrueFalse = require('../models/questions/truefalsequestion');
+const CodingQuestion = require('../models/questions/coding-question');
+
 exports.getTestsTitles = async (req,res,next)=>{
     const courseId = req.courseId;
     const course = await Course.findById(courseId).select('tests _id').populate('tests',"_id testId title instructions groups.groupId groups.startTime groups.endTime");
@@ -93,6 +97,33 @@ exports.addQuestion = async (req, res, next)=>{
     }
 
     res.status(200).json({message:`Question Added to Test ${test.title}`});
+
+    if(questionType == 'mcq'){
+        const mcq = await MCQ.findById(questionId).select('used');
+        if(mcq){
+            mcq.used = true;
+            await mcq.save();
+            return;
+        }
+    }
+
+    if(questionType == 'trueFalse'){
+        const mcq = await TrueFalse.findById(questionId).select('used');
+        if(mcq){
+            mcq.used = true;
+            await mcq.save();
+            return;
+        }
+    }
+
+    if(questionType == 'codingQuestion'){
+        const mcq = await CodingQuestion.findById(questionId).select('used');
+        if(mcq){
+            mcq.used = true;
+            await mcq.save();
+            return;
+        }
+    }
     return;
 }
 
@@ -670,4 +701,61 @@ exports.getUserTestRecord = async (req,res,next) => {
 
     console.log(test);
     res.status(200).json(test);
+}
+
+exports.getLeaderboard = async (req, res, next) => {
+    const test_id = req.query.test_id;
+    const testRecords = await Test.findById(test_id).select('records')
+                                .populate({
+                                    path:'practiceRecord',
+                                    model:'UserPracticeRecord',
+                                    select:'score userId',
+                                    populate:{
+                                        path:'userId',
+                                        model:'User',
+                                        select:'name'
+                                    }
+                                });
+    
+    let entries = [];
+    let userEntry = {};
+    for(let x of courseRecords['practiceRecord']){
+        
+        entries.push({
+            name:x['userId']['name'],
+            score:x['score'],
+            id:x['userId']['_id'].toString()
+        });
+    }                        
+    entries.sort((a,b)=>{
+        return b.score-a.score;
+    })
+
+
+    if (entries[0]) 
+        entries[0]['rank'] = 1;
+    for (var i = 1; i < entries.length; i++) {
+        if (entries[i].score === entries[i-1].score) {
+            entries[i].rank = entries[i-1].rank;
+        } else {
+            entries[i].rank = i + 1;
+        }
+    }
+
+    for(let x of entries){
+        if(x.id == req.userId){
+            userEntry = x;
+            break;
+        }
+    }
+
+    if (entries.length == 0) {
+        res.status(500).json({message: "No entries in leaderboard"});
+    } else {
+        if(req.role=='student'){
+            res.status(200).json({message: entries.slice(0,10),userEntry:userEntry});
+        } else {
+            res.status(200).json({message: entries,userEntry:userEntry});
+        }
+    }
 }

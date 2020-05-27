@@ -51,11 +51,21 @@ exports.getTrueFalse = async (req, res, next) => {
 
 exports.deleteTrueFalse = async (req,res,next)=>{
     const trueFalseId = req.query.questionId;
-    TrueFalseQuestion.findByIdAndRemove(trueFalseId).then((data)=>{
-        if(data){
-            res.status(204).json({message:"Deleted."});
-            return;
-        }
+    const trueFalse = await TrueFalseQuestion.findById(trueFalseId);
+    if(!trueFalse){
         res.status(500).json({message:"Try Again"});
-    });
+        return;
+    }
+    
+    if(trueFalse.used == false){
+        TrueFalseQuestion.findByIdAndRemove(trueFalseId).then((data)=>{
+            if(data){
+                res.status(204).json({message:"Deleted."});
+                return;
+            }
+            res.status(500).json({message:"Try Again"});
+        });
+    } else {
+        res.status(200).json({message:'Operation not allowed. Question has been used elsewhere.'});
+    }
 }

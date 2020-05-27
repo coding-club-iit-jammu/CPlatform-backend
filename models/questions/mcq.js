@@ -1,12 +1,14 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-mongoose.set('useFindAndModify', false);
-const MCQOption = require('./mcq-option');
 
 const mcqSchema = new Schema({
     question:{
         type: String,
         required: true
+    },
+    used:{
+        type: Boolean,
+        default: false
     },
     options:[{
         code:{

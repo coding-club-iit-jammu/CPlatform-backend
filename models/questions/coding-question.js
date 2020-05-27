@@ -33,6 +33,10 @@ const codingSchema = new Schema({
     footer:{
         type: String,
         required: false
+    },
+    used:{
+        type: Boolean,
+        default: false
     }
 });
 

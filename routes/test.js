@@ -10,6 +10,7 @@ const isWithinDuration = require('../middleware/is-within-test-duration');
 
 const isAnswerCorrect = require('../middleware/test-evaluation/is-answer-correct');
 const testController = require('../controllers/test');
+const statsController = require('../controllers/test-statistics');
 
 router.get('/getTitles',isAuth,getRole,testController.getTestsTitles);
 router.post('/create',isAuth,getRole,isNotStudent,testController.createTest);
@@ -29,4 +30,7 @@ router.get('getUserTestRecord',isAuth,getRole,isStudent,testController.getUserTe
 router.get('/checkRevealMarks',isAuth,getRole,testController.checkRevealMarks);
 
 router.get('/leaderboard',isAuth,getRole,isNotStudent,testController.getLeaderboard);
+router.get('/getSpread',isAuth,getRole,isNotStudent,statsController.getMarksSpread);
+router.get('/getQuestionWiseStats',isAuth,getRole,isNotStudent,statsController.getQuestionWiseStats);
+
 module.exports = router;

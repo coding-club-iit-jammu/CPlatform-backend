@@ -156,7 +156,7 @@ exports.getTestData = async (req,res,next) => {
                                 path:'stats.maxMarks.students',
                                 select:'name',
                                 model:'User'
-                            },]
+                            }]
                             );
     if(!test){
         res.status(500).json({message:"Try Again"});
@@ -699,7 +699,6 @@ exports.getUserTestRecord = async (req,res,next) => {
         return;
     }
 
-    console.log(test);
     res.status(200).json(test);
 }
 

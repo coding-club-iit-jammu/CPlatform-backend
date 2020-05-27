@@ -28,4 +28,5 @@ router.get('/getEndTime',isAuth,getRole,isStudent,isWithinDuration,testControlle
 router.get('getUserTestRecord',isAuth,getRole,isStudent,testController.getUserTestRecord);
 router.get('/checkRevealMarks',isAuth,getRole,testController.checkRevealMarks);
 
+router.get('/leaderboard',isAuth,getRole,isNotStudent,testController.getLeaderboard);
 module.exports = router;

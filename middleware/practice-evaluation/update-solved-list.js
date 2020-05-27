@@ -31,6 +31,7 @@ module.exports = async (req,res,next)=>{
     for(let studying of user['courses'][courseType]){
         if(studying.courseId.toString() == courseId){
             solvedQuestions = studying['practice']['solvedQuestions'];
+            solvedQuestions = solvedQuestions.map(String);
             req.solvedQuestions = solvedQuestions;
             isPreviouslySolved = solvedQuestions.includes(questionId.toString());
             if(!isPreviouslySolved){

@@ -707,55 +707,78 @@ exports.getLeaderboard = async (req, res, next) => {
     const test_id = req.query.test_id;
     const testRecords = await Test.findById(test_id).select('records')
                                 .populate({
-                                    path:'practiceRecord',
-                                    model:'UserPracticeRecord',
-                                    select:'score userId',
+                                    path:'records',
+                                    model:'UserTestRecord',
+                                    select:'securedMarks userId mcq trueFalse codingQuestion',
                                     populate:{
                                         path:'userId',
                                         model:'User',
-                                        select:'name'
+                                        select:'name email'
                                     }
                                 });
     
     let entries = [];
-    let userEntry = {};
-    for(let x of courseRecords['practiceRecord']){
+    let mcq = [];
+    let trueFalse = [];
+    let codingQuestion = [];
+    let flag = false;
+    for(let x of testRecords['records']){
         
-        entries.push({
+        let data = {
             name:x['userId']['name'],
-            score:x['score'],
-            id:x['userId']['_id'].toString()
-        });
-    }                        
+            email: x['userId']['email'],
+            marks:x['securedMarks']
+        };
+        
+        let counter = 1;
+        if(x['mcq'] && x['mcq']['problems'].length >0){
+            for(let q of x['mcq']['problems']){
+                data[`M${counter}`] = q['securedMarks']
+                if(!flag)
+                    mcq.push(`M${counter}`);
+                counter++;
+            }
+            counter = 1;
+        }
+        if(x['trueFalse'] && x['trueFalse']['problems'].length >0){
+            for(let q of x['trueFalse']['problems']){
+                data[`T${counter}`] = q['securedMarks']
+                if(!flag)
+                    trueFalse.push(`T${counter}`);
+                counter++;
+            }
+            counter = 1;
+        }
+        if(x['codingQuestion'] && x['codingQuestion']['problems'].length >0){
+            for(let q of x['codingQuestion']['problems']){
+                data[`C${counter}`] = q['securedMarks']
+                if(!flag)
+                    codingQuestion.push(`C${counter}`);
+            }
+            counter = 1;
+        }
+        entries.push(data);
+        flag = true;
+    }
+
     entries.sort((a,b)=>{
-        return b.score-a.score;
+        return b.marks-a.marks;
     })
 
 
     if (entries[0]) 
         entries[0]['rank'] = 1;
     for (var i = 1; i < entries.length; i++) {
-        if (entries[i].score === entries[i-1].score) {
+        if (entries[i].securedMarks === entries[i-1].securedMarks) {
             entries[i].rank = entries[i-1].rank;
         } else {
             entries[i].rank = i + 1;
         }
     }
 
-    for(let x of entries){
-        if(x.id == req.userId){
-            userEntry = x;
-            break;
-        }
-    }
-
     if (entries.length == 0) {
         res.status(500).json({message: "No entries in leaderboard"});
-    } else {
-        if(req.role=='student'){
-            res.status(200).json({message: entries.slice(0,10),userEntry:userEntry});
-        } else {
-            res.status(200).json({message: entries,userEntry:userEntry});
-        }
+    } else {    
+        res.status(200).json({entries: entries,mcq:mcq,trueFalse:trueFalse,codingQuestion:codingQuestion});
     }
 }

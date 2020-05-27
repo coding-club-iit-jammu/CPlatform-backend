@@ -162,6 +162,7 @@ module.exports = async (req,res,next)=>{
         if (passed == caseId) {
             // all test cases passed
             req.verdict = "ACCEPTED!";
+            req.isCorrect = true;
             // res.status(500).json({message: req.verdict});
             // res.status(200).json({message:"ACCEPTED!"});
             // return;

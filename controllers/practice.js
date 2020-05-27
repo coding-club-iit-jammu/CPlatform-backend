@@ -329,10 +329,6 @@ exports.getLeaderboard = async (req, res, next) => {
     if (entries.length == 0) {
         res.status(500).json({message: "No entries in leaderboard"});
     } else {
-        if(req.role=='student'){
-            res.status(200).json({message: entries.slice(0,10),userEntry:userEntry});
-        } else {
-            res.status(200).json({message: entries,userEntry:userEntry});
-        }
+        res.status(200).json({message: entries,userEntry:userEntry});
     }
 }

@@ -96,77 +96,81 @@ module.exports = async (req,res,next)=>{
 
         let inputs = [];
         let outputs = [];
-        let files = fs.readdirSync(testPath);
-        await extractCases(files, testPath, inputs, outputs);
+        try {
+            let files = fs.readdirSync(testPath);
+            await extractCases(files, testPath, inputs, outputs);
 
-        // for each test case
-        // need to use post-code API from ide/runner
-        // decode and trim the stdout and validate with the expected output
-        let data = {
-            lang : langId,
-            version : langVersion,
-            program : encode(submitCode),
-            fields : fields,
-            input : ""
-        }
+            // for each test case
+            // need to use post-code API from ide/runner
+            // decode and trim the stdout and validate with the expected output
+            let data = {
+                lang : langId,
+                version : langVersion,
+                program : encode(submitCode),
+                fields : fields,
+                input : ""
+            }
 
-        // validate the request data
-        if (!runner.validatePostRun(data)) {
-            res.status(500).json({message:"Invalid body parameters"});
-            return;
-        }
-
-        // get language id
-        let languageId = runner.getLangId(langId, langVersion);
-        
-        let caseId = 0;
-        let passed = 0;
-        for (let caseNumber in inputs) {
-            const input = inputs[caseNumber];
-            const output = outputs[caseNumber];
-            // update the input for the request
-            data.input = encode(input);
-            let response = await runner.runTestCase(languageId, data);
-            let actualOutput = decode(response.stdout);
-            console.log(`Input: ${input}, Expected Output: ${output}, Actual Output: ${actualOutput}`);
-
-            if (response.status.id == 5) {
-                req.verdict = `TLE on Test Case ${caseId}`;
-                res.status(500).json({message: req.verdict});
-                return;
-            } else if (response.status.id == 6) {
-                req.verdict = `Compilation Error on Test Case ${caseId}`;
-                res.status(500).json({message: req.verdict});
-                return;
-            } else if (response.status.id >= 7 && response.status.id <= 12) {
-                req.verdict = `Runtime Error on Test Case ${caseId}`;
-                res.status(500).json({message: req.verdict});
-                return;
-            } else if (response.status.id >= 13) {
-                req.verdict = `Internal Error on Test Case ${caseId}`;
-                res.status(500).json({message: req.verdict});
+            // validate the request data
+            if (!runner.validatePostRun(data)) {
+                res.status(500).json({message:"Invalid body parameters"});
                 return;
             }
 
-            let check = await compareOutputs(output, actualOutput);
-            if (check == false) {
-                req.verdict = `Wrong Answer on Test Case ${caseId}`;
-                res.status(500).json({message: req.verdict});
-                return;
-            } else {
-                ++passed;
-            }
-            ++caseId;
-        }
+            // get language id
+            let languageId = runner.getLangId(langId, langVersion);
+            
+            let caseId = 0;
+            let passed = 0;
+            for (let caseNumber in inputs) {
+                const input = inputs[caseNumber];
+                const output = outputs[caseNumber];
+                // update the input for the request
+                data.input = encode(input);
+                let response = await runner.runTestCase(languageId, data);
+                let actualOutput = decode(response.stdout);
+                // console.log(`Input: ${input}, Expected Output: ${output}, Actual Output: ${actualOutput}`);
 
-        if (passed == caseId) {
-            // all test cases passed
-            req.verdict = "ACCEPTED!";
-            req.isCorrect = true;
-            // res.status(500).json({message: req.verdict});
-            // res.status(200).json({message:"ACCEPTED!"});
-            // return;
-            next();
+                if (response.status.id == 5) {
+                    req.verdict = `TLE on Test Case ${caseId}`;
+                    res.status(500).json({message: req.verdict});
+                    return;
+                } else if (response.status.id == 6) {
+                    req.verdict = `Compilation Error on Test Case ${caseId}`;
+                    res.status(500).json({message: req.verdict});
+                    return;
+                } else if (response.status.id >= 7 && response.status.id <= 12) {
+                    req.verdict = `Runtime Error on Test Case ${caseId}`;
+                    res.status(500).json({message: req.verdict});
+                    return;
+                } else if (response.status.id >= 13) {
+                    req.verdict = `Internal Error on Test Case ${caseId}`;
+                    res.status(500).json({message: req.verdict});
+                    return;
+                }
+
+                let check = await compareOutputs(output, actualOutput);
+                if (check == false) {
+                    req.verdict = `Wrong Answer on Test Case ${caseId}`;
+                    res.status(500).json({message: req.verdict});
+                    return;
+                } else {
+                    ++passed;
+                }
+                ++caseId;
+            }
+
+            if (passed == caseId) {
+                // all test cases passed
+                req.verdict = "ACCEPTED!";
+                req.isCorrect = true;
+                // res.status(500).json({message: req.verdict});
+                // res.status(200).json({message:"ACCEPTED!"});
+                // return;
+                next();
+            }
+        } catch (err) {
+            res.status(500).json({message: "There is some bug at our side!"});
         }
     }
 }

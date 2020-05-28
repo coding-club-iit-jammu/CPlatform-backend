@@ -139,8 +139,11 @@ extractContent = async (fileName) => {
     }
     let serverPath = path.join(__dirname, '..'); // one directory back
     let filepath = path.join(serverPath, fileName);
-    // console.log(filepath);
-    return fs.readFileSync(filepath, 'utf-8');
+    try {
+        return fs.readFileSync(filepath, 'utf-8');
+    } catch (err) {
+        return "";
+    }
 }
 
 exports.getCodingQuestion = async (req,res,next)=>{

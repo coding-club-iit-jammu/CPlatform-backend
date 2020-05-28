@@ -460,7 +460,9 @@ exports.submitQuestion = async (req,res,next) => {
         res.status(200).json({message:"Submission Unsuccessful, Try Again."});
         return;
     }
-    res.status(200).json({message:'Submission Successful.'})
+    // show verdict for coding questions in the test!
+    let msg = (questionType == "codingQuestion") ? req.verdict : "Submission Successful";
+    res.status(200).json({message: msg});
 }
 
 exports.getEndTime = async (req,res,next) => {
@@ -505,8 +507,11 @@ extractContent = async (fileName) => {
     }
     let serverPath = path.join(__dirname, '..'); // one directory back
     let filepath = path.join(serverPath, fileName);
-    // console.log(filepath);
-    return fs.readFileSync(filepath, 'utf-8');
+    try {
+        return fs.readFileSync(filepath, 'utf-8');
+    } catch (err) {
+        return "";
+    }
 }
 exports.getQuestions = async (req,res,next) => {
     const userTestRecordId = req.query.userTestRecordId;

@@ -1,6 +1,6 @@
 #include <iostream>
 using namespace std;
 
-int power(int a, int b);
+int sum(int a, int b);
 
 int main ();

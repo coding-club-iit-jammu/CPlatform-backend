@@ -36,7 +36,7 @@ exports.runTestCase = async (id, body) => {
             console.log({ msg: 'postRunRequest on error'});
             return -1;
         }
-        console.log(token);
+        // console.log(token);
     }
     catch(error) {
         console.log({ msg: 'postRunRequest on error', params: error });
@@ -44,18 +44,21 @@ exports.runTestCase = async (id, body) => {
         return -2;
     }
 
-    // send another request after a delay of 2 seconds so that program is run till then
-    await timeout(2000);
+    // send another request after a delay of 2.5 seconds so that program is run till then
+    await timeout(2500);
     
     // fetch the submission status using getSubmissionStatus handler
     try {
         let submissionData = await RequestHandler.RequestHandler.getSubmissionStatus(token, body.fields);
-        console.log({ msg: 'getSubmissionStatus on success', params: submissionData });
-        if (submissionData.status.id <= 2) {
-            // make another fetch
-            await timeout(3000);
+        // console.log({ msg: 'getSubmissionStatus on success', params: submissionData });
+        // keep making multiple fetches till submission is out of queue
+        while (submissionData.status.id <= 2) {
+            // make another fetch in 2 secs
+            await timeout(2000);
             let submissionData2 = await RequestHandler.RequestHandler.getSubmissionStatus(token, body.fields);
-            return submissionData2;
+            if (submissionData2.status.id > 2) {
+                return submissionData2;
+            }
         }
         return submissionData;
     }
@@ -66,7 +69,7 @@ exports.runTestCase = async (id, body) => {
 }
 
 exports.postCode = async (req, res, next) => {
-    console.log({ msg: 'POST: \'/run\'' });
+    // console.log({ msg: 'POST: \'/run\'' });
     let body = _.pick(req.body, ['lang', 'version', 'program', 'input', 'fields']);
     // console.log(body);
     if (!this.validatePostRun(body)) {

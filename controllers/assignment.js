@@ -29,12 +29,12 @@ exports.getAssignmentDoc = (req, res, next) => {
 
 exports.getAssignmentSubmission = (req,res,next) => {
     const assignmentId = req.query.assignmentId;
-    const email = req.userEmail;
+    const userId = req.userId;
 
     Assignment.findById(assignmentId).populate({
         path: 'submissions',
         match: {
-            email : email
+            userId : userId
         }
     }).then((assignment)=>{
         if(!assignment['submissions'][0]['submissionUrl']){
@@ -132,13 +132,13 @@ exports.uploadMarks = async (req,res,next) => {
 
 exports.submitAssignment = async (req,res,next) => {
     const assignmentId = req.body.assignmentId;
-    const email = req.userEmail;
+    const userId = req.userId;
 
     let assignment = await Assignment.findById(assignmentId)
                     .populate({ path:'submissions',
                                 model:'Submission',
                                 match: {
-                                    email : email
+                                    userId : userId
                                 }
                     });
 

@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-
+const lodash = require('lodash');
 const mkdirp = require('mkdirp');
 
 const Course = require('../models/course');
@@ -482,4 +482,78 @@ exports.addAssignment = async (req,res,next) => {
             res.status(201).json({message:'Assignment Added'});
         })
     })
+}
+
+exports.getCombinedReport = async (req,res,next) => {
+    const courseId = req.courseId;
+    const test_id = req.query.test_id;
+
+    //Create a object containing all assignments and tests marks
+
+    const course = await Course.findById(courseId).select('groups assignments tests')
+                        .populate([{
+                            path:'assignments',
+                            model:'Assignment',
+                            select: 'submissions title',
+                            populate:{
+                                path:'submissions',
+                                model:'Submission',
+                                select:'email obtainedMarks'
+                            }
+                        },{
+                            path:'tests',
+                            model:'Test',
+                            select:'title records',
+                            populate:{
+                                path:'records',
+                                model:'UserTestRecord',
+                                select:'userId securedMarks'
+                            }
+                        },{
+                            path:'groups.students',
+                            model:'User',
+                            select: 'email'
+                        }]);
+
+
+    if(!course){
+        res.status(500).json({message:"Try Again"});
+        return;
+    }
+
+    let temp = {email:''};
+
+    for(let x of course['assignments']){
+        temp[`A_${x['title']}`] = 0;
+    }
+
+    for(let x of course['tests']){
+        temp[`T_${x['title']}`] = 0;
+    }
+
+    let data = {};
+
+    for(let x of course['groups']){
+        for(let y of x['students']){
+            data[y['_id'].toString()] = lodash.cloneDeep(temp);
+            data[y['_id'].toString()].email = y['email'];
+        }
+    }
+
+    for(let x of course['assignments']){
+        for(let y of x['submissions']){
+            if(y['obtainedMarks'])
+                data[y['userId'].toString()][`A_${x['title']}`] = y['obtainedMarks'];
+        }
+    }
+
+
+    for(let x of course['tests']){
+        for(let y of x['records']){
+            if(y['securedMarks'])
+                data[y['userId'].toString()][`T_${x['title']}`] = y['securedMarks'];
+        }
+    }
+
+    res.status(200).json(data);
 }

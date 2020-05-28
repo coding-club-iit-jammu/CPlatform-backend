@@ -307,7 +307,6 @@ exports.joinTest = async (req,res,next) => {
 
     const result = await userTestRecord.save();
     if(!result){
-        console.log("User Test Record not created.");
         res.status(500).json({message:"User Test Record not created."})
         return;
     }

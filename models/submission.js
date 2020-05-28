@@ -6,6 +6,11 @@ const submissionSchema = new Schema({
         type: String,
         required: true
     },
+    userId:{
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
     submissionUrl: {
         type: String,
         required: true
@@ -15,7 +20,8 @@ const submissionSchema = new Schema({
         required: true
     },
     obtainedMarks: {
-        type: Number
+        type: Number,
+        default: 0
     }
 
 });

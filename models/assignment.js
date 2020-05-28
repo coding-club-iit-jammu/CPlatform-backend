@@ -33,11 +33,12 @@ const assignmentSchema = new Schema({
     }]
 })
 
-assignmentSchema.methods.addSubmission = function(userEmail,submissionUrl){
+assignmentSchema.methods.addSubmission = function(userEmail,userId,submissionUrl){
     const submission = new Submission({
         submissionUrl : submissionUrl,
         submissionTime :  new Date(),
-        email : userEmail
+        email : userEmail,
+        userId: userId
     })
     return submission.save().then((result)=>{
         if(!result){

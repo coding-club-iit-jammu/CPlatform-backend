@@ -43,5 +43,6 @@ router.get('/getAssignmentDoc', isAuth, getRole, assignmentController.getAssignm
 router.get('/getAssignmentSubmission', isAuth, getRole, isStudent, assignmentController.getAssignmentSubmission);
 
 router.get('/getJoiningCodes', isAuth, getRole, isInstructor, courseController.getJoiningCodes);
+router.get('/getCombinedReport', isAuth, getRole, isInstructor, courseController.getCombinedReport);
 
 module.exports = router;

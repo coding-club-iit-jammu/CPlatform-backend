@@ -11,7 +11,7 @@ const path = require('path');
 
 exports.getTestsTitles = async (req,res,next)=>{
     const courseId = req.courseId;
-    const course = await Course.findById(courseId).select('tests _id').populate('tests',"_id testId title instructions groups.groupId groups.startTime groups.endTime");
+    const course = await Course.findById(courseId).select('tests _id').populate('tests',"_id testId title instructions startTest revealMarks groups.groupId groups.startTime groups.endTime");
     if(!course){
         res.json(500).json({message:'Try Again'});
         return;
@@ -730,21 +730,48 @@ exports.checkRevealMarks = async (req,res,next) => {
 
 exports.getUserTestRecord = async (req,res,next) => {
     const test_id = req.query.test_id;
-    const userId = mongoose.Schema.Types.ObjectId(req.userId);
+    const userId = mongoose.Types.ObjectId(req.userId);
 
     const test = await Test.findById(test_id).select('revealMarks stats records').populate({
         path:'records',
         model:'UserTestRecord',
         match:{
             userId:userId
-        }
+        },
+        populate:[{
+            path:'mcq.problems.question',
+            select:'question',
+            model:'MCQ'
+        },{
+            path:'trueFalse.problems.question',
+            select:'question',
+            model:'TrueFalseQuestion'
+        },{
+            path:'codingQuestion.problems.question',
+            select:'title',
+            model:'CodingQuestion'
+        }]
     });
     if(!test){
         res.status(500).json({message:"Try Again"});
         return;
     }
 
-    res.status(200).json(test);
+    let stats = {
+        minMarks : test['stats']['minMarks']['marks'],
+        maxMarks : test['stats']['maxMarks']['marks'],
+        avgMarks : test['stats']['avgMarks']
+    }
+
+    if(test['records']){
+        res.status(200).json({
+            stats:stats,
+            userTestRecord: test['records'][0]
+        });
+    } else {
+        res.status(500);
+    }
+
 }
 
 exports.getLeaderboard = async (req, res, next) => {

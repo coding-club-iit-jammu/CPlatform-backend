@@ -28,8 +28,8 @@ router.get('/getTestData',isAuth,getRole,isNotStudent,testController.getTestData
 router.get('/getQuestions',isAuth,getRole,isStudent,isWithinDuration,testController.getQuestions);
 router.get('/getEndTime',isAuth,getRole,isStudent,isWithinDuration,testController.getEndTime);
 router.get('/getInstructions',isAuth,getRole,isStudent,testController.getInstructions);
-router.get('getUserTestRecord',isAuth,getRole,isStudent,testController.getUserTestRecord);
-router.get('/checkRevealMarks',isAuth,getRole,pastTestCompletion,testController.checkRevealMarks);
+router.get('/getUserTestRecord',isAuth,getRole,isStudent,testController.getUserTestRecord);
+router.get('/checkRevealMarks',isAuth,getRole,testController.checkRevealMarks);
 
 router.get('/leaderboard',isAuth,getRole,isNotStudent,testController.getLeaderboard);
 router.get('/getSpread',isAuth,getRole,isNotStudent,statsController.getMarksSpread);

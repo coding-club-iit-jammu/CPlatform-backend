@@ -37,7 +37,7 @@ exports.getMarksSpread = async (req,res,next)=>{
 
     let groups = course['groups'].toObject();
 
-    const testRecords = await Test.findOne({testId:testId}).select('records marks stats')
+    const testRecords = await Test.findOne({testId:testId}).select('records revealMarks marks stats')
                                 .populate([{
                                     path:'records',
                                     model:'UserTestRecord',
@@ -56,7 +56,12 @@ exports.getMarksSpread = async (req,res,next)=>{
     if(!testRecords){
         res.status(500);
         return;
-    }                   
+    }              
+    
+    if(testRecords['revealMarks']==false){
+        res.status(500);
+        return;
+    }
     
     let totalMarks = testRecords.marks;
 
@@ -102,7 +107,7 @@ exports.getMarksSpread = async (req,res,next)=>{
 exports.getQuestionWiseStats = async (req,res,next)=>{
     const testId = req.query.testId;
 
-    const testRecords = await Test.findOne({testId:testId}).select('records marks')
+    const testRecords = await Test.findOne({testId:testId}).select('records marks revealMarks')
                                 .populate({
                                     path:'records',
                                     model:'UserTestRecord',
@@ -125,7 +130,12 @@ exports.getQuestionWiseStats = async (req,res,next)=>{
     if(!testRecords){
         res.status(500);
         return;
-    }                   
+    }
+    
+    if(testRecords['revealMarks']==false){
+        res.status(500);
+        return;
+    }
     
     let data = {
         mcq:{},

@@ -28,14 +28,15 @@ module.exports = async (req,res,next) => {
     const token = req.get('Authorization');
     if (!token) {
         res.status(401).send('Token is invalid');
+        return;
     } 
 
     verifyJWTToken(token).then(user => {
         req.userId = user.userId;
         req.userEmail = user.email;
         next();
+        return;
     }).catch(err => {
-        console.log("JWT Verification failed.");
         res.status(401).send(err);
     });
 

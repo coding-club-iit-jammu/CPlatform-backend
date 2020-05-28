@@ -29,14 +29,15 @@ module.exports = async (req,res,next) => {
         return;
     }
 
-    req.endTime = new Date(grp.endTime).toLocaleString('en-In');
+    req.endTime = grp.endTime;
 
     if(test['records'].length == 1){
         res.status(200).json({
             message:"Starting Test",
             userTestRecord:test['records'][0]._id,
             test_id:test._id,
-            endTime:grp.endTime
+            endTime:grp.endTime,
+            instructions: test.instructions
         })
         return;
     }

@@ -39,6 +39,10 @@ const testRecordSchema = new Schema({
                 securedMarks:{
                     type:Number,
                     default:0
+                },
+                submitted:{
+                    type: Boolean,
+                    default: false
                 }
             }]
         },
@@ -62,6 +66,10 @@ const testRecordSchema = new Schema({
                 securedMarks:{
                     type:Number,
                     default:0
+                },
+                submitted:{
+                    type: Boolean,
+                    default: false
                 }
             }]
         },
@@ -90,6 +98,10 @@ const testRecordSchema = new Schema({
             visited:{
                 type:Boolean,
                 default:false
+            },
+            submitted:{
+                type: Boolean,
+                default: false
             }
         }]
     }

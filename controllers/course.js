@@ -512,7 +512,7 @@ exports.getCombinedReport = async (req,res,next) => {
                         },{
                             path:'groups.students',
                             model:'User',
-                            select: 'email'
+                            select: 'email name'
                         }]);
 
 
@@ -521,7 +521,7 @@ exports.getCombinedReport = async (req,res,next) => {
         return;
     }
 
-    let temp = {email:''};
+    let temp = {email:'',name:''};
 
     for(let x of course['assignments']){
         temp[`A_${x['title']}`] = 0;

@@ -339,7 +339,8 @@ exports.joinTest = async (req,res,next) => {
         message:"Starting Test.",
         userTestRecord:result._id,
         test_id:test._id,
-        endTime: req.endTime
+        endTime: req.endTime,
+        instructions: test.instructions
     });
 
 }
@@ -445,6 +446,7 @@ exports.submitQuestion = async (req,res,next) => {
         userTestRecord.securedMarks -= mcq.securedMarks;
         mcq.securedMarks = 0;
     }
+    mcq.submitted = true;
 
     const result = await userTestRecord.save();
     if(!result){
@@ -472,9 +474,23 @@ exports.getEndTime = async (req,res,next) => {
         return;
     }
     
-    res.status(200).json({endTime:new Date(grp.endTime).toLocaleString('en-In')});
+    res.status(200).json({endTime: grp.endTime});
 
 }
+
+exports.getInstructions = async (req,res,next) => {
+    const testId = req.query.testId;
+
+    const test = await Test.findOne({testId:testId}).select('instructions');
+
+    if(!test){
+        res.status(500).json({message:'Try Again'});
+        return;
+    }
+    res.status(200).json({instructions: test['instructions']});
+
+}
+
 
 exports.getQuestions = async (req,res,next) => {
     const userTestRecordId = req.query.userTestRecordId;
@@ -526,8 +542,8 @@ exports.getQuestions = async (req,res,next) => {
                 questionId:x.question._id,
                 response:x.response?x.response:false,
                 marks:x.marks,
-                visited:(x.securedMarks == 0?false:true),
-                submitted:(x.securedMarks == 0?false:true)
+                visited:false,
+                submitted:x.submitted
             })
         }
         if(data.questions.length == 0){
@@ -565,8 +581,8 @@ exports.getQuestions = async (req,res,next) => {
                 options:opts,
                 response:x.response,
                 marks:x.marks,
-                visited:(x.securedMarks==0?false:true),
-                submitted:(x.securedMarks==0?false:true)
+                visited:false,
+                submitted:x.submitted
             })
         }
         if(data.questions.length == 0){
@@ -595,7 +611,7 @@ exports.getQuestions = async (req,res,next) => {
         }
     }
 
-    res.status(200).json({message:"No Questions Left. You can end the test.",ended:true}    );
+    res.status(200).json({message:"No Questions Left. You can end the test.",ended:true});
 }
 
 exports.revealMarks = async (req,res,next) => {

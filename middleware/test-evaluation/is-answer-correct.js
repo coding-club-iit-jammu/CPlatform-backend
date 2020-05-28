@@ -130,26 +130,31 @@ module.exports = async (req,res,next)=>{
 
             if (response.status.id == 5) {
                 req.verdict = `TLE on Test Case ${caseId}`;
-                res.status(500).json({message: req.verdict});
+                // res.status(500).json({message: req.verdict});
+                next();
                 return;
             } else if (response.status.id == 6) {
                 req.verdict = `Compilation Error on Test Case ${caseId}`;
-                res.status(500).json({message: req.verdict});
+                // res.status(500).json({message: req.verdict});
+                next();
                 return;
             } else if (response.status.id >= 7 && response.status.id <= 12) {
                 req.verdict = `Runtime Error on Test Case ${caseId}`;
-                res.status(500).json({message: req.verdict});
+                // res.status(500).json({message: req.verdict});
+                next();
                 return;
             } else if (response.status.id >= 13) {
                 req.verdict = `Internal Error on Test Case ${caseId}`;
-                res.status(500).json({message: req.verdict});
+                // res.status(500).json({message: req.verdict});
+                next();
                 return;
             }
 
             let check = await compareOutputs(output, actualOutput);
             if (check == false) {
                 req.verdict = `Wrong Answer on Test Case ${caseId}`;
-                res.status(500).json({message: req.verdict});
+                // res.status(500).json({message: req.verdict});
+                next();
                 return;
             } else {
                 ++passed;
@@ -163,6 +168,7 @@ module.exports = async (req,res,next)=>{
             // res.status(500).json({message: req.verdict});
             // res.status(200).json({message:"ACCEPTED!"});
             // return;
+            req.isCorrect = true;
             next();
         }
     }

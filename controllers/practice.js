@@ -134,6 +134,9 @@ exports.getTrueFalse = async (req,res,next)=>{
 }
 
 extractContent = async (fileName) => {
+    if (fileName == null) {
+        return "";
+    }
     let serverPath = path.join(__dirname, '..'); // one directory back
     let filepath = path.join(serverPath, fileName);
     // console.log(filepath);

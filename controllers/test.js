@@ -6,6 +6,8 @@ const User = require('../models/user');
 const MCQ = require('../models/questions/mcq');
 const TrueFalse = require('../models/questions/truefalsequestion');
 const CodingQuestion = require('../models/questions/coding-question');
+const fs = require('fs');
+const path = require('path');
 
 exports.getTestsTitles = async (req,res,next)=>{
     const courseId = req.courseId;
@@ -108,19 +110,19 @@ exports.addQuestion = async (req, res, next)=>{
     }
 
     if(questionType == 'trueFalse'){
-        const mcq = await TrueFalse.findById(questionId).select('used');
-        if(mcq){
-            mcq.used = true;
-            await mcq.save();
+        const trueFalse = await TrueFalse.findById(questionId).select('used');
+        if(trueFalse){
+            trueFalse.used = true;
+            await trueFalse.save();
             return;
         }
     }
 
     if(questionType == 'codingQuestion'){
-        const mcq = await CodingQuestion.findById(questionId).select('used');
-        if(mcq){
-            mcq.used = true;
-            await mcq.save();
+        const codingQuestion = await CodingQuestion.findById(questionId).select('used');
+        if(codingQuestion){
+            codingQuestion.used = true;
+            await codingQuestion.save();
             return;
         }
     }
@@ -427,23 +429,23 @@ exports.submitSection = async (req,res,next)=>{
 exports.submitQuestion = async (req,res,next) => {
     const isCorrect = req.isCorrect;
     const questionId = req.body.questionId;
-    const response = req.body.answer;
     const questionType = req.body.questionType;
+    const response = (questionType == "codingQuestion") ? req.body.submitCode: req.body.answer;
     const userTestRecordId = req.body.userTestRecordId;
     const userTestRecord = await UserTestRecord.findById(userTestRecordId).select(`${questionType} securedMarks`);
-    let mcq = userTestRecord[questionType]['problems'].find(obj=>obj.question.toString() == questionId);
-    if(!mcq){
+    let ques = userTestRecord[questionType]['problems'].find(obj=>obj.question.toString() == questionId); // question
+    if(!ques){
         res.status(200).json({message:"Submission Unsuccessful, Try Again."});
         return;
     } 
-    mcq.response = response;
+    ques.response = response;
     
     if(isCorrect){
-        userTestRecord.securedMarks += mcq.marks - mcq.securedMarks;
-        mcq.securedMarks = mcq.marks;
+        userTestRecord.securedMarks += ques.marks - ques.securedMarks;
+        ques.securedMarks = ques.marks;
     } else {
-        userTestRecord.securedMarks -= mcq.securedMarks;
-        mcq.securedMarks = 0;
+        userTestRecord.securedMarks -= ques.securedMarks;
+        ques.securedMarks = 0;
     }
 
     const result = await userTestRecord.save();
@@ -476,6 +478,17 @@ exports.getEndTime = async (req,res,next) => {
 
 }
 
+// to read the code files for fetching header, footer and main code
+extractContent = async (fileName) => {
+    if (fileName == null) {
+        return "";
+    }
+    let serverPath = path.join(__dirname, '..'); // one directory back
+    let filepath = path.join(serverPath, fileName);
+    // console.log(filepath);
+    return fs.readFileSync(filepath, 'utf-8');
+}
+
 exports.getQuestions = async (req,res,next) => {
     const userTestRecordId = req.query.userTestRecordId;
     //Order->1.TrueFalse,2.MCQ,3.CodingQuestions
@@ -496,8 +509,8 @@ exports.getQuestions = async (req,res,next) => {
                                 select:'-answer'
                             },{
                                 path:'codingQuestion.problems.question',
-                                model:'CodingQuestion'
-                                // select:'-options.isCorrect'
+                                model:'CodingQuestion',
+                                select:'-testcases'
                             }])
     
     if(!userTestRecord){
@@ -570,7 +583,7 @@ exports.getQuestions = async (req,res,next) => {
             })
         }
         if(data.questions.length == 0){
-            userTestRecord.codingQuestion.submitted = true;
+            userTestRecord.mcq.submitted = true;
         } else {
             res.status(200).json(data);
             return;
@@ -584,9 +597,23 @@ exports.getQuestions = async (req,res,next) => {
             questions:[]
         };
 
-        /*
-            Add Code here.
-        */
+        for (let q of userTestRecord.codingQuestion.problems) {
+            data['questions'].push({
+                title: q.question.title,
+                questionId: q.question._id,
+                description: q.question.description,
+                sampleInput: q.question.sampleInput,
+                sampleOutput: q.question.sampleOutput,
+                headerCode: await extractContent(q.question.header),
+                mainCode: await extractContent(q.question.mainCode),
+                footerCode: await extractContent(q.question.footer),
+                response: q.response,
+                marks: q.marks,
+                visited: (q.securedMarks == 0) ? false : true,
+                submitted: (q.securedMarks == 0) ? false : true
+            })
+        }
+
         if(data.questions.length == 0){
             userTestRecord.codingQuestion.submitted = true;
         } else {

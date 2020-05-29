@@ -149,7 +149,7 @@ module.exports = async (req,res,next)=>{
                     return;
                 }
 
-                let check = await compareOutputs(output, actualOutput);
+                let check = await compareOutputs(actualOutput, output);
                 if (check == false) {
                     req.verdict = `Wrong Answer on Test Case ${caseId}`;
                     res.status(500).json({message: req.verdict});
@@ -176,7 +176,13 @@ module.exports = async (req,res,next)=>{
 }
 
 compareOutputs = async (actual, expected) => {
-    return actual.trim() == expected.trim();
+    // remove line breaks: https://www.textfixer.com/tutorials/javascript-line-breaks.php
+    // replace line breaks with space and trim at the end
+    actual = actual.replace(/(\r\n|\n|\r)/gm," ").trim();
+    expected = expected.replace(/(\r\n|\n|\r)/gm," ").trim();
+    // console.log(actual);
+    // console.log(expected);
+    return actual == expected;
 }
 
 extractCases = async (files, testPath, inputs, outputs) => {

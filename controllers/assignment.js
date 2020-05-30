@@ -53,6 +53,33 @@ exports.getAssignmentSubmission = (req,res,next) => {
     })
 }
 
+exports.applyPlagiarismCheck = (req, res, next) => {
+    const assignmentId = req.query.assignmentId;
+    const courseCode = req.query.courseCode;
+    const mossFilePath = path.join(__dirname, '..', 'data', 'moss').replace(/ /g, '\\ ');
+    Assignment.findById(assignmentId).select('title').then(async assignment => {
+        if (!assignment) {
+            res.status(400).json({message: "Try again."});
+        }
+        let assignmentPath = path.join(__dirname, '..', 'data', courseCode, assignment.title);
+        assignmentPath = assignmentPath.replace(/ /g, '\\ ');
+        // console.log(assignmentPath);
+        const title = assignment.title.replace(" ", "");
+        const mossScript = child_process.exec(`perl ${mossFilePath} -l cc -c ${title} ${assignmentPath}/*/*.cpp`);
+        mossScript.stdout.on('data', (data)=>{
+            let lines = data.split('\n');
+            // print the moss link to console
+            // console.log(lines[lines.length - 2]);
+            res.status(200).json({message: lines[lines.length - 2]});
+        });
+        mossScript.stderr.on('data', (data)=>{
+            res.status(400).json({message: "There is a bug at our backend."});
+            console.error(data);
+        });
+    })
+
+}
+
 exports.getAllAssignmentSubmissions = (req,res,next) => {
 
     const assignmentId = req.query.assignmentId;
@@ -133,7 +160,7 @@ exports.uploadMarks = async (req,res,next) => {
 exports.submitAssignment = async (req,res,next) => {
     const assignmentId = req.body.assignmentId;
     const userId = req.userId;
-
+    const email = req.userEmail;
     let assignment = await Assignment.findById(assignmentId)
                     .populate({ path:'submissions',
                                 model:'Submission',
@@ -225,7 +252,8 @@ exports.submitAssignment = async (req,res,next) => {
             if(!moved)
                 newPath = oldPath;
     
-            assignment.addSubmission(email,newPath).then((result)=>{
+            assignment.addSubmission(email,userId,newPath).then((result)=>{
+                console.log(result);
                 res.status(201).json(result);
             });
         } else {

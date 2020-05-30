@@ -26,6 +26,7 @@ const assignmentController = require('../controllers/assignment');
 const router = express.Router();
 
 router.get('/getAllSubmissions',isAuth, getRole, isNotStudent, assignmentController.getAllAssignmentSubmissions);
+router.get('/applyPlagiarismCheck',isAuth, getRole, isNotStudent, assignmentController.applyPlagiarismCheck);
 
 router.post('/shiftDeadline', isAuth, getRole, isInstructor, assignmentController.shiftDeadline);
 

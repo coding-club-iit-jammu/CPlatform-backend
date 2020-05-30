@@ -84,7 +84,50 @@ module.exports = async (req,res,next)=>{
     } else if (questionType == 'codingQuestion') {
         const langId = req.body.langId;
         const langVersion = req.body.langVersion;
-        const submitCode = req.body.submitCode;
+        let submitCode = req.body.submitCode;
+        const headerPresent = req.body.headerExists;
+        // if language is C++, remove all lines starting with # and header exists, remove lines
+        // starting with # so as to disable all external library includes
+
+        if (langId == "cpp14" && headerPresent) {
+            // remove libary includes in the main code
+            let lines = submitCode.split('\n');
+            let count = 0;
+            let resCode = "";
+            // skip initial include files
+            for (let i = 0; i < lines.length; ++i) {
+                if (lines[i][0] == '#') {
+                    resCode += (lines[i] + '\n');
+                    continue;
+                } else {
+                    count = i;
+                    break;
+                }
+            }
+            // remove additional include files
+            let remainingLines = lines.splice(count);
+            let badCode = false;
+            let filtered = remainingLines.filter( (line) => {
+                for (let i = 0; i < line.length; ++i) {
+                    if (line[i] != ' ' && line[i] != '#') { // any other char in beginning
+                        return true;
+                    } else if (line[i] == '#') {
+                        if (line[i + 1] == 'i') { // #include
+                            badCode = true;
+                            return false;
+                        }
+                        return true;
+                    }
+                }
+            })
+            resCode += filtered.join('\n');
+            // console.log(resCode);
+            if (badCode) {
+                res.status(500).json({message:"NOT ALLOWED WITH OTHER HEADER FILES INCLUDED!"});
+                return;
+            }
+        }
+
         // fetch the question
         const question = await CodingQuestion.findById(questionId);
 

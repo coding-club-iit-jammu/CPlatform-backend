@@ -253,6 +253,7 @@ exports.getAssignments = (req,res,next) => {
     
     const courseId = req.courseId;
     const email = req.userEmail;
+    const userId = req.userId;
 
     if(req.role != 'student'){
         Course.findById(courseId)
@@ -274,12 +275,11 @@ exports.getAssignments = (req,res,next) => {
             select: 'title description deadline marks file submissions requiresSubmission',
             populate:{
                 path:'submissions',
-                model:'Submission'
+                model:'Submission',
+                match:{
+                    userId:userId
+                }
             }
-        })
-        .populate({
-            path: 'submissions',
-            match: {email:email}
         })
         .then( course => {
             if(!course){

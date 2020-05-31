@@ -34,6 +34,7 @@ module.exports = async (req,res,next) => {
     verifyJWTToken(token).then(user => {
         req.userId = user.userId;
         req.userEmail = user.email;
+        req.userName = user.name;
         next();
         return;
     }).catch(err => {

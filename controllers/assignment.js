@@ -82,29 +82,33 @@ exports.applyPlagiarismCheck = (req, res, next) => {
 
 exports.getAllAssignmentSubmissions = (req,res,next) => {
 
-    const assignmentId = req.query.assignmentId;
-    const courseCode = req.query.courseCode;
-
-    Assignment.findById(assignmentId).select('title').then(async assignment=>{
-        if(!assignment){
-            res.status(400).json({message:'Try Again.'});
-        }
-
-        const pathA = path.join(__dirname,'..','data',courseCode,assignment.title);
-
-        child_process.execSync(`zip -r ${assignmentId} *`, {
-            cwd: pathA
-        });
-
-        res.download(pathA + `/${assignmentId}.zip`,(err)=>{
-            if(!err){
-                fs.unlink(pathA+`/${assignmentId}.zip`,()=>{
-                    ;
-                });
+    try{
+        const assignmentId = req.query.assignmentId;
+        const courseCode = req.query.courseCode;
+    
+        Assignment.findById(assignmentId).select('title').then(async assignment=>{
+            if(!assignment){
+                res.status(400).json({message:'Try Again.'});
             }
-        });
-
-    })
+    
+            const pathA = path.join(__dirname,'..','data',courseCode,assignment.title);
+    
+            child_process.execSync(`zip -r ${assignmentId} *`, {
+                cwd: pathA
+            });
+    
+            res.download(pathA + `/${assignmentId}.zip`,(err)=>{
+                if(!err){
+                    fs.unlink(pathA+`/${assignmentId}.zip`,()=>{
+                        ;
+                    });
+                }
+            });
+    
+        })
+    } catch(err){
+        res.status(500);
+    }
 
 }
 

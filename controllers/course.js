@@ -498,7 +498,7 @@ exports.getCombinedReport = async (req,res,next) => {
                             populate:{
                                 path:'submissions',
                                 model:'Submission',
-                                select:'email obtainedMarks'
+                                select:'email obtainedMarks userId'
                             }
                         },{
                             path:'tests',

@@ -71,6 +71,7 @@ exports.applyPlagiarismCheck = (req, res, next) => {
             // print the moss link to console
             // console.log(lines[lines.length - 2]);
             res.status(200).json({message: lines[lines.length - 2]});
+            return;
         });
         mossScript.stderr.on('data', (data)=>{
             res.status(400).json({message: "There is a bug at our backend."});

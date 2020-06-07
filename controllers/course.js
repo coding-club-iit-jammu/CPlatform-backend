@@ -537,6 +537,7 @@ exports.getCombinedReport = async (req,res,next) => {
         for(let y of x['students']){
             data[y['_id'].toString()] = lodash.cloneDeep(temp);
             data[y['_id'].toString()].email = y['email'];
+            data[y['_id'].toString()].name = y['name'];
         }
     }
 

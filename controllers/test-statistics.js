@@ -21,7 +21,7 @@ const getRange = (temp) => {
     } else if(temp >= 30){
         return '30-49';
     } else {
-        return '0-30';
+        return '0-29';
     }
 } 
 

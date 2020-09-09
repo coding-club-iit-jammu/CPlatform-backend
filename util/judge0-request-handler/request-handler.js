@@ -1,8 +1,8 @@
 const request = require("request");
-const JUDGE0_ENDPOINT_1 = 'https://judge0.p.rapidapi.com/submissions/?base64_encoded=true';
-const JUDGE0_ENDPOINT_2 = 'https://judge0.p.rapidapi.com/submissions';
+const JUDGE0_ENDPOINT_1 = 'http://azure.codingclubiitjammu.tech/submissions/?base64_encoded=true';
+const JUDGE0_ENDPOINT_2 = 'http://azure.codingclubiitjammu.tech/submissions';
 const axios = require('axios').default;
-const KEY = "9573ba1c20msh9604382255867b1p18f6f5jsn30f50d10e1f4";
+const KEY = "abhishek";
 
 const RequestHandler = /** @class */ (function () {
     function RequestHandler() {
@@ -11,8 +11,7 @@ const RequestHandler = /** @class */ (function () {
         try {
             const options = {
                 headers: {
-                    "x-rapidapi-host": "judge0.p.rapidapi.com",
-                    "x-rapidapi-key": KEY,
+                    "X-Auth-Token": KEY,
                     "content-type": "application/json",
                     "accept": "application/json",
                     "useQueryString": true
@@ -32,8 +31,7 @@ const RequestHandler = /** @class */ (function () {
         try {
             const options = {
                 headers: {
-                    "x-rapidapi-host": "judge0.p.rapidapi.com",
-                    "x-rapidapi-key": KEY,
+                    "X-Auth-Token": KEY,
                     "content-type": "application/json",
                     "accept": "application/json",
                     "useQueryString": true

@@ -6,6 +6,7 @@ const fs = require('fs');
 const fields = "stdout,time,memory,compile_output,stderr,token,message,status";
 const runner = require('../../controllers/ide/runner');
 const RequestHandler = require("../../util/judge0-request-handler/request-handler");
+const { response } = require('express');
 
 const universalBtoa = str => {
     try {
@@ -35,6 +36,20 @@ function decode(bytes) {
     } catch {
         return unescape(escaped);
     }
+}
+
+async function run_parallel(languageId , data, inputs){
+    let resp = [];
+    for(let casenum in inputs){
+        data.input = encode(inputs[casenum]);
+        resp[casenum] = runner.runTestCase(languageId, data);
+    }
+    for(let casenum in inputs){
+        await Promise.resolve(resp[casenum]).then(function(resp_sing){
+            resp[casenum] = resp_sing; 
+        });
+    }
+    return resp;
 }
 
 module.exports = async (req,res,next)=>{
@@ -165,12 +180,18 @@ module.exports = async (req,res,next)=>{
             
             let caseId = 0;
             let passed = 0;
-            for (let caseNumber in inputs) {
-                const input = inputs[caseNumber];
+            //console.log("started",Date.now())
+            let runner_resp = await run_parallel(languageId , data, inputs)
+            //console.log("done",Date.now())
+            for (let caseNumber in outputs) {
+                //const input = inputs[caseNumber];
                 const output = outputs[caseNumber];
                 // update the input for the request
-                data.input = encode(input);
-                let response = await runner.runTestCase(languageId, data);
+                //data.input = encode(input);
+                //console.log("before starting",Date.now())
+                //let response = await runner.runTestCase(languageId, data);
+                //console.log("after starting",Date.now())
+                let response = runner_resp[caseNumber];
                 let actualOutput = decode(response.stdout);
                 // console.log(`Input: ${input}, Expected Output: ${output}, Actual Output: ${actualOutput}`);
 
@@ -202,7 +223,6 @@ module.exports = async (req,res,next)=>{
                 }
                 ++caseId;
             }
-
             if (passed == caseId) {
                 // all test cases passed
                 req.verdict = "ACCEPTED!";

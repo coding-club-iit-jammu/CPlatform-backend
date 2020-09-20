@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const sgMail = require('@sendgrid/mail');
 const PORT = 8080;
 
 // require routes
@@ -68,3 +69,4 @@ mongoose.connect("mongodb+srv://pratikparmar:dafiQxSJ4qttuhwr@cluster0-ihjbl.mon
         console.log(`Server Running on Port ${PORT}`);
     })  
 });
+sgMail.setApiKey('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');

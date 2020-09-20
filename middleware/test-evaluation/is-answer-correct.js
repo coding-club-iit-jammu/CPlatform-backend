@@ -37,6 +37,20 @@ function decode(bytes) {
     }
 }
 
+async function run_parallel(languageId , data, inputs){
+    let resp = [];
+    for(let casenum in inputs){
+        data.input = encode(inputs[casenum]);
+        resp[casenum] = runner.runTestCase(languageId, data);
+    }
+    for(let casenum in inputs){
+        await Promise.resolve(resp[casenum]).then(function(resp_sing){
+            resp[casenum] = resp_sing; 
+        });
+    }
+    return resp;
+}
+
 module.exports = async (req,res,next)=>{
     const questionId = req.body.questionId;
     const questionType = req.body.questionType;
@@ -120,14 +134,16 @@ module.exports = async (req,res,next)=>{
             
             let caseId = 0;
             let passed = 0;
-            for (let caseNumber in inputs) {
-                const input = inputs[caseNumber];
+            let runner_resp = await run_parallel(languageId , data, inputs)
+            for (let caseNumber in outputs) {
+                //const input = inputs[caseNumber];
                 const output = outputs[caseNumber];
                 // update the input for the request
                 // TODO: See if storing the encoded input in test case files as preprocessing step
                 // improves the response time!
-                data.input = encode(input);
-                let response = await runner.runTestCase(languageId, data);
+                //data.input = encode(input);
+                //let response = await runner.runTestCase(languageId, data);
+                let response = runner_resp[caseNumber]
                 let actualOutput = decode(response.stdout);
                 // console.log(`Input: ${input}, Expected Output: ${output}, Actual Output: ${actualOutput}`);
 

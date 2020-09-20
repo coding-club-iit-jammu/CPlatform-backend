@@ -22,6 +22,16 @@ const userSchema = new Schema({
       type: String,
       required: true
   },
+  isVerified:{
+    type: Boolean,
+    required: true,
+    default : false
+  },
+  lastReset: {
+    type: Number,
+    required: true,
+    default: 0
+  },
   branch: {
       type: String,
       required: true

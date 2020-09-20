@@ -150,8 +150,7 @@ exports.createUser = async (req,res,next) =>{
                 subject: 'Reset Password for Coding Platform',
                 html: html_msg
             };
-            console.log(url)
-            //sgMail.send(msg)
+            sgMail.send(msg)
             res.status(201).json({'added':true,message:"An verification Email set to your email."})
         } else {
             res.status(500).json({message:"Try Again"})

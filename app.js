@@ -17,10 +17,6 @@ const codingQuestionRoute = require('./routes/questions/coding-question');
 const testRoute = require('./routes/test');
 const practiceRoute = require('./routes/practice');
 const ideRunnerRoute = require('./routes/ide/runner');
-const getIdeCodeRoute = require('./routes/getidecode');
-const saveIdeCodeRoute = require('./routes/saveidecode');
-const autosaveIdeCodeRoute = require('./routes/autosaveidecode');
-
 const app = express();
 
 // use cors
@@ -56,10 +52,6 @@ app.use('/codingQuestion',codingQuestionRoute);
 app.use('/test',testRoute);
 app.use('/practice',practiceRoute);
 app.use(ideRunnerRoute);
-app.use('/CodeofIDE',getIdeCodeRoute);
-app.use('/CodeofIDE',saveIdeCodeRoute);
-app.use('/CodeofIDE',autosaveIdeCodeRoute);
-
 
 // connect with mongoose
 mongoose.connect("mongodb+srv://pratikparmar:dafiQxSJ4qttuhwr@cluster0-ihjbl.mongodb.net/CodingPlatform?retryWrites=true&w=majority",

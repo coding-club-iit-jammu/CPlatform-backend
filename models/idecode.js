@@ -21,8 +21,8 @@ var ideschema = new mongoose.Schema({
 	},
 	prevsubmission:{
 		type:String,
-		required:true,
-		default: "no submission"
+		
+		
 	}
 });
 

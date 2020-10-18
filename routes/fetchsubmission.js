@@ -5,5 +5,5 @@ const codeofIDEController = require('../controllers/CodeofIDE');
 const router = express.Router();
 
 router.get('/fetchsubmission',isAuth, codeofIDEController.fetchPrevSubmission);
-router.put('/updatesubmission',codeofIDEController.updatePrevSubmission);
+router.put('/updatesubmission',isAuth, codeofIDEController.updatePrevSubmission);
 module.exports = router;

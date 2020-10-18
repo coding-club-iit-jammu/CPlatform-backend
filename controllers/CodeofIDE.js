@@ -55,7 +55,7 @@ exports.autosave = (req,res)=> {
 
 exports.fetchPrevSubmission=(req,res)=>{
 	CodeOfIDE.find({email: req.userEmail}).then(async(code)=>{
-		if(code)
+		if(code.prevsubmission)
 		{
 			res.json({
 				status:200,

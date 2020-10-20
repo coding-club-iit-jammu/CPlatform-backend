@@ -1,13 +1,20 @@
 const CodeOfIDE = require('../models/idecode');
 
-exports.getCode=(req,res)=>{
-	CodeOfIDE.find({email: req.body.email}).then(async (code)=>{
+exports.getCode=(req,res,next)=>{
+	CodeOfIDE.find({email: req.userEmail}).then(async (code)=>{
 		
-			
+		if(code)
+		{
 			res.json({
 				status:200,
 				data:code
 			})
+			return;
+		}
+		else {
+			res.status(400).json({message: 'User not found'})
+		}	
+			
 		
 	})
 }
@@ -40,6 +47,41 @@ exports.autosave = (req,res)=> {
 			res.json({
 				status:200,
 				message: 'successfully updated',
+				data: id
+			})
+		}
+	})
+}
+
+exports.fetchPrevSubmission=(req,res)=>{
+	CodeOfIDE.find({email: req.userEmail}).then(async(code)=>{
+		if(code.prevsubmission)
+		{
+			res.json({
+				status:200,
+				data:code
+			})
+			return;
+		}
+		else {
+			res.status(400).json({message: 'submission not found'})
+		}	
+	})
+}
+
+exports.updatePrevSubmission=(req,res)=>{
+	CodeOfIDE.findOneAndUpdate({email:req.body.email},{prevsubmission: req.body.prevsubmission}, function(err,id){
+		if(err){
+			res.json({
+				status:500,
+				message: err
+			})
+		}
+		else
+		{
+			res.json({
+				status:200,
+				message: 'submission updated',
 				data: id
 			})
 		}

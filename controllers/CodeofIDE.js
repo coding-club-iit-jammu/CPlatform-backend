@@ -53,40 +53,6 @@ exports.autosave = (req,res)=> {
 	})
 }
 
-exports.fetchPrevSubmission=(req,res)=>{
-	CodeOfIDE.find({email: req.userEmail}).then(async(code)=>{
-		
-		var useridedocument = Object.values(code[0])[3];
-		if(Object.keys(useridedocument).length===7)
-		{
-			res.json({
-			status:200,
-			data:code
-		})
-		}
-		else
-		{
-			res.status(400).json({message: 'submission not found'})
-		}	
-		
-	})
-}
 
-exports.updatePrevSubmission=(req,res)=>{
-	CodeOfIDE.findOneAndUpdate({email:req.body.email},{prevsubmission: req.body.prevsubmission}, function(err,id){
-		if(err){
-			res.json({
-				status:500,
-				message: err
-			})
-		}
-		else
-		{
-			res.json({
-				status:200,
-				message: 'submission updated',
-				data: id
-			})
-		}
-	})
-}
+
+

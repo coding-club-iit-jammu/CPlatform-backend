@@ -341,32 +341,8 @@ exports.getLeaderboard = async (req, res, next) => {
 
 exports.getPrevsubmission = async(req,res,next) => {   
     
-    // const submittinguserId = req.userId;
-    
-    // const userRecord = await UserPracticeRecord.find({userId:submittinguserId});
-    // if(!userRecord){
-    //     res.status(500).json({message:"Try Again"});
-    //     return;
-    // }
-    // else
-    // {
-    //     res.json({
-    //         status: 200,
-    //         data: userRecord
-    //     })
-    // }
-    
-  
-    const questionId = req.query.questionId;
-    // fetch code
-  
-
-    // fetch the verdict: WA, AC, RE, TLE, Compilation Error
-    // handled in is-answer-correct middleware
-    
-    
-    const userRecordId = req.userRecordId;
-    
+    const questionId = req.query.questionId;  
+    const userRecordId = req.userRecordId;    
     const userRecord = await UserPracticeRecord.findById(userRecordId);
     if(!userRecord){
         res.status(500).json({message:"Try Again"});

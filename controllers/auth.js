@@ -5,7 +5,7 @@ const User = require('../models/user');
 const jwtConfig = require('../jwtConfig');
 const accessTokenSecret = jwtConfig.accessTokenSecret;
 const refreshTokenSecret = jwtConfig.refreshTokenSecret;
-const front_end_URI = "https://prateek18597.github.io/CodingPlatform/"
+const front_end_URI = "https://cplatform.codingclubiitjammu.tech"
 
 function getAccessToken(payload) {
     return jwt.sign(payload, accessTokenSecret, { expiresIn: '15min' });

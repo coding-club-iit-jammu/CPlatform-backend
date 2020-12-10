@@ -338,3 +338,19 @@ exports.getLeaderboard = async (req, res, next) => {
         res.status(200).json({message: entries,userEntry:userEntry});
     }
 }
+
+exports.getPrevsubmission = async(req,res,next) => {   
+    
+    const questionId = req.query.questionId;  
+    const userRecordId = req.userRecordId;    
+    const userRecord = await UserPracticeRecord.findById(userRecordId);
+    if(!userRecord){
+        res.status(500).json({message:"Try Again"});
+        
+    } 
+    else {
+        console.log(userRecord)
+        res.status(200).json({data: userRecord})
+    }
+    
+}

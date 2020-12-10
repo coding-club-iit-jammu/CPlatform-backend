@@ -18,7 +18,6 @@ const testRoute = require('./routes/test');
 const practiceRoute = require('./routes/practice');
 const ideRunnerRoute = require('./routes/ide/runner');
 const getIdeCodeRoute = require('./routes/getidecode');
-const fetchSubmission= require('./routes/fetchsubmission.js');
 const app = express();
 
 // use cors
@@ -55,7 +54,6 @@ app.use('/test',testRoute);
 app.use('/practice',practiceRoute);
 app.use(ideRunnerRoute);
 app.use('/CodeofIDE',getIdeCodeRoute);
-app.use('/CodeofIDE',fetchSubmission);
 
 
 // connect with mongoose

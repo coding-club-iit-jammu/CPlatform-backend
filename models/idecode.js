@@ -18,11 +18,6 @@ var ideschema = new mongoose.Schema({
 		type: String,
 		required:true,
 		default: "class Main { \n public static void main(String[] args) { \n System.out.println(\"hello world\"); \n } \n };"
-	},
-	prevsubmission:{
-		type:String,
-		
-		
 	}
 });
 

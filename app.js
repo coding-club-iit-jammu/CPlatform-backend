@@ -1,8 +1,10 @@
+require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const sgMail = require('@sendgrid/mail');
+
 const PORT = 8080;
 
 // require routes
@@ -55,9 +57,8 @@ app.use('/practice',practiceRoute);
 app.use(ideRunnerRoute);
 app.use('/CodeofIDE',getIdeCodeRoute);
 
-
 // connect with mongoose
-mongoose.connect("mongodb+srv://pratikparmar:dafiQxSJ4qttuhwr@cluster0-ihjbl.mongodb.net/CodingPlatform?retryWrites=true&w=majority",
+mongoose.connect(process.env.MONGODB,
 {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -72,4 +73,4 @@ mongoose.connect("mongodb+srv://pratikparmar:dafiQxSJ4qttuhwr@cluster0-ihjbl.mon
         console.log(`Server Running on Port ${PORT}`);
     })  
 });
-sgMail.setApiKey('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');
+sgMail.setApiKey(process.env.SENDGRID);

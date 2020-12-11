@@ -1,8 +1,8 @@
 const jwt = require('jsonwebtoken');
-const jwtConfig = require('../jwtConfig');
+//const jwtConfig = require('../jwtConfig');
 
-const accessTokenSecret = jwtConfig.accessTokenSecret;
-const refreshTokenSecret = jwtConfig.refreshTokenSecret;
+const accessTokenSecret = process.env.accessTokenSecret;
+const refreshTokenSecret = process.env.refreshTokenSecret;
 
 function verifyJWTToken(token) {
     return new Promise((resolve, reject) => {

@@ -4,7 +4,7 @@
   "description": "Backend for Coding Platform App.",
   "main": "app.js",
   "scripts": {
-    "test": "mocha",
+    "test": "echo \"Error: no test specified\"",
     "start": "node app.js"
   },
   "author": "Pratik Parmar and Sahil Bansal",

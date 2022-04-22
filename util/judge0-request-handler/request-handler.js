@@ -1,8 +1,8 @@
 const request = require("request");
-const JUDGE0_ENDPOINT_1 = 'http://azure.codingclubiitjammu.tech/submissions/?base64_encoded=true';
-const JUDGE0_ENDPOINT_2 = 'http://azure.codingclubiitjammu.tech/submissions';
+const JUDGE0_ENDPOINT_1 = `${process.env.JUDGE0}/submissions?base64_encoded=true`;
+const JUDGE0_ENDPOINT_2 = `${process.env.JUDGE0}/submissions`;
 const axios = require('axios').default;
-const KEY = "abhishek";
+const KEY = process.env.JUDGE0_KEY;
 
 const RequestHandler = /** @class */ (function () {
     function RequestHandler() {

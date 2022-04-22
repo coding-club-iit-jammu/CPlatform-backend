@@ -146,7 +146,7 @@ exports.createUser = async (req,res,next) =>{
             var html_msg = "Hi " + user.name + "<br><br>Thanks for creating Account on Coding Platform . Pls click on the link below to verify your email.<br>" + url + "<br><br>Link will expire in 30 Minutes.<br><br><br>Regards<br>Team Coding Platform";
             const msg = {
                 to: user_payload.email,
-                from: 'cplatform@iamabhishek.live',
+                from: 'cplatform@abhis.me',
                 subject: 'Verify Account for Coding Platform',
                 html: html_msg
             };
@@ -235,7 +235,7 @@ exports.changePasswordEmail = async (req,res,next) =>{
             var html_msg = "Hi " + user_payload.name + "<br><br>You requested to reset the password for your Coding Platform Account. Pls click on the link below to reset your password <br>" + user_payload.url + "<br><br>Regards<br>Team Coding Platform";
             const msg = {
                 to: user_payload.email,
-                from: 'cplatform@iamabhishek.live',
+                from: 'cplatform@abhis.me',
                 subject: 'Reset Password for Coding Platform',
                 html: html_msg
             };
